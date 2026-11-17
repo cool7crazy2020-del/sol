@@ -10,6 +10,7 @@
     "sidePanel"
   ],
   "host_permissions": [
+    "https://tapstitch.com/*",
     "https://www.tapstitch.com/*",
     "https://cool7crazy2020-del.github.io/sol/*"
   ],
@@ -25,6 +26,7 @@
   "content_scripts": [
     {
       "matches": [
+        "https://tapstitch.com/account/products-pool/product/*",
         "https://www.tapstitch.com/account/products-pool/product/*"
       ],
       "js": [
