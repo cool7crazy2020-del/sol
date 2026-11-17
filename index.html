@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#090909"><meta name="description" content="SOL — independent streetwear. Discover the latest collection.">
 <title>SOL — Official Store</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500;1,6..96,600&family=Italianno&display=swap" rel="stylesheet">
 <style>
 /* SOL storefront: keep the clothing shop only; never show a hero/marketing banner. */
 .hero,.hero-banner,.hero-section,.hero-copy,.announcement,.editorial,.collection-strip{display:none!important}
@@ -109,6 +109,27 @@ main section{scroll-margin-top:132px}
  .product-image{height:270px}
  .shop{padding:52px 4vw}
 }
+
+
+/* SOL typography: fluid editorial serif with a subtle handwritten logo echo */
+:root{--serif:'Bodoni Moda','Playfair Display',serif;--sans:'DM Sans',sans-serif}
+body{font-family:var(--sans);letter-spacing:.015em}
+.brand img{filter:drop-shadow(0 0 12px #fff2)}
+.nav a,.nav button,.subnav a{font-family:var(--sans);font-weight:500;letter-spacing:.22em;font-size:9px}
+.eyebrow,.section-head .eyebrow,.product-meta small,.tag,.quick,.button,.filter-list button{font-family:var(--sans);font-weight:500;letter-spacing:.24em}
+.section-head h2,.shop h1,.admin h1,.detail-info h1,.drawer-head h2,.panel h2{
+ font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.065em;text-transform:none
+}
+.section-head h2{font-size:clamp(46px,6.2vw,82px);line-height:.9}
+.shop h1,.admin h1{font-size:clamp(58px,8vw,104px);line-height:.86}
+.detail-info h1{font-size:clamp(48px,6vw,82px);line-height:.92}
+.drawer-head h2,.panel h2{font-size:38px}
+.category span{font-family:var(--serif);font-style:italic;font-size:23px;letter-spacing:-.035em;text-transform:none}
+.product-meta{font-family:var(--sans);font-size:11px;letter-spacing:.04em}
+.product-meta small{font-size:8px;letter-spacing:.2em}
+.price{font-family:var(--serif);font-style:italic;font-size:16px;letter-spacing:0}
+.detail-info p,.field label,.muted{letter-spacing:.025em}
+.button,.quick{font-size:9px;letter-spacing:.22em}
 
 </style>
 </head>
