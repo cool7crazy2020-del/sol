@@ -173,6 +173,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
  border-bottom:1px solid #29292f;
  background:linear-gradient(110deg,#0a0a0c 0%,#111115 52%,#09090b 100%);
 }
+.editorial-intro .editorial-logo{position:relative;z-index:1;display:block;width:clamp(190px,30vw,420px);max-height:132px;height:auto;object-fit:contain;object-position:left center;filter:drop-shadow(0 0 12px #fff2)}
 .editorial-intro:after{
  content:"";position:absolute;right:0;top:0;width:32%;height:100%;
  pointer-events:none;opacity:.22;
@@ -212,7 +213,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
 .page.active .section:nth-of-type(3){animation-delay:.12s}
 @media(max-width:650px){
  .editorial-intro{padding:38px 4vw 32px}
- .editorial-intro h1{font-size:clamp(54px,12vw,78px)}
+ .editorial-intro .editorial-logo{width:clamp(175px,48vw,300px);max-height:105px}
  .editorial-intro:after{width:24%;opacity:.12}
 }
 @media(prefers-reduced-motion:reduce){
@@ -232,7 +233,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
 </header>
 <main>
 <section id="home" class="page active">
- <section class="editorial-intro"><div class="eyebrow">SOL / COLLECTION 001</div><h1>SOL</h1></section>
+ <section class="editorial-intro"><img class="editorial-logo" src="assets/sol-logo-transparent.svg" alt="SOL"></section>
  <section class="section" id="collections"><div class="section-head"><div><div class="eyebrow">SOL COLLECTIONS</div><h2>Clothing</h2></div></div>
  <div class="category-grid">
   <a class="category" href="#shop" data-page="shop" data-category="Tops"><span>T-shirts ↗</span></a>
