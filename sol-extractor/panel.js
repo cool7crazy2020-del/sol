@@ -3,7 +3,7 @@ let latest = null, currentTabId = null;
 async function activeTab() {
   const [tab] = await chrome.tabs.query({active:true,lastFocusedWindow:true});
   currentTabId = tab?.id ?? null;
-  const isTap = !!tab?.url && tab.url.startsWith("https://www.tapstitch.com/account/products-pool/product/");
+  const isTap = !!tab?.url && tab.url.includes("tapstitch.com/account/products-pool/product/");
   $("status").textContent = isTap ? "Tapstitch product page detected" : "Waiting for Tapstitch";
   $("product").textContent = isTap ? (tab.title || "Product page") : "Open a Tapstitch product";
   $("hint").textContent = isTap ? "Ready to collect product details and mockup images." : "Keep this panel open and switch to a signed-in Tapstitch product tab.";
