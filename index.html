@@ -25,6 +25,91 @@ main section{scroll-margin-top:130px}.section{padding:74px 5vw}.section-head{dis
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:white;padding:12px 18px;font-size:10px;z-index:40;display:none}
 @media(max-width:850px){.product-grid{grid-template-columns:repeat(2,1fr)}.product-image{height:340px}.category-grid{grid-template-columns:repeat(2,1fr)}.category{height:320px}detail{grid-template-columns:1fr}.detail-photo{height:520px}.admin-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.head{height:72px;padding:0 4vw}.brand{width:125px;height:55px}.nav{gap:12px}.nav a,.nav button{font-size:8px;letter-spacing:.08em}.subnav{gap:16px;overflow:auto;justify-content:flex-start;padding:0 14px}.subnav a{white-space:nowrap;font-size:7px}section{padding:54px 4vw}.product-image{height:260px}.category{height:245px}.filters{align-items:flex-start;flex-direction:column}detail{padding:24px 4vw}.detail-photo{height:430px}.detail-info{padding:0}}
+
+/* SOL FUTURE / chrome editorial refresh — intentionally no hero banner */
+:root{
+ --ink:#f1f0ee;--paper:#09090b;--muted:#85858d;--line:#29292f;
+ --serif:'DM Sans',sans-serif;--sans:'DM Sans',sans-serif;
+}
+html{background:#09090b}
+body{background:#09090b;color:#f1f0ee;letter-spacing:.005em}
+header{background:rgba(7,7,9,.94);backdrop-filter:blur(18px);border-bottom:1px solid #29292f}
+.head{height:88px;border-bottom:1px solid #29292f}
+.nav a,.nav button{color:#d8d7d5;transition:color .2s}
+.nav a:hover,.nav button:hover,.subnav a:hover{color:#fff}
+.brand{width:205px;height:70px}
+.brand img{filter:drop-shadow(0 0 14px #ffffff18)}
+.bag-count{border-color:#777}
+.subnav{background:#0c0c0f;border-color:#29292f}
+.subnav a{color:#8d8d95;transition:color .2s}
+main section{scroll-margin-top:132px}
+.section{padding:82px 5vw}
+.section-head{margin-bottom:32px}
+.eyebrow{color:#9999a2;font-size:8px;letter-spacing:.28em}
+.section-head h2,.shop h1,.admin h1,.detail-info h1,.drawer-head h2,.panel h2{
+ font-family:var(--sans);font-weight:500;letter-spacing:-.075em;text-transform:uppercase
+}
+.section-head h2{font-size:clamp(38px,5.5vw,76px);line-height:.92;color:#f4f3f1}
+.category-grid{gap:10px}
+.category{height:420px;background:#141418;border:1px solid #25252b}
+.category:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,#050507d9 100%);pointer-events:none}
+.category img{filter:grayscale(1) contrast(1.08) brightness(.78);transition:transform .8s,filter .5s}
+.category:hover img{transform:scale(1.055);filter:grayscale(.35) contrast(1.08) brightness(.92)}
+.category span{z-index:1;left:18px;bottom:18px;background:transparent;color:#f5f4f2;padding:0;font-size:11px;letter-spacing:.2em}
+.category span:after{content:"";display:block;width:32px;height:1px;background:#c7c7cc;margin-top:10px;transition:width .25s}
+.category:hover span:after{width:75px}
+.product-grid{gap:34px 13px}
+.product-image{height:420px;background:#141418;border:1px solid #25252b}
+.product-image img{filter:grayscale(1) contrast(1.04) brightness(.88);transition:transform .65s,filter .4s}
+.product:hover .product-image img{transform:scale(1.035);filter:grayscale(.35) brightness(.98)}
+.product-meta{color:#f1f0ee;font-size:11px;letter-spacing:.03em}
+.product-meta small{color:#85858d;letter-spacing:.2em}
+.price{color:#c8c8ce}
+.tag{background:#d9d9dc;color:#101014;font-size:7px;letter-spacing:.17em}
+.quick{background:#e9e9eb;color:#09090b;font-weight:600;letter-spacing:.2em}
+.shop{padding:72px 5vw;background:#09090b}
+.shop h1,.admin h1{font-size:clamp(48px,7vw,92px);line-height:.9;color:#f4f3f1}
+.filters{border-top:1px solid #29292f;border-bottom:1px solid #29292f;padding:15px 0}
+.filter-list button{border:1px solid #33333a;color:#b9b9c0;background:transparent;transition:.2s}
+.filter-list button.active,.filter-list button:hover{background:#e7e7e9;color:#09090b;border-color:#e7e7e9}
+.filters select{color:#dedee2;border-color:#444}
+.filters select option{background:#111;color:#eee}
+.detail{background:#09090b;color:#f1f0ee}
+.detail-photo{background:#141418;border:1px solid #25252b}
+.detail-info h1{font-size:clamp(42px,5vw,70px);line-height:.95}
+.detail-info p{color:#a3a3ab}
+.sizes button{color:#ddd;border-color:#414149}
+.sizes button.selected,.sizes button:hover{background:#ededee;color:#09090b;border-color:#ededee}
+.button,.button.dark{background:#e7e7e9;color:#09090b;border:1px solid #e7e7e9;font-weight:600;letter-spacing:.2em;transition:.2s}
+.button:hover,.button.dark:hover{background:transparent;color:#eee;border-color:#aaa}
+.admin{color:#f1f0ee}
+.panel{background:#101014;border-color:#303037}
+.panel h2{color:#f3f2f0}
+.field label{color:#a4a4ac}
+.field input,.field select,.field textarea{background:#09090b;color:#f1f0ee;border-color:#383840}
+.field input:focus,.field textarea:focus,.field select:focus{outline:1px solid #bfc0c6}
+.admin-item{border-color:#303037;color:#eee}
+.admin-item button{color:#c7c7cd}
+.drawer{background:#101014;color:#f1f0ee}
+.drawer-head{border-color:#34343b}
+.close{color:#eee}
+.cart-item{border-color:#34343b}
+.muted{color:#96969f}
+.subtotal{border-top:1px solid #34343b;color:#eee}
+.toast{background:#e7e7e9;color:#09090b}
+::selection{background:#d6d6dc;color:#08080a}
+@media(max-width:850px){
+ .category{height:340px}.product-image{height:360px}
+}
+@media(max-width:560px){
+ .head{height:74px}.brand{width:135px;height:55px}
+ .section{padding:58px 4vw}
+ .section-head h2{font-size:42px}
+ .category{height:260px}
+ .product-image{height:270px}
+ .shop{padding:52px 4vw}
+}
+
 </style>
 </head>
 <body>
