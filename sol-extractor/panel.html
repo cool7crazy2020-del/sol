@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SOL Extractor</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b0b0b;color:#f4f2ed;font:14px/1.5 Arial,sans-serif;padding:20px}
+.brand{font-size:11px;letter-spacing:.28em;color:#aaa}.logo{font:italic 42px Georgia;margin:6px 0 22px}
+.card{border:1px solid #333;padding:16px;margin:14px 0;background:#111}
+.status{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#aaa}.title{font-size:18px;font-weight:600;margin:8px 0}.muted{color:#aaa;font-size:12px}
+button{width:100%;border:0;background:#f4f2ed;color:#111;padding:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.4;cursor:not-allowed}.preview{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}.preview img{width:100%;aspect-ratio:1;object-fit:cover;background:#222}
+#message{min-height:42px;color:#ccc;font-size:12px;margin-top:12px}
+</style></head><body>
+<div class="brand">SOL / TAPSTITCH TOOL</div><div class="logo">Extractor.</div>
+<div class="card"><div class="status" id="status">Checking active tab…</div><div class="title" id="product">Open a Tapstitch product</div><div class="muted" id="hint">Keep this side panel open, switch to your Tapstitch product tab, then extract.</div><button id="extract" disabled>Extract product</button><div id="message"></div><div class="preview" id="preview"></div><button id="send" hidden>Send to SOL Studio</button></div>
+<div class="muted">Only images loaded in the product page can be collected. Some temporary or protected image links may not work in your public store.</div>
+<script src="panel.js"></script></body></html>
