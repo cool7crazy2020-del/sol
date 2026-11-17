@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 300">
+<defs><linearGradient id="silver" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#b9b9b9"/><stop offset="1" stop-color="#f4f4f4"/></linearGradient></defs>
+<g fill="none" stroke="url(#silver)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M20 205 C110 105 235 110 355 145 C450 175 520 165 610 100 C705 30 840 15 910 35 C970 53 930 88 865 119 C790 155 700 175 630 208 C770 188 900 182 1015 155" stroke-width="5"/>
+<path d="M190 260 C360 300 590 260 755 200" stroke-width="4"/>
+<path d="M760 98 C835 80 940 80 1080 84" stroke-width="3"/>
+<path d="M975 24 C968 82 976 93 1038 92 C980 100 970 114 964 180 C958 116 947 101 892 96 C947 91 964 78 975 24Z" fill="url(#silver)" stroke="none"/>
+</g>
+<text x="190" y="205" fill="url(#silver)" font-family="Georgia,serif" font-size="190" font-style="italic" font-weight="bold" letter-spacing="-22">SOL</text>
+</svg>
