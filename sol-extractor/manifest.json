@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "SOL Tapstitch Extractor",
+  "version": "1.0.0",
+  "description": "Extract product details and mockup image URLs from your signed-in Tapstitch product page into SOL.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://www.tapstitch.com/*",
+    "https://cool7crazy2020-del.github.io/sol/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open SOL Extractor"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.tapstitch.com/account/products-pool/product/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
