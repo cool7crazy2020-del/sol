@@ -166,61 +166,58 @@ body{font-family:var(--sans);letter-spacing:.015em}
 .recent-section{padding-top:10px}
 @media(max-width:560px){.header-tools{gap:12px}.search-toggle{font-size:7px;letter-spacing:.08em}.editorial-intro{padding:45px 4vw 20px}.editorial-intro h1{font-size:54px}.search-panel{right:-60px}.wishlist-heart{width:32px;height:32px}}
 .detail-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.detail-gallery img{width:100%;height:115px;object-fit:cover;background:#17171b;border:1px solid #333;cursor:pointer}.detail-gallery img:hover{border-color:#ddd}@media(max-width:850px){.detail-gallery img{height:90px}}
-/* EXPERIENCE UPDATE 001 — refined chrome editorial treatment */
+/* SOL — restrained editorial finish and interaction details */
 .editorial-intro{
- position:relative;isolation:isolate;overflow:hidden;
- padding:25px 5vw 18px;
- min-height:310px;
- border-bottom:1px solid #34343b;
- background:
-  radial-gradient(ellipse at 76% 48%,#25252b 0%,#111115 25%,transparent 56%),
-  linear-gradient(115deg,#09090b 0%,#101014 55%,#09090b 100%);
+ position:relative;overflow:hidden;
+ padding:48px 5vw 42px;min-height:0;
+ border-bottom:1px solid #29292f;
+ background:linear-gradient(110deg,#0a0a0c 0%,#111115 52%,#09090b 100%);
 }
-.editorial-intro:before{
- content:"";position:absolute;z-index:-1;inset:0;opacity:.16;pointer-events:none;
- background:repeating-linear-gradient(135deg,transparent 0 34px,#777780 35px,transparent 36px 70px);
- mask-image:linear-gradient(90deg,transparent 15%,#000 100%);
+.editorial-intro:after{
+ content:"";position:absolute;right:0;top:0;width:32%;height:100%;
+ pointer-events:none;opacity:.22;
+ background:linear-gradient(115deg,transparent 0%,#777780 49.8%,transparent 50.3%);
+ mask-image:linear-gradient(180deg,transparent,#000 25%,#000 75%,transparent);
 }
-.editorial-topline,.editorial-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px}
-.editorial-index,.editorial-bottom{font:500 8px var(--sans);letter-spacing:.22em;color:#777780}
-.editorial-main{display:flex;justify-content:space-between;align-items:center;min-height:215px;position:relative}
-.editorial-kicker{margin:22px 0 12px!important;color:#a8a8b0}
+.editorial-intro .eyebrow{margin-bottom:18px;color:#9999a2}
 .editorial-intro h1{
- font:500 clamp(56px,8.2vw,108px)/.82 var(--sans);
- font-style:normal;letter-spacing:-.095em;text-transform:uppercase;
- margin:0;max-width:800px;color:#f1f1f2;
+ position:relative;z-index:1;margin:0;max-width:900px;
+ font:400 clamp(58px,8.5vw,112px)/.88 'Bodoni Moda',serif;
+ font-style:italic;letter-spacing:-.075em;color:#f1f0ee;
 }
-.chrome-period{
- display:inline-block;margin-left:5px;
- background:linear-gradient(115deg,#55555d 0%,#f4f4f5 17%,#85858d 31%,#fff 47%,#66666e 62%,#d9d9dc 78%,#55555d 100%);
- -webkit-background-clip:text;background-clip:text;color:transparent;
- filter:drop-shadow(0 0 15px #d9d9dc30);
+.nav a,.nav button,.subnav a{transition:color .2s ease,opacity .2s ease}
+.nav a:hover,.nav button:hover,.subnav a:hover{color:#fff;opacity:.72}
+.category,.product{transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .3s ease}
+.category:hover{transform:translateY(-4px);border-color:#66666e}
+.product:hover{transform:translateY(-4px)}
+.product-image{overflow:hidden}
+.product-image:after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(115deg,transparent 25%,#ffffff12 48%,transparent 70%);
+ transform:translateX(-120%);transition:transform .75s cubic-bezier(.2,.7,.2,1);
 }
-.editorial-main p{font:500 8px var(--sans);letter-spacing:.3em;color:#a0a0a8;margin:20px 0 0}
-.chrome-object{position:absolute;right:8%;top:50%;transform:translateY(-48%);width:clamp(110px,17vw,210px);aspect-ratio:1;border-radius:50%;
- background:radial-gradient(circle at 32% 25%,#fff 0%,#c9c9ce 5%,#777780 13%,#26262c 29%,#aeb0b8 39%,#35353c 49%,#09090b 64%,#777780 70%,#18181d 78%,#050507 100%);
- box-shadow:inset -15px -18px 35px #000c,inset 9px 8px 22px #fff5,0 0 45px #bfc0c51c,0 25px 55px #000b;
- opacity:.86;
-}
-.chrome-object:before{content:"";position:absolute;inset:13%;border-radius:50%;border:1px solid #ffffff70;box-shadow:0 0 18px #fff4,inset 0 0 18px #fff2}
-.chrome-object:after{content:"";position:absolute;left:-22%;right:-22%;top:47%;height:12%;border:1px solid #e5e5e8b0;border-left-color:#55555d;border-right-color:#55555d;border-radius:50%;transform:rotate(-28deg);box-shadow:0 0 12px #d9d9dc55}
-.editorial-bottom{padding-top:13px;border-top:1px solid #ffffff20}
-.nav a,.nav button,.subnav a{transition:color .2s,text-shadow .2s}
-.nav a:hover,.nav button:hover,.subnav a:hover{color:#fff;text-shadow:0 0 12px #d7d7df70}
-.category{box-shadow:inset 0 1px #ffffff0b}
-.category:hover{border-color:#777780}
-.product-image{box-shadow:inset 0 1px #ffffff10}
-.wishlist-heart{backdrop-filter:blur(10px)}
+.product:hover .product-image:after{transform:translateX(120%)}
+.product-image img{transition:transform .65s cubic-bezier(.2,.7,.2,1),filter .4s ease}
+.wishlist-heart{backdrop-filter:blur(8px);transition:background .2s,color .2s,transform .2s}
+.wishlist-heart:hover{transform:scale(1.08)}
+.button,.quick,.filter-list button{transition:background .22s ease,color .22s ease,border-color .22s ease,transform .22s ease}
+.button:active,.quick:active{transform:scale(.985)}
+.search-panel{transform:translateY(7px);opacity:0;transition:opacity .18s ease,transform .18s ease}
+.search-panel.open{transform:translateY(0);opacity:1}
+.search-result{transition:background .18s ease;padding-left:7px;padding-right:7px}
+.search-result:hover{background:#ffffff09}
+@keyframes sol-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page.active .editorial-intro,.page.active .section{animation:sol-rise .55s ease both}
+.page.active .section:nth-of-type(2){animation-delay:.06s}
+.page.active .section:nth-of-type(3){animation-delay:.12s}
 @media(max-width:650px){
- .editorial-intro{padding:20px 4vw 15px;min-height:255px}
- .editorial-main{min-height:180px}
- .editorial-intro h1{font-size:clamp(48px,12vw,72px)}
- .chrome-object{right:1%;width:105px;opacity:.55}
- .editorial-main p{font-size:7px;letter-spacing:.2em}
- .editorial-index,.editorial-bottom{font-size:7px;letter-spacing:.12em}
+ .editorial-intro{padding:38px 4vw 32px}
+ .editorial-intro h1{font-size:clamp(54px,12vw,78px)}
+ .editorial-intro:after{width:24%;opacity:.12}
 }
-@media(prefers-reduced-motion:reduce){.nav a,.nav button,.subnav a{transition:none}}
-
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
@@ -235,7 +232,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
 </header>
 <main>
 <section id="home" class="page active">
- <section class="editorial-intro"><div class="editorial-topline"><span class="eyebrow">SOL — INDEPENDENT LABEL</span><span class="editorial-index">EST. 2026&nbsp; / &nbsp;001</span></div><div class="editorial-main"><div><div class="eyebrow editorial-kicker">COLLECTION 001&nbsp; · &nbsp;THE CURRENT EDIT</div><h1>New<br>perspective<span class="chrome-period">.</span></h1><p>FORM / FUNCTION / EXPRESSION</p></div><div class="chrome-object" aria-hidden="true"><span></span></div></div><div class="editorial-bottom"><span>DESIGNED TO STAND APART</span><span>SCROLL TO EXPLORE&nbsp; ↓</span></div></section>
+ <section class="editorial-intro"><div class="eyebrow">SOL / COLLECTION 001</div><h1>New<br>perspective.</h1></section>
  <section class="section" id="collections"><div class="section-head"><div><div class="eyebrow">SOL COLLECTIONS</div><h2>Clothing</h2></div></div>
  <div class="category-grid">
   <a class="category" href="#shop" data-page="shop" data-category="Tops"><span>T-shirts ↗</span></a>
