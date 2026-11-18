@@ -13,8 +13,12 @@ function solExtractTapstitchProduct() {
     || document.title;
   const body = document.body.innerText || "";
   const item = body.match(/Item number:\\s*([A-Z0-9-]+)/i)?.[1] || "";
-  const sizes = [...document.querySelectorAll("button,[role=button],[class*=size]")].map(el => (el.innerText || "").trim())
-    .filter(x => /^(XS|S|M|L|XL|2XL|3XL|4XL|5XL|One size)$/i.test(x));
+  const sizePattern = /^(XXS|XS|S|M|L|XL|XXL|2XL|3XL|XXXL|4XL|XXXXL|5XL|OS|ONE SIZE|ONE-SIZE|FREE SIZE|\\d{2,3})$/i;
+  const sizeNodes = [...document.querySelectorAll('button,[role="button"],label,[class*="size"],[data-size]')];
+  const sizes = [...new Set(sizeNodes.map(el => {
+    const raw = (el.getAttribute("data-size") || el.getAttribute("aria-label") || el.innerText || el.textContent || "").trim().replace(/\\s+/g," ");
+    return sizePattern.test(raw) ? raw.toUpperCase().replace("ONE-SIZE","ONE SIZE").replace("FREE SIZE","ONE SIZE") : "";
+  }).filter(Boolean))];
   const palette = ["Off White","Heather Grey","Light Grey","Dark Grey","Charcoal","Navy","Royal Blue","Sky Blue","Baby Blue","Forest Green","Olive","Sage","Burgundy","Wine Red","Hot Pink","Dusty Pink","Cream","Ivory","Beige","Khaki","Brown","Black","White","Gray","Grey","Blue","Red","Green","Pink","Purple","Yellow","Orange"];
   const colorNodes = [...document.querySelectorAll('button,[role="button"],[data-color],[data-colour],[class*="swatch"],[class*="color"],[class*="colour"]')].slice(0,700);
   const colors = [];
