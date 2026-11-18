@@ -29,8 +29,14 @@ $("extract").addEventListener("click", async () => {
 });
 $("send").addEventListener("click", async () => {
   if (!latest) return;
-  const url = "https://cool7crazy2020-del.github.io/sol/#tapstitch-import=" + encodeURIComponent(JSON.stringify(latest));
-  await chrome.tabs.create({url});
-  $("message").textContent = "Sent to SOL. Review the details and set your selling price.";
+  const url = "https://cool7crazy2020-del.github.io/sol/?import=" + Date.now() + "#tapstitch-import=" + encodeURIComponent(JSON.stringify(latest));
+  const existing = await chrome.tabs.query({url:["https://cool7crazy2020-del.github.io/sol/*"]});
+  if (existing.length) {
+    await chrome.tabs.update(existing[0].id,{url,active:true});
+    if (existing[0].windowId !== undefined) await chrome.windows.update(existing[0].windowId,{focused:true});
+  } else {
+    await chrome.tabs.create({url,active:true});
+  }
+  $("message").textContent = "Sent to your SOL Studio tab. The current product draft will be continued.";
 });
 activeTab();
