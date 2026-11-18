@@ -12,7 +12,7 @@
 /* SOL_STUDIO_GATE: hidden footer entry; casual privacy only, not secure authentication. */
 [data-page="studio"]{display:none!important}
 .sol-foot{padding:24px 5vw 18px;text-align:center;border-top:1px solid #202026;background:#09090b}
-.copyright-hotspot{display:inline-flex;align-items:center;justify-content:center;min-width:42px;min-height:42px;color:#777780;font-size:12px;letter-spacing:.08em;cursor:pointer;user-select:none;padding:10px;touch-action:manipulation;position:relative;z-index:5}.copyright-hotspot:hover{color:#c9c9cf}
+.copyright-hotspot{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;color:#777780;font-size:12px;letter-spacing:.08em;cursor:pointer;user-select:none;padding:10px;touch-action:manipulation;position:relative;z-index:20;background:transparent;border:0}.copyright-hotspot:hover{color:#c9c9cf}
 .copyright-hotspot:focus{outline:1px solid #777}
 
 .hero,.hero-banner,.hero-section,.hero-copy,.announcement,.editorial,.collection-strip{display:none!important}
@@ -253,7 +253,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
 <section id="studio" class="page admin"><div class="eyebrow">SOL / Backstage</div><h1>Studio</h1><p class="muted">Add your Tapstitch products here. Copy the product details, upload your product mockup, and publish it to the storefront. Product changes are saved in this browser.</p><div class="panel" style="margin:26px 0 0"><h2>SOL Tapstitch extractor</h2><p class="muted">Open any Tapstitch product page, then use the SOL Extractor side panel. No product-link pasting needed.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><a class="button dark" href="https://github.com/cool7crazy2020-del/sol/releases/download/sol-extractor-latest/SOL-Extractor.zip" target="_blank" rel="noopener">Download SOL Extractor</a><a class="button" href="https://github.com/cool7crazy2020-del/sol/tree/main/sol-extractor" target="_blank" rel="noopener" style="background:transparent">View extension files</a></div><ol class="muted" style="padding-left:20px;line-height:1.9"><li>Download and unzip the extension.</li><li>Open <b>chrome://extensions</b> in Chrome and turn on Developer mode.</li><li>Click <b>Load unpacked</b> and select the <b>sol-extractor</b> folder inside the unzipped SOL folder.</li><li>Reload your Tapstitch product tab once so Chrome loads the extractor, then open SOL.</li><li>Click the SOL Extractor puzzle-piece/extension icon in Chrome and pin it if you want.</li><li>Open a signed-in Tapstitch product page, open the SOL Extractor side panel, and click <b>Extract product</b>.</li><li>Click <b>Send to SOL Studio</b>. The product name, mockups, sizes, and colors are sent straight to the Studio form.</li></ol><p class="muted" id="extractorStatus" aria-live="polite">The extension only reads the active Tapstitch product page when you press Extract. Only loaded images can be collected; temporary or protected image URLs may not work in the public store.</p></div><div class="admin-grid"><div class="panel"><h2 id="formTitle">Add a product</h2><form id="productForm"><input type="hidden" id="editId"><div class="field"><label>Product name</label><input id="pName" required></div><div class="field"><label>Description</label><textarea id="pDesc"></textarea></div><div class="field"><label>Price (USD)</label><input id="pPrice" type="number" min="0" step=".01" required></div><div class="field"><label>Category</label><select id="pCategory"><option>Tops</option><option>Outerwear</option><option>Bottoms</option><option>Accessories</option></select></div><div class="field"><label>Available sizes</label><div id="pSizeChoices" class="color-choices"><span class="muted">Import a Tapstitch product to detect its sizes.</span></div><input id="pSizes" placeholder="Add sizes manually (e.g. XS, S, M)" style="margin-top:10px"><p class="muted" id="pSizeHint">Select all sizes you want to offer.</p></div><div class="field"><label>Available colors</label><div id="pColorChoices" class="color-choices"><span class="muted">Import a Tapstitch product to detect its color options.</span></div><div style="display:flex;gap:8px;margin-top:10px"><input id="pColor" placeholder="Type a color (e.g. Washed Black)" style="flex:1;min-width:0"><button type="button" class="button" id="addColorChoice" style="white-space:nowrap;padding:12px 15px;background:transparent">Add color +</button></div><p class="muted" id="pColorHint">Select multiple detected colors, or add your own one at a time.</p></div><div class="field"><label>Product image / Tapstitch mockup</label><input id="pImage" type="file" accept="image/*"></div><div class="field"><label>Extracted mockup image URLs — one per line</label><textarea id="pImageUrls" placeholder="Imported image URLs will collect here"></textarea><div id="importedPhotoSets" style="display:grid;gap:10px;margin-top:12px"></div><p class="muted">Each extraction is kept as its own photo group. Assign each group to its matching product color.</p></div><button class="button dark" style="width:100%">Save product</button><button type="button" id="resetForm" class="button" style="width:100%;margin-top:8px;background:transparent">Clear form</button></form></div><div class="panel"><h2>Your products</h2><p class="muted">Manage your Tapstitch catalog here. Changes save in this browser. Export your catalog when you want me to publish the products on the live SOL site.</p><a href="https://www.tapstitch.com/" target="_blank" rel="noopener" class="eyebrow">Open Tapstitch ↗</a><div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0"><button type="button" class="button dark" id="exportCatalog">Export catalog</button><button type="button" class="button" id="importCatalog" style="background:transparent">Import catalog</button><input type="file" id="catalogFile" accept="application/json,.json" hidden></div><div id="adminList"></div></div></div></section>
 </main>
 
-<footer class="sol-foot"><span class="copyright-hotspot" id="copyrightHotspot" aria-label="Copyright">©</span></footer>
+<footer class="sol-foot"><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Open SOL Studio" onclick="openStudioGate()">©</button></footer>
 
 <div class="overlay" id="overlay"></div><aside class="drawer" id="drawer"><div class="drawer-head"><h2>Your bag</h2><button class="close" id="closeBag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Storefront preview only. Checkout and payment processing are not connected yet.</p><button class="button dark" id="checkout" style="width:100%">Checkout preview</button></aside><div class="toast" id="toast"></div>
 <script>
@@ -280,19 +280,7 @@ function openStudioGate(){
   toast('Studio unlocked');
  } else toast('Incorrect passcode');
 }
-// Hidden Studio entry: three clicks on ©, or Alt+Shift+S.
-function bindStudioEntry(){
- const hotspot=$('copyrightHotspot');
- if(hotspot)hotspot.addEventListener('click',e=>{
-  e.preventDefault();studioTapCount++;clearTimeout(studioTapTimer);
-  if(studioTapCount>=3){studioTapCount=0;openStudioGate();return}
-  studioTapTimer=setTimeout(()=>{studioTapCount=0},5000);
- });
-}
-bindStudioEntry();
-document.addEventListener('keydown',e=>{
- if(e.altKey&&e.shiftKey&&e.key.toLowerCase()==='s'){e.preventDefault();openStudioGate()}
-});
+// Studio is opened directly by the footer copyright button.
 function go(id){
  if(id==='studio'&&sessionStorage.getItem('sol-studio-unlocked')!=='yes'){openStudioGate();return}
  const target=$(id);
