@@ -22,7 +22,7 @@ $("extract").addEventListener("click", async () => {
     if (!result?.ok) throw new Error(result?.error || "Could not extract this page.");
     latest = result.data;
     $("product").textContent = latest.title || "Tapstitch product";
-    $("message").textContent = latest.images.length + " mockup image URL(s) collected" + (latest.item ? " · Item " + latest.item : "") + (latest.colors?.length ? " · " + latest.colors.length + " color options detected" : " · No color labels detected");
+    $("message").textContent = latest.images.length + " mockup image URL(s) collected" + (latest.item ? " · Item " + latest.item : "") + (latest.colors?.length ? " · " + latest.colors.length + " color options" : " · no color labels") + (latest.sizes?.length ? " · " + latest.sizes.length + " sizes detected" : " · no sizes detected");
     $("preview").innerHTML = latest.images.slice(0,6).map(src => '<img src="'+src.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'" alt="Mockup preview">').join("");
     $("send").hidden = false;
   } catch (error) { $("message").textContent = error.message || "Extraction failed."; }
