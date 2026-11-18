@@ -220,6 +220,39 @@ body{font-family:var(--sans);letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* SOL polish pass — responsive details, focus states, and calmer mobile header */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid #d7d7dc;outline-offset:4px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.search-result{transition:background .18s;padding:10px 8px}
+.search-result:hover{background:#1b1b20}
+.search-result:focus-visible{outline-offset:-2px}
+.drawer{padding-bottom:max(25px,env(safe-area-inset-bottom))}
+.detail{min-width:0}
+.detail-info{min-width:0}
+.detail-photo img{display:block}
+.empty-state p{max-width:360px;margin:0 auto 18px;line-height:1.8;font-size:11px}
+.toast{max-width:calc(100vw - 32px);text-align:center;border:1px solid #55555d;box-shadow:0 10px 35px #0008}
+@media(max-width:850px){
+ .detail{grid-template-columns:1fr;gap:28px;padding:30px 5vw}
+ .detail-info{padding:0}
+ .detail-photo{height:min(78vw,560px)}
+}
+@media(max-width:560px){
+ .head{grid-template-columns:auto 1fr auto;gap:8px}
+ .nav:not(.right) a:nth-child(2){display:none}
+ .nav.right{min-width:0}
+ .header-tools{gap:9px}
+ .header-tools>a,.header-tools>button{white-space:nowrap}
+ .brand{justify-self:center;width:116px}
+ .nav a,.nav button{font-size:7px;letter-spacing:.04em}
+ .detail{padding:22px 4vw;gap:20px}
+ .detail-photo{height:112vw;max-height:490px}
+ .detail-info h1{font-size:48px}
+ .detail-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .detail-gallery img{height:82px}
+ .drawer{padding:20px 18px max(20px,env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
@@ -254,7 +287,7 @@ body{font-family:var(--sans);letter-spacing:.015em}
 
 <footer class="sol-foot"><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Open SOL Studio" onclick="handleStudioTap()">©</button></footer>
 
-<div class="overlay" id="overlay"></div><aside class="drawer" id="drawer"><div class="drawer-head"><h2>Your bag</h2><button class="close" id="closeBag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Storefront preview only. Checkout and payment processing are not connected yet.</p><button class="button dark" id="checkout" style="width:100%">Checkout preview</button></aside><div class="toast" id="toast"></div>
+<div class="overlay" id="overlay"></div><aside class="drawer" id="drawer"><div class="drawer-head"><h2>Your bag</h2><button class="close" id="closeBag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Storefront preview only. Checkout and payment processing are not connected yet.</p><button class="button dark" id="checkout" style="width:100%">Checkout preview</button></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 const demo=[];
 let products=(JSON.parse(localStorage.getItem('sol-products')||'null')||demo).filter(p=>!p.sample),cart=JSON.parse(localStorage.getItem('sol-cart')||'[]'),filter='All',picked='';
@@ -320,9 +353,10 @@ $('searchToggle').onclick=()=>{const panel=$('searchPanel'),open=!panel.classLis
 function renderSearch(){const q=$('searchInput').value.trim().toLowerCase();if(!q){$('searchResults').innerHTML='<div class="search-empty">Start typing to discover pieces.</div>';return}const matches=products.filter(p=>p.hidden!==true&&[p.name,p.category,p.color,p.desc].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);$('searchResults').innerHTML=matches.map(p=>'<div class="search-result" data-search-id="'+safe(p.id)+'"><img src="'+safe(p.image)+'" alt=""><div>'+safe(p.name)+'<small>'+safe(p.category)+'</small></div><span>'+money(p.price)+'</span></div>').join('')||'<div class="search-empty">No pieces found. Try another search.</div>';document.querySelectorAll('[data-search-id]').forEach(el=>el.onclick=()=>{$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');showProduct(el.dataset.searchId)})}
 $('searchInput').addEventListener('input',renderSearch);
 document.addEventListener('click',e=>{if(!$('searchPanel').contains(e.target)&&!$('searchToggle').contains(e.target)){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('drawer').classList.contains('show'))closeBag();if($('searchPanel').classList.contains('open')){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');$('searchToggle').focus()}}});
 $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render()});
 document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.category){filter=a.dataset.category;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter))}go(a.dataset.page)}));
-$('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
+$('openBag').onclick=()=>{openBag();$('openBag').setAttribute('aria-expanded','true')};$('closeBag').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
 saveWishlist();render();
 restoreImportDraft();
 document.querySelectorAll('#productForm input,#productForm textarea,#productForm select').forEach(el=>el.addEventListener('input',saveImportDraft));
