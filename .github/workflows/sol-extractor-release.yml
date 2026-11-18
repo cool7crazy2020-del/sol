@@ -1,0 +1,40 @@
+name: Build SOL Extractor Download
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "sol-extractor/**"
+      - ".github/workflows/sol-extractor-release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Package extractor folder
+        run: |
+          cd sol-extractor
+          zip -r ../SOL-Extractor.zip .
+
+      - name: Publish or update the latest extractor release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: sol-extractor-latest
+          name: SOL Extractor — Latest
+          body: |
+            Latest downloadable build of the SOL Chrome Extractor.
+
+            Download **SOL-Extractor.zip**, extract it, then load the extracted folder in Chrome at chrome://extensions with Developer mode enabled.
+          files: SOL-Extractor.zip
+          overwrite_files: true
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
