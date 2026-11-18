@@ -15,7 +15,20 @@ function solExtractTapstitchProduct() {
   const item = body.match(/Item number:\\s*([A-Z0-9-]+)/i)?.[1] || "";
   const sizes = [...document.querySelectorAll("button,[role=button],[class*=size]")].map(el => (el.innerText || "").trim())
     .filter(x => /^(XS|S|M|L|XL|2XL|3XL|4XL|5XL|One size)$/i.test(x));
-  return { source: location.href, title, item, sizes: [...new Set(sizes)], images: unique.map(x => x.src) };
+  const palette = ["Off White","Heather Grey","Light Grey","Dark Grey","Charcoal","Navy","Royal Blue","Sky Blue","Baby Blue","Forest Green","Olive","Sage","Burgundy","Wine Red","Hot Pink","Dusty Pink","Cream","Ivory","Beige","Khaki","Brown","Black","White","Gray","Grey","Blue","Red","Green","Pink","Purple","Yellow","Orange"];
+  const colorNodes = [...document.querySelectorAll('button,[role="button"],[data-color],[data-colour],[class*="swatch"],[class*="color"],[class*="colour"]')].slice(0,700);
+  const colors = [];
+  for (const el of colorNodes) {
+    const raw = [el.getAttribute("data-color"),el.getAttribute("data-colour"),el.getAttribute("aria-label"),el.getAttribute("title"),el.innerText].filter(Boolean).join(" ");
+    if (!raw || raw.length > 90) continue;
+    for (const name of palette) {
+      const pattern = new RegExp("\\b"+name.toLowerCase().replace(/ /g,"\\s+")+"\\b","i");
+      if (pattern.test(raw) && !colors.includes(name)) colors.push(name);
+    }
+    const hex = raw.match(/#(?:[0-9a-f]{3}|[0-9a-f]{6})\\b/i)?.[0];
+    if (hex && /color|colour|swatch/i.test(String(el.className)+" "+raw) && !colors.includes(hex.toUpperCase())) colors.push(hex.toUpperCase());
+  }
+  return { source: location.href, title, item, sizes: [...new Set(sizes)], colors: colors.slice(0,20), images: unique.map(x => x.src) };
 }
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type !== "SOL_EXTRACT_TAPSTITCH") return;
