@@ -253,6 +253,53 @@ button:disabled{opacity:.45;cursor:not-allowed}
  .detail-gallery img{height:82px}
  .drawer{padding:20px 18px max(20px,env(safe-area-inset-bottom))}
 }
+
+/* SOL desktop refinement — wider canvas, balanced grids, stronger editorial hierarchy */
+@media(min-width:1100px){
+ .head{height:96px;padding-inline:clamp(42px,6vw,110px)}
+ .brand{width:220px;height:74px}
+ .nav{gap:clamp(22px,2.2vw,38px)}
+ .nav a,.nav button{font-size:9px;letter-spacing:.19em}
+ .subnav{height:44px;gap:clamp(28px,3vw,52px)}
+ .subnav a{font-size:8px;letter-spacing:.2em}
+ .section,.shop{padding-left:clamp(48px,6vw,112px);padding-right:clamp(48px,6vw,112px)}
+ .section{padding-top:clamp(82px,7vw,112px);padding-bottom:clamp(82px,7vw,112px)}
+ .section-head{margin-bottom:38px}
+ .category-grid{gap:14px}
+ .category{height:clamp(390px,34vw,520px)}
+ .category span{left:20px;bottom:22px;font-size:10px;letter-spacing:.22em}
+ .product-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:34px 18px}
+ .product-image{height:auto;aspect-ratio:4/5}
+ .product-meta{font-size:12px;padding-top:15px}
+ .product-meta small{font-size:8px}
+ .quick{left:12px;right:12px;bottom:12px;padding:15px;letter-spacing:.19em}
+ .shop{padding-top:68px;padding-bottom:90px}
+ .shop h1{font-size:clamp(64px,6vw,92px)}
+ .filters{margin:32px 0 34px}
+ .filter-list{gap:10px}
+ .filter-list button{padding:11px 17px}
+ .detail{padding:70px clamp(70px,10vw,180px);grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:clamp(64px,8vw,130px)}
+ .detail-photo{height:auto;aspect-ratio:4/5;position:sticky;top:160px}
+ .detail-info{padding:50px 0;max-width:520px}
+ .detail-info h1{font-size:clamp(54px,5vw,76px)}
+ .admin{padding:58px clamp(48px,6vw,112px)}
+ .admin-grid{gap:28px}
+ .panel{padding:28px}
+}
+@media(min-width:1500px){
+ .product-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:42px 22px}
+ .category-grid{gap:18px}
+ .category{height:500px}
+}
+@media(hover:hover) and (min-width:851px){
+ .product{transition:transform .25s ease}
+ .product:hover{transform:translateY(-3px)}
+ .quick{pointer-events:none}
+ .product:hover .quick{pointer-events:auto}
+ .category::before{filter:saturate(.82) contrast(1.04)}
+ .category:hover::before{filter:saturate(1) contrast(1.08)}
+}
+
 </style>
 </head>
 <body>
