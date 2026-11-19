@@ -471,6 +471,59 @@ header,.head,.subnav{background:#f5f2eb!important;color:#111!important;border-co
 .copyright-hotspot{color:#777!important}
 .detail-photo .gallery-arrow,.gallery-position{background:#fbf9f4!important;color:#111!important;border-color:#d8d2c7!important}
 
+
+/* SOL THEME SWITCH */
+.theme-toggle{font:inherit;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid currentColor;padding:9px 11px;cursor:pointer;white-space:nowrap;color:inherit}
+.theme-toggle:hover{opacity:.65}
+@media(max-width:560px){.theme-toggle{font-size:8px;padding:7px 8px}}
+html[data-sol-theme="dark"]{color-scheme:dark;--paper:#090909;--ink:#f4f2ed;--line:#292929}
+html[data-sol-theme="dark"],html[data-sol-theme="dark"] body,
+html[data-sol-theme="dark"] main,html[data-sol-theme="dark"] .page,
+html[data-sol-theme="dark"] .section,html[data-sol-theme="dark"] .shop,
+html[data-sol-theme="dark"] .admin,html[data-sol-theme="dark"] .detail,
+html[data-sol-theme="dark"] .editorial-intro{background:#090909!important;color:#f4f2ed!important}
+html[data-sol-theme="dark"] header,html[data-sol-theme="dark"] .head,
+html[data-sol-theme="dark"] .subnav{background:#090909!important;color:#f4f2ed!important;border-color:#292929!important}
+html[data-sol-theme="dark"] .nav a,html[data-sol-theme="dark"] .nav button,
+html[data-sol-theme="dark"] .subnav a,html[data-sol-theme="dark"] .search-toggle,
+html[data-sol-theme="dark"] .theme-toggle{color:#f4f2ed!important}
+html[data-sol-theme="dark"] .brand img{filter:brightness(0) invert(1)!important}
+html[data-sol-theme="dark"] .section-head h2,html[data-sol-theme="dark"] .shop h1,
+html[data-sol-theme="dark"] .admin h1,html[data-sol-theme="dark"] .detail-info h1,
+html[data-sol-theme="dark"] .drawer-head h2,html[data-sol-theme="dark"] .panel h2,
+html[data-sol-theme="dark"] .empty-state h2{color:#f4f2ed!important}
+html[data-sol-theme="dark"] .eyebrow,html[data-sol-theme="dark"] .muted,
+html[data-sol-theme="dark"] .product-meta small{color:#a5a29b!important}
+html[data-sol-theme="dark"] .category{background:#171717!important;border-color:#303030!important}
+html[data-sol-theme="dark"] .product-image,html[data-sol-theme="dark"] .detail-photo,
+html[data-sol-theme="dark"] .detail-gallery img{background:#151515!important;border-color:#303030!important}
+html[data-sol-theme="dark"] .product-meta,html[data-sol-theme="dark"] .price,
+html[data-sol-theme="dark"] .detail-info p,html[data-sol-theme="dark"] .admin-item,
+html[data-sol-theme="dark"] .field label{color:#f4f2ed!important}
+html[data-sol-theme="dark"] .filters{border-color:#303030!important}
+html[data-sol-theme="dark"] .filter-list button,
+html[data-sol-theme="dark"] .filters select,html[data-sol-theme="dark"] .field input,
+html[data-sol-theme="dark"] .field select,html[data-sol-theme="dark"] .field textarea,
+html[data-sol-theme="dark"] .panel,html[data-sol-theme="dark"] .drawer,
+html[data-sol-theme="dark"] .search-panel{background:#141414!important;color:#f4f2ed!important;border-color:#333!important}
+html[data-sol-theme="dark"] .filter-list button.active,
+html[data-sol-theme="dark"] .filter-list button:hover,
+html[data-sol-theme="dark"] .color-chip.selected,
+html[data-sol-theme="dark"] .sizes button.selected,
+html[data-sol-theme="dark"] .sizes button:hover{background:#f4f2ed!important;color:#090909!important;border-color:#f4f2ed!important}
+html[data-sol-theme="dark"] .quick,
+html[data-sol-theme="dark"] .color-chip,html[data-sol-theme="dark"] .sizes button,
+html[data-sol-theme="dark"] .search-panel input{background:#1b1b1b!important;color:#f4f2ed!important;border-color:#444!important}
+html[data-sol-theme="dark"] .drawer-head,html[data-sol-theme="dark"] .cart-item,
+html[data-sol-theme="dark"] .subtotal,html[data-sol-theme="dark"] .admin-item,
+html[data-sol-theme="dark"] .sol-foot{border-color:#303030!important}
+html[data-sol-theme="dark"] .sol-foot{background:#090909!important}
+html[data-sol-theme="dark"] .copyright-hotspot{color:#aaa!important}
+html[data-sol-theme="dark"] .detail-photo .gallery-arrow,
+html[data-sol-theme="dark"] .gallery-position{background:#171717!important;color:#f4f2ed!important;border-color:#444!important}
+html[data-sol-theme="dark"] .tag{background:#f4f2ed!important;color:#090909!important}
+html[data-sol-theme="dark"] .bag-count{border-color:#777!important}
+
 </style>
 </head>
 <body>
@@ -478,7 +531,7 @@ header,.head,.subnav{background:#f5f2eb!important;color:#111!important;border-co
  <div class="head">
   <nav class="nav"><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#home" aria-label="SOL home"><img src="assets/sol-logo-transparent.svg" alt="SOL"></a>
-  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
+  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to black theme" aria-pressed="false">Black</button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
  <nav class="subnav"><a href="#shop" data-page="shop">Shop all</a><a href="#shop" data-page="shop" data-category="Tops">T-shirts</a><a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups</a><a href="#shop" data-page="shop" data-category="Bottoms">Sweatpants & shorts</a><a href="#shop" data-page="shop" data-category="Accessories">Accessories</a></nav>
  <div class="search-panel" id="searchPanel"><div class="eyebrow" style="margin-bottom:10px">Search SOL</div><input id="searchInput" type="search" placeholder="Search pieces or categories..." autocomplete="off"><div class="search-results" id="searchResults"><div class="search-empty">Start typing to discover pieces.</div></div></div>
@@ -577,6 +630,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('drawer').clas
 $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render()});
 document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.category){filter=a.dataset.category;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter))}go(a.dataset.page)}));
 $('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
+const themeToggle=$('themeToggle');
+function applySolTheme(theme){const dark=theme==='dark';document.documentElement.dataset.solTheme=dark?'dark':'light';themeToggle.textContent=dark?'Off-white':'Black';themeToggle.setAttribute('aria-label',dark?'Switch to off-white theme':'Switch to black theme');themeToggle.setAttribute('aria-pressed',String(dark));}
+let savedTheme=localStorage.getItem('sol-theme')==='dark'?'dark':'light';applySolTheme(savedTheme);
+themeToggle.addEventListener('click',()=>{savedTheme=savedTheme==='dark'?'light':'dark';localStorage.setItem('sol-theme',savedTheme);applySolTheme(savedTheme);});
 saveWishlist();render();
 restoreImportDraft();
 document.querySelectorAll('#productForm input,#productForm textarea,#productForm select').forEach(el=>el.addEventListener('input',saveImportDraft));
