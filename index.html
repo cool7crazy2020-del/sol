@@ -472,10 +472,17 @@ header,.head,.subnav{background:#f5f2eb!important;color:#111!important;border-co
 .detail-photo .gallery-arrow,.gallery-position{background:#fbf9f4!important;color:#111!important;border-color:#d8d2c7!important}
 
 
-/* SOL THEME SWITCH */
-.theme-toggle{font:inherit;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid currentColor;padding:9px 11px;cursor:pointer;white-space:nowrap;color:inherit}
-.theme-toggle:hover{opacity:.65}
-@media(max-width:560px){.theme-toggle{font-size:8px;padding:7px 8px}}
+/* SOL THEME SWITCH — compact slider integrated with header tools */
+.theme-switch{display:inline-flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #d6d1c7;border-radius:999px;background:#ebe8e1;color:#34322e;cursor:pointer;white-space:nowrap;transition:background .25s,border-color .25s,color .25s}
+.theme-switch-label{font-size:7px;line-height:1;font-weight:700;letter-spacing:.13em;opacity:.55;transition:opacity .2s}
+.theme-switch[aria-checked="false"] .theme-switch-label:first-child,.theme-switch[aria-checked="true"] .theme-switch-label:last-child{opacity:1}
+.theme-switch-track{width:34px;height:19px;padding:3px;display:flex;align-items:center;border-radius:20px;background:#b8b2a8;transition:background .25s}
+.theme-switch-track i{display:block;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transform:translateX(0);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.theme-switch[aria-checked="true"]{background:#171719;border-color:#4a4a50;color:#f4f2ed}
+.theme-switch[aria-checked="true"] .theme-switch-track{background:#777780}
+.theme-switch[aria-checked="true"] .theme-switch-track i{transform:translateX(15px)}
+.theme-switch:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media(max-width:560px){.header-tools{gap:10px}.theme-switch{gap:5px;padding:6px 7px}.theme-switch-label{font-size:6px}.theme-switch-track{width:29px;height:17px}.theme-switch-track i{width:11px;height:11px}.theme-switch[aria-checked="true"] .theme-switch-track i{transform:translateX(12px)}}
 html[data-sol-theme="dark"]{color-scheme:dark;--paper:#090909;--ink:#f4f2ed;--line:#292929}
 html[data-sol-theme="dark"],html[data-sol-theme="dark"] body,
 html[data-sol-theme="dark"] main,html[data-sol-theme="dark"] .page,
@@ -486,7 +493,7 @@ html[data-sol-theme="dark"] header,html[data-sol-theme="dark"] .head,
 html[data-sol-theme="dark"] .subnav{background:#090909!important;color:#f4f2ed!important;border-color:#292929!important}
 html[data-sol-theme="dark"] .nav a,html[data-sol-theme="dark"] .nav button,
 html[data-sol-theme="dark"] .subnav a,html[data-sol-theme="dark"] .search-toggle,
-html[data-sol-theme="dark"] .theme-toggle{color:#f4f2ed!important}
+html[data-sol-theme="dark"] .theme-switch{color:#f4f2ed!important}
 html[data-sol-theme="dark"] .brand img{filter:brightness(0) invert(1)!important}
 html[data-sol-theme="dark"] .section-head h2,html[data-sol-theme="dark"] .shop h1,
 html[data-sol-theme="dark"] .admin h1,html[data-sol-theme="dark"] .detail-info h1,
@@ -531,7 +538,7 @@ html[data-sol-theme="dark"] .bag-count{border-color:#777!important}
  <div class="head">
   <nav class="nav"><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#home" aria-label="SOL home"><img src="assets/sol-logo-transparent.svg" alt="SOL"></a>
-  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to black theme" aria-pressed="false">Black</button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
+  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Color theme" aria-checked="false"><span class="theme-switch-label">LIGHT</span><span class="theme-switch-track"><i></i></span><span class="theme-switch-label">DARK</span></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
  <nav class="subnav"><a href="#shop" data-page="shop">Shop all</a><a href="#shop" data-page="shop" data-category="Tops">T-shirts</a><a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups</a><a href="#shop" data-page="shop" data-category="Bottoms">Sweatpants & shorts</a><a href="#shop" data-page="shop" data-category="Accessories">Accessories</a></nav>
  <div class="search-panel" id="searchPanel"><div class="eyebrow" style="margin-bottom:10px">Search SOL</div><input id="searchInput" type="search" placeholder="Search pieces or categories..." autocomplete="off"><div class="search-results" id="searchResults"><div class="search-empty">Start typing to discover pieces.</div></div></div>
@@ -631,7 +638,7 @@ $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.datas
 document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.category){filter=a.dataset.category;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter))}go(a.dataset.page)}));
 $('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
 const themeToggle=$('themeToggle');
-function applySolTheme(theme){const dark=theme==='dark';document.documentElement.dataset.solTheme=dark?'dark':'light';themeToggle.textContent=dark?'Off-white':'Black';themeToggle.setAttribute('aria-label',dark?'Switch to off-white theme':'Switch to black theme');themeToggle.setAttribute('aria-pressed',String(dark));}
+function applySolTheme(theme){const dark=theme==='dark';document.documentElement.dataset.solTheme=dark?'dark':'light';themeToggle.setAttribute('aria-label',dark?'Dark mode active. Switch to light mode':'Light mode active. Switch to dark mode');themeToggle.setAttribute('aria-checked',String(dark));}
 let savedTheme=localStorage.getItem('sol-theme')==='dark'?'dark':'light';applySolTheme(savedTheme);
 themeToggle.addEventListener('click',()=>{savedTheme=savedTheme==='dark'?'light':'dark';localStorage.setItem('sol-theme',savedTheme);applySolTheme(savedTheme);});
 saveWishlist();render();
