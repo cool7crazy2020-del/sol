@@ -707,15 +707,55 @@ body.sol-mobile-preview .admin-grid{grid-template-columns:minmax(0,1fr)!importan
 body.sol-mobile-preview .panel{padding:16px!important}
 body.sol-mobile-preview .field input,body.sol-mobile-preview .field select,body.sol-mobile-preview .field textarea{font-size:16px!important}
 
+
+/* Mobile navigation reset + product card visibility */
+.mobile-menu-toggle,.mobile-menu{display:none}
+@media(max-width:560px){
+ .head{grid-template-columns:42px minmax(0,1fr) 42px!important;padding:0 14px!important}
+ .head>.nav:first-child{grid-column:1;grid-row:1;margin:0!important;width:42px;height:44px}
+ .head>.nav:first-child>a{display:none!important}
+ .mobile-menu-toggle{display:flex!important;width:40px;height:40px;padding:10px 8px!important;flex-direction:column;justify-content:center;gap:5px;border:0!important;background:transparent!important;color:inherit!important}
+ .mobile-menu-toggle span{display:block;width:22px;height:1.5px;background:currentColor;border-radius:2px;transition:transform .2s,opacity .2s}
+ .mobile-menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(6.5px) rotate(45deg)}
+ .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+ .mobile-menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-6.5px) rotate(-45deg)}
+ .head>.brand{grid-column:2;grid-row:1;justify-self:center;width:104px!important;height:50px!important}
+ .head>.nav.right{grid-column:3;grid-row:1;width:42px;justify-self:end}
+ .header-tools{gap:0!important}
+ .header-tools>*:not(#openBag){display:none!important}
+ .header-tools #openBag{width:40px;min-width:40px;height:40px;min-height:40px;padding:0!important;display:grid;place-items:center;font-size:0!important}
+ .header-tools #openBag:before{content:"BAG";font-size:8px;letter-spacing:.1em}
+ .subnav{display:none!important}
+ .mobile-menu{display:flex;position:absolute;top:100%;left:0;right:0;z-index:80;flex-direction:column;padding:8px 18px 18px;background:#f5f2eb;color:#111;border-top:1px solid #ded9cf;border-bottom:1px solid #ded9cf;box-shadow:0 18px 32px #0002;opacity:0;visibility:hidden;transform:translateY(-7px);transition:opacity .18s,transform .18s,visibility .18s}
+ .mobile-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
+ .mobile-menu a,.mobile-menu button{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 2px;border:0;border-bottom:1px solid #ded9cf;background:transparent;color:#111;text-align:left;text-transform:uppercase;font-size:10px;letter-spacing:.13em}
+ .mobile-menu a span,.mobile-menu button span{font-size:15px;color:#777}
+ html[data-sol-theme="dark"] .mobile-menu{background:#090909;color:#f4f2ed;border-color:#303030}
+ html[data-sol-theme="dark"] .mobile-menu a,html[data-sol-theme="dark"] .mobile-menu button{color:#f4f2ed;border-color:#303030}
+ .product-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:start!important;visibility:visible!important;opacity:1!important}
+ .product-grid>.product{display:block!important;visibility:visible!important;opacity:1!important;min-width:0!important;width:100%!important}
+ .product-image{display:block!important;width:100%!important;height:auto!important;aspect-ratio:4/5!important;min-height:0!important}
+ .product-image>img{display:block!important;width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important}
+ .product-meta{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;visibility:visible!important}
+}
 </style>
 </head>
 <body>
 <header>
  <div class="head">
-  <nav class="nav"><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
+  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#home" aria-label="SOL home"><img src="assets/sol-logo-transparent.svg" alt="SOL"></a>
   <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Color theme" aria-checked="false"><span class="theme-switch-label">LIGHT</span><span class="theme-switch-track"><i></i></span><span class="theme-switch-label">DARK</span></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
+ <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+  <a href="#shop" data-page="shop">Shop all <span>↗</span></a>
+  <a href="#shop" data-page="shop" data-category="Tops">Tops <span>↗</span></a>
+  <a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups <span>↗</span></a>
+  <a href="#shop" data-page="shop" data-category="Bottoms">Bottoms <span>↗</span></a>
+  <a href="#wishlist" data-page="wishlist">Wishlist <span>↗</span></a>
+  <button type="button" id="mobileMenuSearch">Search SOL <span>⌕</span></button>
+  <button type="button" id="mobileMenuTheme">Switch theme <span>◐</span></button>
+ </nav>
  <nav class="subnav"><a href="#shop" data-page="shop">Shop all</a><a href="#shop" data-page="shop" data-category="Tops">Tops</a><a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups</a><a href="#shop" data-page="shop" data-category="Bottoms">Bottoms</a></nav>
  <div class="search-panel" id="searchPanel"><div class="eyebrow" style="margin-bottom:10px">Search SOL</div><input id="searchInput" type="search" placeholder="Search pieces or categories..." autocomplete="off"><div class="search-results" id="searchResults"><div class="search-empty">Start typing to discover pieces.</div></div></div>
 </header>
@@ -841,5 +881,14 @@ function ensureSolPreviewControls(){
  document.getElementById('solPreviewDesktop').addEventListener('click',()=>setSolPreview('desktop'));
  document.getElementById('solPreviewMobile').addEventListener('click',()=>setSolPreview('mobile'));
 }
+
+/* Mobile menu interactions */
+const mobileMenu=$('mobileMenu'),mobileMenuToggle=$('mobileMenuToggle');
+function closeMobileMenu(){if(!mobileMenu||!mobileMenuToggle)return;mobileMenu.classList.remove('open');mobileMenuToggle.setAttribute('aria-expanded','false');mobileMenuToggle.setAttribute('aria-label','Open menu')}
+mobileMenuToggle?.addEventListener('click',()=>{const open=!mobileMenu.classList.contains('open');mobileMenu.classList.toggle('open',open);mobileMenuToggle.setAttribute('aria-expanded',String(open));mobileMenuToggle.setAttribute('aria-label',open?'Close menu':'Open menu')});
+mobileMenu?.querySelectorAll('a[data-page]').forEach(link=>link.addEventListener('click',closeMobileMenu));
+$('mobileMenuSearch')?.addEventListener('click',()=>{closeMobileMenu();$('searchToggle').click()});
+$('mobileMenuTheme')?.addEventListener('click',()=>{closeMobileMenu();$('themeToggle').click()});
+document.addEventListener('click',e=>{if(mobileMenu?.classList.contains('open')&&!mobileMenu.contains(e.target)&&!mobileMenuToggle.contains(e.target))closeMobileMenu()});
 </script>
 </body></html>
