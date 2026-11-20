@@ -565,6 +565,149 @@ body.sol-mobile-preview .page-heading-row{align-items:flex-start;flex-direction:
 .sol-preview-controls button[aria-pressed="true"]{background:#eee;color:#111}
 @media(max-width:430px){body.sol-mobile-preview{border:0}.sol-preview-controls{right:10px;bottom:10px}}
 </style>
+<style>
+
+/* SOL mobile rebuild — compact navigation, balanced cards, touch-first layouts */
+@media(max-width:560px){
+ html,body{width:100%;max-width:100%;overflow-x:hidden}
+ body{letter-spacing:.01em}
+ header{position:sticky;top:0;z-index:50}
+ .head{height:68px!important;min-height:68px;padding:0 12px!important;display:grid!important;grid-template-columns:42px minmax(0,1fr) auto!important;gap:8px!important;align-items:center}
+ .head>.nav:first-child{grid-column:1;grid-row:1;margin:0!important;min-width:0}
+ .head>.nav:first-child a{font-size:9px!important;letter-spacing:.12em!important}
+ .head>.nav:first-child a:nth-child(2){display:none!important}
+ .head>.brand{grid-column:2;grid-row:1;justify-self:center;width:92px!important;height:48px!important;min-width:0}
+ .head>.brand img{width:100%;height:100%;object-fit:contain}
+ .head>.nav.right{grid-column:3;grid-row:1;min-width:0;justify-self:end}
+ .header-tools{display:flex!important;align-items:center;justify-content:flex-end;gap:9px!important;min-width:0}
+ .header-tools>a,.header-tools>button{white-space:nowrap;min-height:40px}
+ .header-tools>a[data-page="studio"]{display:none!important}
+ .header-tools>a[href="#wishlist"]{font-size:0!important;display:grid;place-items:center;min-width:24px}
+ .header-tools>a[href="#wishlist"]:before{content:"♡";font-size:21px;line-height:1}
+ .header-tools>a[href="#wishlist"] .bag-count{font-size:8px;position:absolute;transform:translate(10px,-9px);min-width:14px;height:14px;padding:0 3px}
+ .header-tools #openBag{font-size:0!important;min-width:28px;display:grid;place-items:center}
+ .header-tools #openBag:before{content:"BAG";font-size:8px;letter-spacing:.08em}
+ .header-tools .search-toggle{font-size:8px!important;letter-spacing:.08em!important;padding:8px 0}
+ .theme-switch{position:static!important;transform:none!important;left:auto!important;top:auto!important;width:30px!important;height:34px!important;min-width:30px;padding:0!important;gap:0!important;display:flex!important}
+ .theme-switch-label{display:none!important}
+ .theme-switch-track{width:25px!important;height:12px!important}
+ .theme-switch-track i{width:7px;height:7px}
+ .theme-switch[aria-checked="true"] .theme-switch-track i{transform:translateX(10px)!important}
+ .subnav{height:42px;display:flex;gap:0!important;justify-content:flex-start!important;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding:0 12px!important;border-top:1px solid #ded9cf}
+ .subnav::-webkit-scrollbar{display:none}
+ .subnav a{flex:0 0 auto;white-space:nowrap;font-size:8px!important;letter-spacing:.1em!important;padding:0 13px;min-height:42px;display:flex;align-items:center}
+ .search-panel{position:absolute!important;top:calc(100% + 1px)!important;right:8px!important;left:8px!important;width:auto!important;max-width:none!important;padding:14px!important;z-index:60}
+ .search-panel input{font-size:16px!important;min-height:46px}
+ main{width:100%;overflow:hidden}
+ .section{padding:44px 14px!important}
+ .section[style*="padding-top:8px"]{padding-top:8px!important}
+ .section-head{margin-bottom:20px}
+ .section-head h2{font-size:clamp(38px,11vw,48px)!important;line-height:.95}
+ .section-head .eyebrow{font-size:8px}
+ .category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .category{height:auto!important;min-height:0!important;aspect-ratio:4/5;overflow:hidden}
+ .category:nth-child(3){grid-column:1/-1;aspect-ratio:2.05/1}
+ .category span{left:11px!important;bottom:11px!important;max-width:calc(100% - 22px)!important;font-size:clamp(16px,5vw,21px)!important;padding:8px 10px!important}
+ .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:10px!important;row-gap:24px!important}
+ .product{min-width:0}
+ .product-image{height:auto!important;aspect-ratio:4/5;overflow:hidden}
+ .product-image img{width:100%;height:100%;object-fit:cover}
+ .tag{top:7px;left:7px;padding:6px 7px;font-size:7px}
+ .wishlist-heart{top:7px;right:7px;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+ .quick{left:6px!important;right:6px!important;bottom:6px!important;min-height:36px!important;padding:9px 5px!important;font-size:7px!important;letter-spacing:.08em!important}
+ .product-meta{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:5px!important;padding-top:9px!important;font-size:10px!important;line-height:1.35}
+ .product-meta>span:first-child{min-width:0;overflow-wrap:anywhere}
+ .product-meta small{font-size:7px!important;letter-spacing:.1em!important;line-height:1.4}
+ .price{font-size:14px!important;white-space:nowrap}
+ .shop{padding:40px 14px 60px!important}
+ .shop h1{font-size:clamp(48px,13vw,64px)!important;line-height:.92}
+ .filters{display:flex;flex-direction:column;align-items:stretch!important;gap:13px!important;margin:20px 0 22px!important}
+ .filter-list{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:7px!important;padding-bottom:5px;scrollbar-width:none}
+ .filter-list::-webkit-scrollbar{display:none}
+ .filter-list button{flex:0 0 auto;min-height:40px;padding:9px 12px!important;font-size:7px!important;letter-spacing:.1em!important}
+ .filters select{width:100%;min-height:44px;padding:10px 4px!important;font-size:12px!important}
+ .page-heading-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:22px}
+ .page-heading-row h1{font-size:clamp(48px,13vw,64px)!important}
+ .detail{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:20px!important;padding:18px 14px 48px!important}
+ .detail-photo{width:100%;height:auto!important;aspect-ratio:4/5;max-height:none!important}
+ .detail-photo img{width:100%;height:100%;object-fit:cover}
+ .detail-photo .gallery-arrow{width:36px!important;height:36px!important}
+ .detail-gallery{display:flex!important;gap:8px!important;overflow-x:auto;padding:2px 0 8px;scroll-snap-type:x mandatory}
+ .detail-gallery img{flex:0 0 22%;height:auto!important;aspect-ratio:1/1;scroll-snap-align:start}
+ .detail-info{padding:4px 0 0!important;min-width:0}
+ .detail-info h1{font-size:clamp(42px,11vw,54px)!important;line-height:.95}
+ .detail-info p{font-size:12px!important;line-height:1.75}
+ .sizes{display:flex;flex-wrap:wrap;gap:8px!important;margin:15px 0 22px!important}
+ .sizes button{width:auto!important;min-width:44px!important;min-height:44px!important;padding:0 12px}
+ .detail-info>.button{width:100%!important;min-height:48px;margin-top:8px}
+ .drawer{width:100vw!important;max-width:100vw;height:100dvh;padding:18px 16px max(18px,env(safe-area-inset-bottom))!important}
+ .drawer-head h2{font-size:32px!important}
+ .cart-item{grid-template-columns:68px minmax(0,1fr) auto;gap:10px}
+ .cart-item img{width:68px;height:84px}
+ .admin{padding:38px 14px 55px!important}
+ .admin h1{font-size:clamp(48px,13vw,64px)!important}
+ .admin-grid{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+ .panel{padding:16px!important;min-width:0}
+ .panel h2{font-size:28px!important}
+ .field input,.field select,.field textarea{font-size:16px!important;min-height:44px}
+ .field textarea{min-height:90px}
+ .admin .button,.panel .button{width:100%;min-height:46px;justify-content:center}
+ .toast{width:max-content;max-width:calc(100vw - 28px);bottom:calc(14px + env(safe-area-inset-bottom))}
+ .sol-foot{padding-bottom:max(18px,env(safe-area-inset-bottom))}
+}
+@media(max-width:370px){
+ .head{padding-inline:9px!important;grid-template-columns:35px minmax(0,1fr) auto!important;gap:5px!important}
+ .head>.brand{width:78px!important}
+ .header-tools{gap:6px!important}
+ .header-tools .search-toggle{font-size:7px!important}
+ .category-grid{gap:7px!important}
+ .category span{font-size:15px!important}
+ .product-meta{font-size:9px!important}
+}
+/* The Studio preview uses the same phone composition even on a desktop browser. */
+body.sol-mobile-preview{width:390px!important;max-width:100%!important;min-height:100vh;margin:0 auto!important;overflow-x:hidden!important;border-left:1px solid #34343a;border-right:1px solid #34343a;box-shadow:0 0 50px #0008}
+body.sol-mobile-preview .head{height:68px!important;min-height:68px;padding:0 12px!important;display:grid!important;grid-template-columns:42px minmax(0,1fr) auto!important;gap:8px!important}
+body.sol-mobile-preview .head>.nav:first-child{grid-column:1;grid-row:1;margin:0!important}
+body.sol-mobile-preview .head>.nav:first-child a:nth-child(2){display:none!important}
+body.sol-mobile-preview .head>.brand{grid-column:2;grid-row:1;justify-self:center;width:92px!important;height:48px!important}
+body.sol-mobile-preview .head>.nav.right{grid-column:3;grid-row:1;justify-self:end;min-width:0}
+body.sol-mobile-preview .header-tools{gap:9px!important}
+body.sol-mobile-preview .header-tools>a[data-page="studio"]{display:none!important}
+body.sol-mobile-preview .header-tools>a[href="#wishlist"]{font-size:0!important;display:grid;place-items:center;min-width:24px}
+body.sol-mobile-preview .header-tools>a[href="#wishlist"]:before{content:"♡";font-size:21px}
+body.sol-mobile-preview .header-tools #openBag{font-size:0!important;min-width:28px}
+body.sol-mobile-preview .header-tools #openBag:before{content:"BAG";font-size:8px;letter-spacing:.08em}
+body.sol-mobile-preview .theme-switch{position:static!important;transform:none!important;width:30px!important;height:34px!important;min-width:30px;padding:0!important;gap:0!important}
+body.sol-mobile-preview .theme-switch-label{display:none!important}
+body.sol-mobile-preview .subnav{height:42px;gap:0!important;justify-content:flex-start!important;overflow-x:auto;padding:0 12px!important}
+body.sol-mobile-preview .subnav a{flex:0 0 auto;padding:0 13px;min-height:42px;font-size:8px!important}
+body.sol-mobile-preview .search-panel{top:calc(100% + 1px)!important;right:8px!important;left:8px!important;width:auto!important}
+body.sol-mobile-preview .section{padding:44px 14px!important}
+body.sol-mobile-preview .section-head h2{font-size:42px!important}
+body.sol-mobile-preview .category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+body.sol-mobile-preview .category{height:auto!important;min-height:0!important;aspect-ratio:4/5}
+body.sol-mobile-preview .category:nth-child(3){grid-column:1/-1;aspect-ratio:2.05/1}
+body.sol-mobile-preview .category span{font-size:19px!important}
+body.sol-mobile-preview .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:24px 10px!important}
+body.sol-mobile-preview .product-image{height:auto!important;aspect-ratio:4/5}
+body.sol-mobile-preview .product-meta{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:5px!important;font-size:10px!important}
+body.sol-mobile-preview .price{font-size:14px!important}
+body.sol-mobile-preview .shop{padding:40px 14px 60px!important}
+body.sol-mobile-preview .filters{display:flex;flex-direction:column;align-items:stretch!important;gap:13px!important}
+body.sol-mobile-preview .filter-list{flex-wrap:nowrap;overflow-x:auto}
+body.sol-mobile-preview .detail{grid-template-columns:minmax(0,1fr)!important;gap:20px!important;padding:18px 14px 48px!important}
+body.sol-mobile-preview .detail-photo{height:auto!important;aspect-ratio:4/5}
+body.sol-mobile-preview .detail-gallery{display:flex!important;overflow-x:auto}
+body.sol-mobile-preview .detail-gallery img{flex:0 0 22%;height:auto!important;aspect-ratio:1}
+body.sol-mobile-preview .detail-info{padding:4px 0 0!important}
+body.sol-mobile-preview .detail-info h1{font-size:48px!important}
+body.sol-mobile-preview .drawer{width:100%!important;max-width:100%!important}
+body.sol-mobile-preview .admin{padding:38px 14px 55px!important}
+body.sol-mobile-preview .admin-grid{grid-template-columns:minmax(0,1fr)!important}
+body.sol-mobile-preview .panel{padding:16px!important}
+body.sol-mobile-preview .field input,body.sol-mobile-preview .field select,body.sol-mobile-preview .field textarea{font-size:16px!important}
+
+</style>
 </head>
 <body>
 <header>
