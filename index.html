@@ -1610,6 +1610,26 @@ body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visib
  .head>.nav:first-child>a{display:inline-flex!important;align-items:center!important}
 }
 </style>
+
+<style id="sol-hamburger-click-layer-final">
+/* Keep the menu control above every header layer on real phones and Studio preview. */
+@media(max-width:560px){
+ header{position:sticky!important;top:0!important;z-index:10000!important;overflow:visible!important}
+ header .head{position:relative!important;z-index:10000!important;overflow:visible!important}
+ header .head>.nav:first-child{position:relative!important;z-index:10002!important;pointer-events:auto!important}
+ #mobileMenuToggle{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:10003!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
+ #mobileMenuToggle span{pointer-events:none!important}
+ #mobileMenu{position:absolute!important;top:100%!important;left:0!important;right:0!important;z-index:10001!important;pointer-events:auto!important}
+ #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
+}
+body.sol-mobile-preview header{position:sticky!important;top:0!important;z-index:10000!important;overflow:visible!important}
+body.sol-mobile-preview header .head{position:relative!important;z-index:10000!important;overflow:visible!important}
+body.sol-mobile-preview header .head>.nav:first-child{position:relative!important;z-index:10002!important;pointer-events:auto!important}
+body.sol-mobile-preview #mobileMenuToggle{display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;z-index:10003!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
+body.sol-mobile-preview #mobileMenuToggle span{pointer-events:none!important}
+body.sol-mobile-preview #mobileMenu{z-index:10001!important;pointer-events:auto!important}
+body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
+</style>
 </head>
 <body>
 <header>
