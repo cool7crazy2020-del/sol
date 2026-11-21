@@ -1440,6 +1440,84 @@ body.sol-mobile-preview .head{min-height:76px!important;padding-top:10px!importa
 body.sol-mobile-preview .head>.brand{width:144px!important;height:66px!important;min-width:144px!important}
 body.sol-mobile-preview .head #mobileMenuToggle{width:46px!important;height:46px!important}
 </style>
+
+<style id="sol-remove-wishlist-nav-refine-bag-count">
+/* Remove Wishlist from both desktop header and mobile dropdown. */
+header .header-tools>a[href="#wishlist"],
+#mobileMenu>a[href="#wishlist"],
+body.sol-mobile-preview .header-tools>a[href="#wishlist"],
+body.sol-mobile-preview #mobileMenu>a[href="#wishlist"]{
+  display:none!important;
+}
+/* Bag count: understated inline text, never a separate badge above/below BAG. */
+#openBag{
+  display:inline-flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  white-space:nowrap!important;
+}
+#openBag .bag-count{
+  display:inline!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:8px!important;
+  line-height:1!important;
+  font-weight:400!important;
+  opacity:.48!important;
+  vertical-align:baseline!important;
+}
+@media(max-width:560px){
+  .header-tools #openBag,
+  body.sol-mobile-preview .header-tools #openBag{
+    display:inline-flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:5px!important;
+    width:auto!important;
+    min-width:0!important;
+    height:40px!important;
+    padding:0 2px!important;
+    font-size:0!important;
+  }
+  .header-tools #openBag:before,
+  body.sol-mobile-preview .header-tools #openBag:before{
+    content:"BAG"!important;
+    display:inline!important;
+    font-size:8px!important;
+    line-height:1!important;
+    letter-spacing:.12em!important;
+    font-weight:400!important;
+  }
+  .header-tools #openBag .bag-count,
+  body.sol-mobile-preview .header-tools #openBag .bag-count{
+    display:inline!important;
+    position:static!important;
+    transform:none!important;
+    width:auto!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    font-size:8px!important;
+    line-height:1!important;
+    opacity:.48!important;
+  }
+}
+</style>
 </head>
 <body>
 <header>
