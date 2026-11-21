@@ -1518,13 +1518,58 @@ body.sol-mobile-preview #mobileMenu>a[href="#wishlist"]{
   }
 }
 </style>
+
+<style id="sol-bag-icon-and-dark-close-final">
+#openBag{
+ display:inline-flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:center!important;gap:7px!important;white-space:nowrap!important;
+ font-size:inherit!important;
+}
+#openBag .sol-bag-icon{
+ width:48px!important;height:42px!important;display:block!important;overflow:visible!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.35!important;
+ stroke-linecap:round!important;stroke-linejoin:round!important;flex:0 0 auto!important;
+}
+#openBag .sol-bag-icon text{
+ fill:currentColor!important;stroke:none!important;font-family:Arial,Helvetica,sans-serif!important;
+ font-size:8px!important;font-weight:500!important;letter-spacing:.6px!important;
+}
+#openBag .bag-count{
+ position:static!important;display:inline!important;transform:none!important;
+ width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;font-size:9px!important;
+ line-height:1!important;font-weight:400!important;opacity:.42!important;
+}
+@media(max-width:560px){
+ .header-tools #openBag,body.sol-mobile-preview .header-tools #openBag{
+  display:inline-flex!important;flex-direction:row!important;align-items:center!important;
+  gap:6px!important;height:44px!important;width:auto!important;padding:0!important;
+  font-size:inherit!important;
+ }
+ .header-tools #openBag .sol-bag-icon,
+ body.sol-mobile-preview .header-tools #openBag .sol-bag-icon{
+  width:46px!important;height:40px!important;
+ }
+ .header-tools #openBag .bag-count,
+ body.sol-mobile-preview .header-tools #openBag .bag-count{
+  position:static!important;display:inline!important;font-size:8px!important;
+  opacity:.42!important;line-height:1!important;
+ }
+}
+html[data-sol-theme="dark"] #closeBag,
+html[data-sol-theme="dark"] .drawer .close{
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border-color:rgba(255,255,255,.28)!important;
+}
+</style>
 </head>
 <body>
 <header>
  <div class="head">
   <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#collections" data-page="home" aria-label="SOL collections"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
-  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
+  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false"><svg class="sol-bag-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 17h32l-2.5 25h-27L8 17Z"></path><path d="M17 18v-5a7 7 0 0 1 14 0v5"></path><text x="24" y="32" text-anchor="middle">BAG</text></svg><span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="#shop" data-page="shop">Shop all <span>↗︎</span></a>
