@@ -871,7 +871,23 @@ body.sol-mobile-preview #detail .detail-gallery img{flex:0 0 72px!important;widt
 body.sol-mobile-preview #detail .detail-info{min-width:0!important;padding:0!important}
 </style>
 
-</head>
+<style id="sol-iphone-frame-preview">
+html:has(body.sol-mobile-preview){min-height:100%;background:#eeeae2!important;overflow:auto!important}
+body.sol-mobile-preview{
+ box-sizing:border-box!important;position:relative!important;
+ width:402px!important;max-width:calc(100vw - 40px)!important;
+ height:min(874px,calc(100vh - 48px))!important;min-height:560px!important;max-height:calc(100vh - 48px)!important;
+ margin:24px auto!important;padding:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+ border:8px solid #171717!important;border-radius:48px!important;outline:1px solid #777!important;
+ box-shadow:0 22px 70px #0003,0 0 0 1px #fff9 inset!important;
+ background:var(--paper,#09090b)!important;scrollbar-width:none!important;overscroll-behavior:contain!important
+}
+body.sol-mobile-preview::-webkit-scrollbar{display:none!important}
+body.sol-mobile-preview:before{content:"";display:block;position:sticky;top:0;z-index:10001;width:112px;height:24px;margin:0 auto -24px;border-radius:0 0 16px 16px;background:#171717;pointer-events:none}
+body.sol-mobile-preview header{z-index:50!important}
+@media(max-height:650px){body.sol-mobile-preview{height:calc(100vh - 24px)!important;max-height:calc(100vh - 24px)!important;min-height:0!important;margin:12px auto!important}}
+@media(max-width:440px){body.sol-mobile-preview{max-width:calc(100vw - 16px)!important;margin:8px auto!important;height:calc(100vh - 16px)!important;max-height:calc(100vh - 16px)!important;border-radius:38px!important}}
+</style>\n</head>
 <body>
 <header>
  <div class="head">
