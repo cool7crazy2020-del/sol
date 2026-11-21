@@ -1277,13 +1277,26 @@ body.sol-mobile-preview .head>.nav.right{grid-column:3!important;grid-row:1!impo
 
 
 <style id="sol-hamburger-light-mode-color">
-/* Light mode: force the three hamburger bars to solid black. Dark mode keeps them light. */
-html:not([data-sol-theme="dark"]) #mobileMenuToggle,
-html:not([data-sol-theme="dark"]) #mobileMenuToggle span,
-body.sol-mobile-preview #mobileMenuToggle,
-body.sol-mobile-preview #mobileMenuToggle span{color:#09090b!important;background-color:#09090b!important}
-html[data-sol-theme="dark"] #mobileMenuToggle,
-html[data-sol-theme="dark"] #mobileMenuToggle span{color:#f5f4f1!important;background-color:#f5f4f1!important}
+/* Keep the hamburger button transparent; color only its three bars. */
+#mobileMenuToggle{
+  background:transparent!important;
+  background-color:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#mobileMenuToggle span{
+  display:block!important;
+  width:20px!important;
+  height:2px!important;
+  border-radius:2px!important;
+  background:#09090b!important;
+}
+html[data-sol-theme="dark"] #mobileMenuToggle span{
+  background:#f5f4f1!important;
+}
+body.sol-mobile-preview #mobileMenuToggle span{
+  background:#09090b!important;
+}
 </style>
 </head>
 <body>
