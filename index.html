@@ -1630,11 +1630,27 @@ body.sol-mobile-preview #mobileMenuToggle span{pointer-events:none!important}
 body.sol-mobile-preview #mobileMenu{z-index:10001!important;pointer-events:auto!important}
 body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
 </style>
+
+<style id="sol-real-phone-menu-tap-final">
+@media(max-width:560px){
+ header{position:sticky!important;top:0!important;z-index:2147483000!important;isolation:isolate!important;overflow:visible!important}
+ header .head{position:relative!important;z-index:2147483000!important;isolation:isolate!important;overflow:visible!important}
+ header .head>.nav:first-child{position:relative!important;z-index:2147483002!important;isolation:isolate!important;pointer-events:auto!important}
+ #mobileMenuToggle{position:relative!important;z-index:2147483003!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-appearance:none!important;appearance:none!important}
+ #mobileMenuToggle span{pointer-events:none!important}
+ #mobileMenu{position:absolute!important;top:100%!important;left:0!important;right:0!important;z-index:2147483001!important;pointer-events:auto!important;touch-action:pan-y!important}
+ #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
+}
+body.sol-mobile-preview header,body.sol-mobile-preview header .head{z-index:2147483000!important;isolation:isolate!important;overflow:visible!important}
+body.sol-mobile-preview header .head>.nav:first-child{position:relative!important;z-index:2147483002!important;pointer-events:auto!important}
+body.sol-mobile-preview #mobileMenuToggle{position:relative!important;z-index:2147483003!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;touch-action:manipulation!important}
+body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:auto!important}
+</style>
 </head>
 <body>
 <header>
  <div class="head">
-  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
+  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="event.preventDefault();event.stopPropagation();var m=document.getElementById('mobileMenu');var o=!m.classList.contains('open');m.classList.toggle('open',o);this.setAttribute('aria-expanded',String(o));this.setAttribute('aria-label',o?'Close menu':'Open menu');"><span></span><span></span><span></span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#collections" data-page="home" aria-label="SOL collections"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
   <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false"><svg class="sol-bag-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 17h32l-2.5 25h-27L8 17Z"></path><path d="M17 18v-5a7 7 0 0 1 14 0v5"></path><text x="24" y="32" text-anchor="middle">BAG</text></svg></button></div></nav>
  </div>
@@ -1645,8 +1661,8 @@ body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visib
   <a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups <span>↗︎</span></a>
   <a href="#shop" data-page="shop" data-category="Bottoms">Bottoms <span>↗︎</span></a>
   <a href="#wishlist" data-page="wishlist">Wishlist <span>↗︎</span></a>
-  <button type="button" id="mobileMenuSearch">Search SOL <span>⌕</span></button>
-  <button type="button" id="mobileMenuTheme">Switch theme <span>◐</span></button>
+  <button type="button" id="mobileMenuSearch" onclick="event.preventDefault();event.stopPropagation();document.getElementById('mobileMenu').classList.remove('open');document.getElementById('mobileMenuToggle').setAttribute('aria-expanded','false');document.getElementById('searchToggle').click();">Search SOL <span>⌕</span></button>
+  <button type="button" id="mobileMenuTheme" onclick="event.preventDefault();event.stopPropagation();document.getElementById('mobileMenu').classList.remove('open');document.getElementById('mobileMenuToggle').setAttribute('aria-expanded','false');document.getElementById('themeToggle').click();">Switch theme <span>◐</span></button>
  </nav>
  <nav class="subnav"><a href="#shop" data-page="shop">Shop all</a><a href="#shop" data-page="shop" data-category="Tops">Tops</a><a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups</a><a href="#shop" data-page="shop" data-category="Bottoms">Bottoms</a></nav>
  <div class="search-panel" id="searchPanel"><div class="eyebrow" style="margin-bottom:10px">Search SOL</div><input id="searchInput" type="search" placeholder="Search pieces or categories..." autocomplete="off"><div class="search-results" id="searchResults"><div class="search-empty">Start typing to discover pieces.</div></div></div>
