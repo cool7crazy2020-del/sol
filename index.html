@@ -1351,6 +1351,23 @@ html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenuToggle span{
   font-family:var(--serif)!important;
 }
 </style>
+
+<style id="sol-mobile-menu-single-divider">
+@media(max-width:560px){
+  #mobileMenu>a:first-child,
+  body.sol-mobile-preview #mobileMenu>a:first-child{
+    border-bottom:0!important;
+    box-shadow:none!important;
+    background-image:none!important;
+  }
+  #mobileMenu>a:nth-child(2),
+  body.sol-mobile-preview #mobileMenu>a:nth-child(2){
+    border-top:0!important;
+    box-shadow:none!important;
+    background-image:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <header>
