@@ -1579,13 +1579,32 @@ html[data-sol-theme="dark"] .drawer .close{
 }
 </style>
 
+
+<style id="sol-fix-desktop-theme-position-and-mobile-menu">
+@media(min-width:561px){
+ .head>.nav:first-child{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:22px!important;width:max-content!important}
+ .head>.nav:first-child .theme-switch{position:static!important;left:auto!important;top:auto!important;transform:none!important;display:inline-flex!important;flex:0 0 34px!important;width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;margin:0!important}
+ .head>.nav:first-child>a{display:inline-flex!important;align-items:center!important}
+ .head>.nav.right .theme-switch{display:none!important}
+}
+@media(max-width:560px){
+ .head>.nav:first-child{width:42px!important;height:44px!important;margin:0!important}
+ .head>.nav:first-child .theme-switch{display:none!important}
+ #mobileMenuToggle{pointer-events:auto!important;touch-action:manipulation!important;z-index:9999!important}
+ #mobileMenu{z-index:9998!important;pointer-events:auto!important}
+ #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
+}
+body.sol-mobile-preview #mobileMenuToggle{pointer-events:auto!important;touch-action:manipulation!important;z-index:9999!important}
+body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visible!important;opacity:1!important}
+</style>
+
 </head>
 <body>
 <header>
  <div class="head">
-  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
+  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#collections" data-page="home" aria-label="SOL collections"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
-  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false"><svg class="sol-bag-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 17h32l-2.5 25h-27L8 17Z"></path><path d="M17 18v-5a7 7 0 0 1 14 0v5"></path><text x="24" y="32" text-anchor="middle">BAG</text></svg></button></div></nav>
+  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false"><svg class="sol-bag-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 17h32l-2.5 25h-27L8 17Z"></path><path d="M17 18v-5a7 7 0 0 1 14 0v5"></path><text x="24" y="32" text-anchor="middle">BAG</text></svg></button></div></nav>
  </div>
  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="#shop" data-page="shop">Shop all <span>↗︎</span></a>
@@ -1766,40 +1785,24 @@ function ensureSolPreviewControls(){
  document.getElementById('solPreviewMobile').addEventListener('click',()=>setSolPreview('mobile'));
 }
 
-/* Mobile menu interactions — delegated so the toggle remains reliable after page navigation. */
-document.addEventListener('click',function(event){
- const toggle=event.target.closest('#mobileMenuToggle');
+/* Mobile menu: bind directly to the actual header controls for dependable touch behavior. */
+(function(){
+ const toggle=document.getElementById('mobileMenuToggle');
  const menu=document.getElementById('mobileMenu');
+ const close=()=>{menu?.classList.remove('open');toggle?.setAttribute('aria-expanded','false');toggle?.setAttribute('aria-label','Open menu');};
  if(toggle&&menu){
-  const isOpen=menu.classList.toggle('open');
-  toggle.setAttribute('aria-expanded',String(isOpen));
-  toggle.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
-  return;
+  toggle.addEventListener('click',function(event){
+   event.preventDefault();event.stopPropagation();
+   const open=!menu.classList.contains('open');
+   menu.classList.toggle('open',open);
+   toggle.setAttribute('aria-expanded',String(open));
+   toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+  });
+  menu.querySelectorAll('a[data-page]').forEach(link=>link.addEventListener('click',close));
+  document.getElementById('mobileMenuSearch')?.addEventListener('click',()=>{close();document.getElementById('searchToggle')?.click();});
+  document.getElementById('mobileMenuTheme')?.addEventListener('click',()=>{close();document.getElementById('themeToggle')?.click();});
+  document.addEventListener('click',event=>{if(menu.classList.contains('open')&&!menu.contains(event.target)&&!toggle.contains(event.target))close();});
  }
- const menuLink=event.target.closest('#mobileMenu a[data-page]');
- if(menuLink){
-  menu?.classList.remove('open');
-  document.getElementById('mobileMenuToggle')?.setAttribute('aria-expanded','false');
-  return;
- }
- const search=event.target.closest('#mobileMenuSearch');
- if(search){
-  menu?.classList.remove('open');
-  document.getElementById('mobileMenuToggle')?.setAttribute('aria-expanded','false');
-  document.getElementById('searchToggle')?.click();
-  return;
- }
- const theme=event.target.closest('#mobileMenuTheme');
- if(theme){
-  menu?.classList.remove('open');
-  document.getElementById('mobileMenuToggle')?.setAttribute('aria-expanded','false');
-  document.getElementById('themeToggle')?.click();
-  return;
- }
- if(menu?.classList.contains('open')&&!event.target.closest('#mobileMenu')){
-  menu.classList.remove('open');
-  document.getElementById('mobileMenuToggle')?.setAttribute('aria-expanded','false');
- }
-});
+})();
 </script>
 </body></html>
