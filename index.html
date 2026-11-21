@@ -819,6 +819,35 @@ html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu{background:#0909
 html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu a,html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu button{color:#f4f2ed!important;border-color:#303030!important}
 </style>
 </style>
+
+<style id="sol-mobile-collections-polish">
+@media(max-width:560px){
+  /* Keep category cards and their clothing labels fully inside the phone width. */
+  #collections{scroll-margin-top:86px!important;padding:38px 14px 30px!important}
+  #collections .section-head{margin:0 0 18px!important;align-items:flex-end!important}
+  #collections .section-head h2{font-size:clamp(34px,10vw,42px)!important;line-height:1!important}
+  #collections .category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #collections .category{width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;aspect-ratio:4/5!important;overflow:hidden!important}
+  #collections .category:nth-child(3){grid-column:1/-1!important;aspect-ratio:2.05/1!important}
+  #collections .category span{
+    left:8px!important;right:8px!important;bottom:8px!important;
+    width:max-content!important;max-width:calc(100% - 16px)!important;
+    box-sizing:border-box!important;padding:9px 10px!important;
+    font-size:clamp(8px,2.25vw,10px)!important;line-height:1.35!important;
+    letter-spacing:.09em!important;white-space:normal!important;
+    overflow-wrap:anywhere!important;text-align:left!important;
+  }
+  #mobileMenu{max-height:calc(100dvh - 74px)!important;overflow-y:auto!important;overscroll-behavior:contain}
+  #mobileMenu a[href="#collections"]{border-top:1px solid #ded9cf!important;margin-top:3px;padding-top:2px}
+  html[data-sol-theme="dark"] #mobileMenu a[href="#collections"]{border-color:#303030!important}
+}
+body.sol-mobile-preview #collections{scroll-margin-top:86px!important;padding:38px 14px 30px!important}
+body.sol-mobile-preview #collections .section-head{margin:0 0 18px!important}
+body.sol-mobile-preview #collections .category span{left:8px!important;right:8px!important;bottom:8px!important;max-width:calc(100% - 16px)!important;box-sizing:border-box!important;padding:9px 10px!important;font-size:9px!important;line-height:1.35!important;letter-spacing:.09em!important;white-space:normal!important;overflow-wrap:anywhere!important}
+body.sol-mobile-preview #mobileMenu{max-height:calc(100dvh - 68px)!important;overflow-y:auto!important;overscroll-behavior:contain}
+body.sol-mobile-preview #mobileMenu a[href="#collections"]{border-top:1px solid #ded9cf!important;margin-top:3px;padding-top:2px}
+</style>
+
 </head>
 <body>
 <header>
@@ -829,6 +858,7 @@ html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu a,html[data-sol-
  </div>
  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="#shop" data-page="shop">Shop all <span>↗</span></a>
+  <a href="#collections" data-page="home">Collections <span>↗</span></a>
   <a href="#shop" data-page="shop" data-category="Tops">Tops <span>↗</span></a>
   <a href="#shop" data-page="shop" data-category="Outerwear">Hoodies & zip-ups <span>↗</span></a>
   <a href="#shop" data-page="shop" data-category="Bottoms">Bottoms <span>↗</span></a>
