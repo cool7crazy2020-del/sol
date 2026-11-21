@@ -997,9 +997,52 @@ receiveTapImport();
 
 /* Studio-only device preview controls. These controls are injected only after the private Studio gate is passed. */
 let solPreviewMode='desktop';
+/* Mirror the real phone's responsive CSS inside the fixed-width Studio preview.
+   The desktop browser viewport itself does not shrink, so copy the matching mobile
+   media-query rules and scope them to the simulated device surface. */
+function buildSolMobilePreviewCSS(){
+ const targetWidth=390;
+ const out=[];
+ const splitSelectors=value=>{const parts=[];let start=0,depth=0;for(let i=0;i<value.length;i++){if(value[i]==='('||value[i]==='[')depth++;else if(value[i]===')'||value[i]===']')depth--;else if(value[i]===','&&depth===0){parts.push(value.slice(start,i).trim());start=i+1}}parts.push(value.slice(start).trim());return parts.filter(Boolean)};
+ const scopeSelector=selector=>{
+  if(/^:root$/.test(selector))return 'body.sol-mobile-preview';
+  if(/^(html|body)(?=\\b|[.#:[\\s>+~])/.test(selector))return selector.replace(/^(html|body)/,'body.sol-mobile-preview');
+  return 'body.sol-mobile-preview '+selector;
+ };
+ const mediaApplies=query=>{
+  const q=query.toLowerCase();
+  if(/\\bprint\\b/.test(q))return false;
+  const max=[...q.matchAll(/max-width\\s*:\\s*([\\d.]+)(px|em|rem)/g)];
+  const min=[...q.matchAll(/min-width\\s*:\\s*([\\d.]+)(px|em|rem)/g)];
+  const px=m=>Number(m[1])*(m[2]==='px'?1:16);
+  if(max.some(m=>targetWidth>px(m)))return false;
+  if(min.some(m=>targetWidth<px(m)))return false;
+  if(/hover\\s*:\\s*hover/.test(q)||/pointer\\s*:\\s*fine/.test(q))return false;
+  return max.length>0||min.length>0||/hover\\s*:\\s*none|pointer\\s*:\\s*coarse/.test(q);
+ };
+ const walk=(rules,responsive=false)=>{
+  for(const rule of rules){
+   if(rule.type===4){if(mediaApplies(rule.conditionText))walk(rule.cssRules,true);continue}
+   if(rule.type===12){walk(rule.cssRules,responsive);continue}
+   if(rule.type===1&&responsive){
+    const selectors=splitSelectors(rule.selectorText).map(scopeSelector).join(',');
+    out.push(selectors+'{'+rule.style.cssText+'}');
+    continue;
+   }
+   if(responsive&&rule.type===7)out.push(rule.cssText);
+  }
+ };
+ for(const sheet of Array.from(document.styleSheets)){
+  try{walk(sheet.cssRules,false)}catch(error){/* Skip inaccessible stylesheets. */}
+ }
+ let style=document.getElementById('sol-mobile-responsive-mirror');
+ if(!style){style=document.createElement('style');style.id='sol-mobile-responsive-mirror';document.head.appendChild(style)}
+ style.textContent=out.join('\\n');
+}
 function setSolPreview(mode){
  solPreviewMode=mode;
  document.body.classList.toggle('sol-mobile-preview',mode==='mobile');
+ if(mode==='mobile')buildSolMobilePreviewCSS();
  const mobile=document.getElementById('solPreviewMobile');
  const desktop=document.getElementById('solPreviewDesktop');
  if(mobile)mobile.setAttribute('aria-pressed',String(mode==='mobile'));
