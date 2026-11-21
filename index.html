@@ -1259,12 +1259,28 @@ html[data-sol-theme="dark"] .theme-switch{color:#f4f2ed!important}
 }
 body.sol-mobile-preview #detail .detail-photo .gallery-arrow{width:42px!important;height:42px!important}
 </style>
+
+<style id="sol-mobile-header-final">
+@media(max-width:560px){
+  .head{position:relative!important;display:grid!important;grid-template-columns:1fr auto 1fr!important;align-items:center!important;padding-left:8px!important;padding-right:12px!important}
+  .head>.nav:first-child{position:static!important;grid-column:1!important;grid-row:1!important;justify-self:start!important;width:auto!important;margin:0!important;padding:0!important}
+  #mobileMenuToggle{position:relative!important;left:0!important;margin-left:0!important;background:transparent!important;background-color:transparent!important;border:0!important;box-shadow:none!important;width:40px!important;height:40px!important;min-width:40px!important;padding:9px!important}
+  .head>.brand{grid-column:2!important;grid-row:1!important;justify-self:center!important}
+  .head>.nav.right{grid-column:3!important;grid-row:1!important;justify-self:end!important}
+}
+body.sol-mobile-preview .head{position:relative!important;display:grid!important;grid-template-columns:1fr auto 1fr!important;padding-left:8px!important;padding-right:12px!important}
+body.sol-mobile-preview .head>.nav:first-child{position:static!important;grid-column:1!important;grid-row:1!important;justify-self:start!important;width:auto!important;margin:0!important;padding:0!important}
+body.sol-mobile-preview #mobileMenuToggle{position:relative!important;left:0!important;margin-left:0!important;background:transparent!important;background-color:transparent!important;border:0!important;box-shadow:none!important;width:40px!important;height:40px!important;min-width:40px!important;padding:9px!important}
+body.sol-mobile-preview .head>.brand{grid-column:2!important;grid-row:1!important;justify-self:center!important}
+body.sol-mobile-preview .head>.nav.right{grid-column:3!important;grid-row:1!important;justify-self:end!important}
+</style>
+
 </head>
 <body>
 <header>
  <div class="head">
   <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
-  <a class="brand" href="#home" aria-label="SOL home"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
+  <a class="brand" href="#collections" data-page="home" aria-label="SOL collections"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
   <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
