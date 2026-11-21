@@ -1,4 +1,4 @@
-name: Deploy SOL storefront
+name: Deploy SOL storefront (clean artifact run)
 
 on:
   push:
