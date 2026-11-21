@@ -794,6 +794,7 @@ html[data-sol-theme="dark"] #mobileMenu a,html[data-sol-theme="dark"] #mobileMen
  .head>.nav:first-child{display:flex!important;align-items:center!important}
  .head>.nav:first-child>a{display:none!important}
 }
+</style>
 
 <style id="sol-mobile-preview-navigation">
 /* Force the mobile header/menu inside Studio's desktop-sized phone preview. */
@@ -1796,24 +1797,46 @@ function ensureSolPreviewControls(){
  document.getElementById('solPreviewMobile').addEventListener('click',()=>setSolPreview('mobile'));
 }
 
-/* Mobile menu: bind directly to the actual header controls for dependable touch behavior. */
+/* Mobile menu: delegated controls keep the menu reliable and close it after every selection. */
 (function(){
  const toggle=document.getElementById('mobileMenuToggle');
  const menu=document.getElementById('mobileMenu');
- const close=()=>{menu?.classList.remove('open');toggle?.setAttribute('aria-expanded','false');toggle?.setAttribute('aria-label','Open menu');};
- if(toggle&&menu){
-  toggle.addEventListener('click',function(event){
-   event.preventDefault();event.stopPropagation();
-   const open=!menu.classList.contains('open');
-   menu.classList.toggle('open',open);
-   toggle.setAttribute('aria-expanded',String(open));
-   toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
-  });
-  menu.querySelectorAll('a[data-page]').forEach(link=>link.addEventListener('click',close));
-  document.getElementById('mobileMenuSearch')?.addEventListener('click',()=>{close();document.getElementById('searchToggle')?.click();});
-  document.getElementById('mobileMenuTheme')?.addEventListener('click',()=>{close();document.getElementById('themeToggle')?.click();});
-  document.addEventListener('click',event=>{if(menu.classList.contains('open')&&!menu.contains(event.target)&&!toggle.contains(event.target))close();});
- }
+ const close=()=>{
+  if(!menu||!toggle)return;
+  menu.classList.remove('open');
+  toggle.setAttribute('aria-expanded','false');
+  toggle.setAttribute('aria-label','Open menu');
+ };
+ if(!toggle||!menu)return;
+ toggle.addEventListener('click',function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  const open=!menu.classList.contains('open');
+  menu.classList.toggle('open',open);
+  toggle.setAttribute('aria-expanded',String(open));
+  toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+ });
+ menu.addEventListener('click',function(event){
+  const link=event.target.closest('a[data-page]');
+  const action=event.target.closest('button');
+  if(link){close();return;}
+  if(!action)return;
+  event.preventDefault();
+  if(action.id==='mobileMenuSearch'){
+   close();
+   document.getElementById('searchToggle')?.click();
+   return;
+  }
+  if(action.id==='mobileMenuTheme'){
+   close();
+   document.getElementById('themeToggle')?.click();
+  }
+ });
+ document.addEventListener('click',function(event){
+  if(menu.classList.contains('open')&&!menu.contains(event.target)&&!toggle.contains(event.target))close();
+ });
+ document.addEventListener('keydown',function(event){if(event.key==='Escape')close();});
 })();
+;
 </script>
 </body></html>
