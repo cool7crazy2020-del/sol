@@ -1136,6 +1136,15 @@ body.sol-mobile-preview .panel{padding:15px!important}
 body.sol-mobile-preview .field input,body.sol-mobile-preview .field select,body.sol-mobile-preview .field textarea{font-size:16px!important;min-height:45px!important}
 body.sol-mobile-preview .search-panel{left:8px!important;right:8px!important;width:auto!important;top:calc(100% + 1px)!important}
 </style>
+
+<style id="sol-hide-mobile-detail-thumbnails">
+/* The main product carousel already has arrows and position dots; hide the
+   separate thumbnail strip on phone layouts so it cannot peek below the frame. */
+@media(max-width:560px){
+  .detail-gallery{display:none!important}
+}
+body.sol-mobile-preview .detail-gallery{display:none!important}
+</style>
 </head>
 <body>
 <header>
