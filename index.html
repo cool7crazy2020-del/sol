@@ -849,6 +849,142 @@ body.sol-mobile-preview #mobileMenu a[href="#collections"]{border-top:1px solid 
 </style>
 
 
+<style id="sol-mobile-collections-redesign">
+/* A calmer, editorial collections landing on real phones and in Studio's phone frame. */
+@media(max-width:560px){
+  #collections{
+    scroll-margin-top:78px!important;
+    padding:34px 16px 28px!important;
+  }
+  #collections .section-head{
+    display:block!important;
+    margin:0 0 18px!important;
+    text-align:left!important;
+  }
+  #collections .eyebrow{
+    font-size:8px!important;
+    letter-spacing:.24em!important;
+    color:#92929a!important;
+  }
+  #collections .section-head h2{
+    margin:8px 0 0!important;
+    font-size:clamp(30px,8.8vw,38px)!important;
+    line-height:.98!important;
+    letter-spacing:-.065em!important;
+  }
+  #collections .category-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:10px!important;
+  }
+  #collections .category,
+  #collections .category:nth-child(3){
+    grid-column:auto!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    aspect-ratio:2.12/1!important;
+    border:1px solid #29292f!important;
+    background:#111115!important;
+    overflow:hidden!important;
+    isolation:isolate!important;
+  }
+  #collections .category::before{
+    opacity:.9!important;
+    background-position:center 48%!important;
+    transition:transform .45s ease!important;
+  }
+  #collections .category::after{
+    content:""!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    background:linear-gradient(90deg,rgba(5,5,7,.72) 0%,rgba(5,5,7,.18) 72%),linear-gradient(0deg,rgba(5,5,7,.46),transparent 62%)!important;
+    pointer-events:none!important;
+  }
+  #collections .category span{
+    position:absolute!important;
+    left:16px!important;
+    right:14px!important;
+    bottom:15px!important;
+    z-index:2!important;
+    width:auto!important;
+    max-width:calc(100% - 30px)!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    color:#f5f4f2!important;
+    font-size:10px!important;
+    line-height:1.2!important;
+    letter-spacing:.17em!important;
+    white-space:normal!important;
+    overflow-wrap:normal!important;
+    text-align:left!important;
+    backdrop-filter:none!important;
+  }
+  #collections .category span:after{
+    display:block!important;
+    width:28px!important;
+    height:1px!important;
+    margin-top:8px!important;
+    background:#d4d4d8!important;
+    transition:width .2s ease!important;
+  }
+  #collections .category:active::before{transform:scale(1.025)!important}
+}
+body.sol-mobile-preview #collections{
+  scroll-margin-top:78px!important;
+  padding:34px 16px 28px!important;
+}
+body.sol-mobile-preview #collections .section-head{
+  display:block!important;
+  margin:0 0 18px!important;
+  text-align:left!important;
+}
+body.sol-mobile-preview #collections .section-head h2{
+  margin:8px 0 0!important;
+  font-size:34px!important;
+  line-height:.98!important;
+  letter-spacing:-.065em!important;
+}
+body.sol-mobile-preview #collections .category-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:10px!important;
+}
+body.sol-mobile-preview #collections .category,
+body.sol-mobile-preview #collections .category:nth-child(3){
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  aspect-ratio:2.12/1!important;
+  overflow:hidden!important;
+}
+body.sol-mobile-preview #collections .category::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  background:linear-gradient(90deg,rgba(5,5,7,.72),rgba(5,5,7,.18) 72%),linear-gradient(0deg,rgba(5,5,7,.46),transparent 62%)!important;
+  pointer-events:none!important;
+}
+body.sol-mobile-preview #collections .category span{
+  left:16px!important;right:14px!important;bottom:15px!important;
+  z-index:2!important;width:auto!important;max-width:calc(100% - 30px)!important;
+  padding:0!important;border:0!important;background:transparent!important;
+  color:#f5f4f2!important;font-size:10px!important;line-height:1.2!important;
+  letter-spacing:.17em!important;white-space:normal!important;overflow-wrap:normal!important;
+  text-align:left!important;backdrop-filter:none!important;
+}
+body.sol-mobile-preview #collections .category span:after{
+  display:block!important;width:28px!important;height:1px!important;
+  margin-top:8px!important;background:#d4d4d8!important;
+}
+</style>
 <style id="sol-mobile-product-gallery-fix">
 @media(max-width:560px){
  #detail .detail{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:20px!important;padding:16px 14px 44px!important}
