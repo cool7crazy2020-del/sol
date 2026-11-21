@@ -1599,26 +1599,21 @@ body.sol-mobile-preview #mobileMenu.open{display:flex!important;visibility:visib
 </style>
 
 
-<style id="sol-header-left-and-menu-final">
+
+
+<style id="sol-only-left-primary-nav">
 @media(min-width:561px){
- .head{position:relative!important}
- .head>.nav:first-child{position:absolute!important;left:22px!important;top:50%!important;transform:translateY(-50%)!important;width:auto!important;margin:0!important;justify-self:start!important}
-}
-@media(max-width:560px),body.sol-mobile-preview{
- .head{position:relative!important;display:grid!important;grid-template-columns:1fr auto 1fr!important;padding-left:14px!important;padding-right:14px!important}
- .head>.nav:first-child{position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;width:44px!important;height:48px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;z-index:10000!important}
- .head>.nav:first-child .theme-switch,.head>.nav:first-child>a{display:none!important}
- #mobileMenuToggle{display:flex!important;position:relative!important;z-index:10001!important;pointer-events:auto!important;touch-action:manipulation!important;width:42px!important;height:42px!important;min-width:42px!important;flex:0 0 42px!important;background:transparent!important;border:0!important;padding:9px!important;margin:0!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:5px!important;cursor:pointer!important}
- #mobileMenuToggle span{display:block!important;width:23px!important;height:2px!important;min-height:2px!important;background:#f4f2ed!important;border-radius:2px!important;pointer-events:none!important}
- .head>.nav.right{justify-self:end!important}
- #mobileMenu{position:fixed!important;top:72px!important;left:0!important;right:0!important;width:100%!important;z-index:10000!important;max-height:calc(100dvh - 72px)!important;overflow-y:auto!important;pointer-events:auto!important}
+ .head{grid-template-columns:1fr auto 1fr!important;padding-left:22px!important;padding-right:5vw!important}
+ .head>.nav:first-child{position:relative!important;left:auto!important;top:auto!important;transform:none!important;justify-self:start!important;width:max-content!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:22px!important}
+ .head>.nav:first-child .theme-switch{position:static!important;display:inline-flex!important;flex:0 0 34px!important;width:34px!important;height:34px!important;margin:0!important;padding:0!important}
+ .head>.nav:first-child>a{display:inline-flex!important;align-items:center!important}
 }
 </style>
 </head>
 <body>
 <header>
  <div class="head">
-  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="event.preventDefault();event.stopPropagation();var m=document.getElementById('mobileMenu');var o=!m.classList.contains('open');m.classList.toggle('open',o);this.setAttribute('aria-expanded',String(o));this.setAttribute('aria-label',o?'Close menu':'Open menu');"><span></span><span></span><span></span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
+  <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#collections" data-page="home" aria-label="SOL collections"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
   <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false"><svg class="sol-bag-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 17h32l-2.5 25h-27L8 17Z"></path><path d="M17 18v-5a7 7 0 0 1 14 0v5"></path><text x="24" y="32" text-anchor="middle">BAG</text></svg></button></div></nav>
  </div>
