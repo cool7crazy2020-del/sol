@@ -794,6 +794,30 @@ html[data-sol-theme="dark"] #mobileMenu a,html[data-sol-theme="dark"] #mobileMen
  .head>.nav:first-child{display:flex!important;align-items:center!important}
  .head>.nav:first-child>a{display:none!important}
 }
+
+<style id="sol-mobile-preview-navigation">
+/* Force the mobile header/menu inside Studio's desktop-sized phone preview. */
+body.sol-mobile-preview header{position:sticky!important;top:0!important;z-index:90!important;overflow:visible!important}
+body.sol-mobile-preview .head{grid-template-columns:42px minmax(0,1fr) 42px!important;padding:0 12px!important}
+body.sol-mobile-preview .head>.nav:first-child{grid-column:1!important;grid-row:1!important;display:flex!important;align-items:center!important;width:42px!important;height:44px!important}
+body.sol-mobile-preview .head>.nav:first-child>a{display:none!important}
+body.sol-mobile-preview #mobileMenuToggle{display:flex!important;visibility:visible!important;opacity:1!important;width:40px!important;height:40px!important;min-width:40px!important;flex:0 0 40px!important;padding:10px 8px!important;margin:0!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;border:1px solid #555!important;border-radius:0!important;background:#09090b!important;color:#f5f4f1!important;position:relative!important;z-index:120!important;cursor:pointer!important}
+body.sol-mobile-preview #mobileMenuToggle span{display:block!important;width:22px!important;height:2px!important;min-height:2px!important;background:#f5f4f1!important;border-radius:2px!important;opacity:1!important}
+body.sol-mobile-preview #mobileMenuToggle[aria-expanded="true"] span:first-child{transform:translateY(7px) rotate(45deg)}
+body.sol-mobile-preview #mobileMenuToggle[aria-expanded="true"] span:nth-child(2){opacity:0!important}
+body.sol-mobile-preview #mobileMenuToggle[aria-expanded="true"] span:last-child{transform:translateY(-7px) rotate(-45deg)}
+body.sol-mobile-preview .head>.brand{grid-column:2!important;grid-row:1!important;justify-self:center!important;width:92px!important;height:48px!important}
+body.sol-mobile-preview .head>.nav.right{grid-column:3!important;grid-row:1!important;width:42px!important;justify-self:end!important}
+body.sol-mobile-preview .header-tools{display:flex!important;gap:0!important}
+body.sol-mobile-preview .header-tools>*:not(#openBag){display:none!important}
+body.sol-mobile-preview .header-tools #openBag{display:grid!important;place-items:center!important;width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;font-size:0!important}
+body.sol-mobile-preview .header-tools #openBag:before{content:"BAG";font-size:8px;letter-spacing:.1em}
+body.sol-mobile-preview #mobileMenu{display:none;position:absolute!important;top:100%!important;left:0!important;right:0!important;z-index:110!important;flex-direction:column!important;padding:10px 18px 18px!important;background:#f5f2eb!important;color:#111!important;border-top:1px solid #ded9cf!important;border-bottom:1px solid #ded9cf!important;box-shadow:0 18px 32px #0005!important}
+body.sol-mobile-preview #mobileMenu.open{display:flex!important}
+body.sol-mobile-preview #mobileMenu a,body.sol-mobile-preview #mobileMenu button{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:50px!important;padding:0 2px!important;border:0!important;border-bottom:1px solid #ded9cf!important;background:transparent!important;color:#111!important;text-align:left!important;text-transform:uppercase!important;font-size:10px!important;letter-spacing:.13em!important;cursor:pointer}
+html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu{background:#09090b!important;color:#f4f2ed!important;border-color:#303030!important}
+html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu a,html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenu button{color:#f4f2ed!important;border-color:#303030!important}
+</style>
 </style>
 </head>
 <body>
