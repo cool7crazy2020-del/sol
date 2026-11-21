@@ -1277,15 +1277,13 @@ body.sol-mobile-preview .head>.nav.right{grid-column:3!important;grid-row:1!impo
 
 
 <style id="sol-hamburger-light-mode-color">
-/* Black hamburger strokes in light mode; preserve white strokes in dark mode. */
-@media(max-width:560px){
-  #mobileMenuToggle{color:#09090b!important}
-  #mobileMenuToggle span{background:#09090b!important}
-}
-body.sol-mobile-preview #mobileMenuToggle{color:#09090b!important}
-body.sol-mobile-preview #mobileMenuToggle span{background:#09090b!important}
-html[data-sol-theme="dark"] #mobileMenuToggle{color:#f5f4f1!important}
-html[data-sol-theme="dark"] #mobileMenuToggle span{background:#f5f4f1!important}
+/* Light mode: force the three hamburger bars to solid black. Dark mode keeps them light. */
+html:not([data-sol-theme="dark"]) #mobileMenuToggle,
+html:not([data-sol-theme="dark"]) #mobileMenuToggle span,
+body.sol-mobile-preview #mobileMenuToggle,
+body.sol-mobile-preview #mobileMenuToggle span{color:#09090b!important;background-color:#09090b!important}
+html[data-sol-theme="dark"] #mobileMenuToggle,
+html[data-sol-theme="dark"] #mobileMenuToggle span{color:#f5f4f1!important;background-color:#f5f4f1!important}
 </style>
 </head>
 <body>
