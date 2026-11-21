@@ -1563,6 +1563,22 @@ html[data-sol-theme="dark"] .drawer .close{
  border-color:rgba(255,255,255,.28)!important;
 }
 </style>
+
+<style id="sol-header-nav-and-mobile-bag-label-fix">
+/* The bag icon already contains its BAG label; suppress the older duplicate mobile pseudo-label. */
+@media(max-width:560px){
+ .header-tools #openBag:before,
+ body.sol-mobile-preview .header-tools #openBag:before{content:none!important;display:none!important}
+}
+/* Desktop: place the theme control and primary links together at the far left. */
+@media(min-width:561px){
+ .head>.nav:first-child{display:flex!important;align-items:center!important;gap:24px!important}
+ .head>.nav:first-child .theme-switch{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important}
+ .head>.nav:first-child>a{display:inline-flex!important}
+ .head>.nav.right .theme-switch{display:none!important}
+}
+</style>
+
 </head>
 <body>
 <header>
