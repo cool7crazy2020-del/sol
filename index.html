@@ -1298,6 +1298,41 @@ body.sol-mobile-preview #mobileMenuToggle span{
   background:#09090b!important;
 }
 </style>
+
+<style id="sol-hamburger-transparent-black-final">
+/* Final override: transparent hit-area, with only three black strokes in light mode. */
+@media(max-width:560px){
+  #mobileMenuToggle,
+  body.sol-mobile-preview #mobileMenuToggle{
+    appearance:none!important;
+    -webkit-appearance:none!important;
+    background:transparent!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    border:0!important;
+    outline:0!important;
+    box-shadow:none!important;
+    color:#09090b!important;
+    padding:9px!important;
+  }
+  #mobileMenuToggle span,
+  body.sol-mobile-preview #mobileMenuToggle span{
+    display:block!important;
+    width:22px!important;
+    height:2px!important;
+    min-height:2px!important;
+    flex:0 0 2px!important;
+    background:#09090b!important;
+    border:0!important;
+    border-radius:1px!important;
+    opacity:1!important;
+  }
+}
+html[data-sol-theme="dark"] #mobileMenuToggle span,
+html[data-sol-theme="dark"] body.sol-mobile-preview #mobileMenuToggle span{
+  background:#f5f4f1!important;
+}
+</style>
 </head>
 <body>
 <header>
