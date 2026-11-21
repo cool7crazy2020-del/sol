@@ -1185,6 +1185,40 @@ body.sol-mobile-preview{border:1px solid #bdb8ae!important;border-radius:24px!im
 body.sol-mobile-preview:before{width:82px!important;height:18px!important;margin-bottom:-18px!important;border-radius:0 0 12px 12px!important}
 @media(max-width:440px){body.sol-mobile-preview{border-radius:24px!important}}
 </style>
+
+<style id="sol-mobile-arrows-match-desktop">
+/* Match the desktop gallery controls exactly; use the existing CSS chevron span. */
+@media(max-width:560px), (hover:none) and (pointer:coarse){
+  #detail .detail-photo .gallery-arrow{
+    appearance:none!important;-webkit-appearance:none!important;
+    width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+    padding:0!important;border:1px solid #ddd!important;border-radius:50%!important;
+    background:#fff!important;color:#111!important;box-shadow:0 2px 14px #0003!important;
+    backdrop-filter:none!important;font-size:0!important;line-height:0!important;
+    display:grid!important;place-items:center!important
+  }
+  #detail .detail-photo .gallery-arrow::before{content:none!important;display:none!important}
+  #detail .detail-photo .gallery-arrow .gallery-chevron{
+    display:block!important;width:9px!important;height:9px!important;
+    border-top:1.7px solid currentColor!important;border-right:1.7px solid currentColor!important
+  }
+  #detail .detail-photo .gallery-prev .gallery-chevron{transform:translateX(2px) rotate(-135deg)!important}
+  #detail .detail-photo .gallery-next .gallery-chevron{transform:translateX(-2px) rotate(45deg)!important}
+}
+body.sol-mobile-preview #detail .detail-photo .gallery-arrow{
+  appearance:none!important;-webkit-appearance:none!important;width:42px!important;height:42px!important;
+  min-width:42px!important;min-height:42px!important;padding:0!important;border:1px solid #ddd!important;
+  border-radius:50%!important;background:#fff!important;color:#111!important;box-shadow:0 2px 14px #0003!important;
+  backdrop-filter:none!important;font-size:0!important;line-height:0!important;display:grid!important;place-items:center!important
+}
+body.sol-mobile-preview #detail .detail-photo .gallery-arrow::before{content:none!important;display:none!important}
+body.sol-mobile-preview #detail .detail-photo .gallery-arrow .gallery-chevron{
+  display:block!important;width:9px!important;height:9px!important;
+  border-top:1.7px solid currentColor!important;border-right:1.7px solid currentColor!important
+}
+body.sol-mobile-preview #detail .detail-photo .gallery-prev .gallery-chevron{transform:translateX(2px) rotate(-135deg)!important}
+body.sol-mobile-preview #detail .detail-photo .gallery-next .gallery-chevron{transform:translateX(-2px) rotate(45deg)!important}
+</style>
 </head>
 <body>
 <header>
