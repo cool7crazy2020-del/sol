@@ -1229,13 +1229,18 @@ body.sol-mobile-preview #detail .detail-photo .gallery-next .gallery-chevron{tra
 html[data-sol-theme="dark"] .theme-switch{color:#f4f2ed!important}
 @media(max-width:560px){.theme-switch{left:9px!important;width:34px!important;height:34px!important}.head>.nav:first-child{margin-left:66px!important}}
 </style>
+
+<style id="sol-desktop-search-icon">
+@media(min-width:561px){.header-tools .search-toggle{display:inline-flex!important;align-items:center;justify-content:center;gap:7px}.search-glass-icon{display:block;width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}}
+@media(max-width:560px){.search-glass-icon{display:none}}
+</style>
 </head>
 <body>
 <header>
  <div class="head">
   <nav class="nav"><button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button><a href="#shop" data-page="shop">Shop</a><a href="#collections" data-page="home">Collections</a></nav>
   <a class="brand" href="#home" aria-label="SOL home"><img src="assets/sol-logo-transparent.svg?v=3" alt="SOL"></a>
-  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false">Search</button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
+  <nav class="nav right"><div class="header-tools"><button class="search-toggle" id="searchToggle" aria-expanded="false"><svg class="search-glass-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg><span>Search</span></button><button class="theme-switch" id="themeToggle" type="button" role="switch" aria-label="Toggle color theme" aria-checked="false"><svg class="theme-sun-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56m11.02 11.02 1.56 1.56M2 12h2.2m15.6 0H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path></svg></button><a href="#wishlist" data-page="wishlist">Wishlist <span class="bag-count" id="wishCount">0</span></a><a href="#studio" data-page="studio">Studio</a><button id="openBag" aria-controls="drawer" aria-expanded="false">Bag <span class="bag-count" id="bagCount">0</span></button></div></nav>
  </div>
  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
   <a href="#shop" data-page="shop">Shop all <span>↗</span></a>
