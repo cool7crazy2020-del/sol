@@ -29,14 +29,37 @@ $("extract").addEventListener("click", async () => {
 });
 $("send").addEventListener("click", async () => {
   if (!latest) return;
-  const url = "https://cool7crazy2020-del.github.io/sol/?import=" + Date.now() + "#tapstitch-import=" + encodeURIComponent(JSON.stringify(latest));
-  const existing = await chrome.tabs.query({url:["https://cool7crazy2020-del.github.io/sol/*"]});
-  if (existing.length) {
-    await chrome.tabs.update(existing[0].id,{url,active:true});
-    if (existing[0].windowId !== undefined) await chrome.windows.update(existing[0].windowId,{focused:true});
-  } else {
-    await chrome.tabs.create({url,active:true});
+  $("send").disabled = true;
+  $("message").textContent = "Sending to SOL Studio…";
+  try {
+    // Reuse whichever supported SOL storefront the user already has open.
+    // This preserves that tab's Studio session and avoids sending Vercel users
+    // to the separate GitHub Pages copy.
+    const tabs = await chrome.tabs.query({});
+    const existing = tabs.find(tab => {
+      try {
+        const url = new URL(tab.url || "");
+        return url.hostname === "shopsol.vercel.app"
+          || (url.hostname === "cool7crazy2020-del.github.io" && url.pathname.startsWith("/sol"));
+      } catch (_) { return false; }
+    });
+    const target = existing
+      ? new URL(existing.url)
+      : new URL("https://shopsol.vercel.app/");
+    target.search = "";
+    target.searchParams.set("import", String(Date.now()));
+    target.hash = "tapstitch-import=" + encodeURIComponent(JSON.stringify(latest));
+    if (existing) {
+      await chrome.tabs.update(existing.id, {url:target.toString(), active:true});
+      if (existing.windowId !== undefined) await chrome.windows.update(existing.windowId, {focused:true});
+    } else {
+      await chrome.tabs.create({url:target.toString(), active:true});
+    }
+    $("message").textContent = "Product data sent to SOL. Check the Studio product form.";
+  } catch (error) {
+    $("message").textContent = "Could not send to SOL: " + (error.message || "Unknown error");
+  } finally {
+    $("send").disabled = false;
   }
-  $("message").textContent = "Sent to your SOL Studio tab. The current product draft will be continued.";
 });
 activeTab();
