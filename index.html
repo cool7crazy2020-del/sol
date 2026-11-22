@@ -1788,7 +1788,7 @@ saveWishlist();render();
 restoreImportDraft();
 document.querySelectorAll('#productForm input,#productForm textarea,#productForm select').forEach(el=>el.addEventListener('input',saveImportDraft));
 receiveTapImport();
-initSolCloud();
+
 
 /* Studio-only device preview controls. These controls are injected only after the private Studio gate is passed. */
 let solPreviewMode='desktop';
@@ -1894,8 +1894,7 @@ function ensureSolPreviewControls(){
  document.addEventListener('keydown',function(event){if(event.key==='Escape')close();});
 })();
 ;
-</script>
-</body></html>+Number(n).toFixed(2),safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
++Number(n).toFixed(2),safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let solDb=null,solIsAdmin=false;
 try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABASE_PUBLISHABLE_KEY)solDb=window.supabase.createClient(window.SOL_SUPABASE_URL,window.SOL_SUPABASE_PUBLISHABLE_KEY)}catch(error){console.error('SOL cloud setup:',error)}
 async function solCheckAdmin(){if(!solDb)return false;const {data:{user}}=await solDb.auth.getUser();if(!user)return false;const {data,error}=await solDb.from('sol_admins').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;solIsAdmin=!!data;return solIsAdmin}
@@ -2084,5 +2083,7 @@ function ensureSolPreviewControls(){
  document.addEventListener('keydown',function(event){if(event.key==='Escape')close();});
 })();
 ;
+
+initSolCloud();
 </script>
 </body></html>
