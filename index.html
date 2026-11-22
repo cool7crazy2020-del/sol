@@ -2000,14 +2000,14 @@ let solDb=null,solIsAdmin=false;
 let solAccountMode='signup';
 function solSetAccountMode(mode){solAccountMode=mode;const signup=mode==='signup';$('solAccountTitle').textContent=signup?'Create your account':'Welcome back';$('solAccountIntro').textContent=signup?'Join SOL to keep your account in one place.':'Sign in to your SOL account.';$('solAccountSubmit').textContent=signup?'CREATE ACCOUNT':'SIGN IN';$('solAccountPassword').setAttribute('autocomplete',signup?'new-password':'current-password');$('solAccountSwitchText').textContent=signup?'Already have an account?':"New to SOL?";$('solAccountSwitch').textContent=signup?'Sign in':'Create account';$('solAccountStatus').textContent='';}
 function solShowAccount(user){const signedIn=!!user;$('solAccountForms').style.display=signedIn?'none':'block';$('solAccountSignedIn').style.display=signedIn?'block':'none';$('solAccountTitle').textContent=signedIn?'Your account':(solAccountMode==='signup'?'Create your account':'Welcome back');$('solAccountIntro').textContent=signedIn?'You are signed in to SOL.':'';$('accountOpen').textContent=signedIn?'My account':'Account';$('solAccountEmailLabel').textContent=user?.email||'';}
-function solOpenAccount(){$('solAccountModal').style.display='flex';$('solAccountModal').setAttribute('aria-hidden','false');if(solDb)solDb.auth.getUser().then(({data})=>solShowAccount(data.user));}
-function solCloseAccount(){$('solAccountModal').style.display='none';$('solAccountModal').setAttribute('aria-hidden','true');}
+function solOpenAccount(){$('solAccountModal').style.display='flex';$('solAccountModal').setAttribute('aria-hidden','false');try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(error){}if(solDb)solDb.auth.getUser().then(({data})=>solShowAccount(data.user));}
+function solCloseAccount(){$('solAccountModal').style.display='none';$('solAccountModal').setAttribute('aria-hidden','true');try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(error){}}
 $('accountOpen').addEventListener('click',solOpenAccount);
 $('mobileAccountOpen').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.remove('open');document.getElementById('mobileMenuToggle').setAttribute('aria-expanded','false');solOpenAccount()});
 $('solAccountClose').addEventListener('click',solCloseAccount);
 $('solAccountModal').addEventListener('click',e=>{if(e.target===$('solAccountModal'))solCloseAccount()});
 $('solAccountSwitch').addEventListener('click',()=>solSetAccountMode(solAccountMode==='signup'?'signin':'signup'));
-$('solAccountSubmit').addEventListener('click',async()=>{const email=$('solAccountEmail').value.trim(),password=$('solAccountPassword').value,button=$('solAccountSubmit'),status=$('solAccountStatus');if(!email||!password){status.textContent='Enter your email and password.';return}if(password.length<8){status.textContent='Use a password with at least 8 characters.';return}if(!solDb){status.textContent='Account service is temporarily unavailable.';return}button.disabled=true;button.textContent=solAccountMode==='signup'?'CREATING…':'SIGNING IN…';status.textContent='';try{if(solAccountMode==='signup'){const {data,error}=await solDb.auth.signUp({email,password});if(error)throw error;if(data.session){solShowAccount(data.user);status.textContent='Your SOL account is ready.'}else{status.textContent='Check your email for a confirmation link to finish creating your account.'}}else{const {data,error}=await solDb.auth.signInWithPassword({email,password});if(error)throw error;solShowAccount(data.user);status.textContent='You are signed in.'}}catch(error){status.textContent=error.message||'Something went wrong. Please try again.'}finally{button.disabled=false;button.textContent=solAccountMode==='signup'?'CREATE ACCOUNT':'SIGN IN'}});
+$('solAccountSubmit').addEventListener('click',async()=>{const email=$('solAccountEmail').value.trim(),password=$('solAccountPassword').value,button=$('solAccountSubmit'),status=$('solAccountStatus');if(!email||!password){status.textContent='Enter your email and password.';return}if(password.length<8){status.textContent='Use a password with at least 8 characters.';return}if(!solDb){status.textContent='Account service is temporarily unavailable.';return}button.disabled=true;button.textContent=solAccountMode==='signup'?'CREATING…':'SIGNING IN…';status.textContent='';try{if(solAccountMode==='signup'){const {data,error}=await solDb.auth.signUp({email,password});if(error)throw error;try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(storageError){}if(data.session){solShowAccount(data.user);status.textContent='Your SOL account is ready.'}else{status.textContent='Check your email for a confirmation link to finish creating your account.'}}else{const {data,error}=await solDb.auth.signInWithPassword({email,password});if(error)throw error;solShowAccount(data.user);status.textContent='You are signed in.'}}catch(error){status.textContent=error.message||'Something went wrong. Please try again.'}finally{button.disabled=false;button.textContent=solAccountMode==='signup'?'CREATE ACCOUNT':'SIGN IN'}});
 $('solAccountSignOut').addEventListener('click',async()=>{if(!solDb)return;const {error}=await solDb.auth.signOut();if(error){$('solAccountStatus').textContent=error.message;return}solShowAccount(null);solSetAccountMode('signup');$('solAccountStatus').textContent='You have been signed out.'});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('solAccountModal').style.display==='flex')solCloseAccount()});
 try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABASE_PUBLISHABLE_KEY)solDb=window.supabase.createClient(window.SOL_SUPABASE_URL,window.SOL_SUPABASE_PUBLISHABLE_KEY)}catch(error){console.error('SOL cloud setup:',error)}
@@ -2090,5 +2090,23 @@ async function initSolCloud(){
 
 
 initSolCloud();
+
+// Show the signup invitation once per browser on the first storefront visit.
+(async function solMaybeShowFirstVisitSignup(){
+ const seenKey='sol-first-visit-signup-seen-v1';
+ try{
+  if(localStorage.getItem(seenKey)==='yes')return;
+  if(solDb){
+   const {data,error}=await solDb.auth.getSession();
+   if(error)throw error;
+   if(data&&data.session){localStorage.setItem(seenKey,'yes');return;}
+  }
+  localStorage.setItem(seenKey,'yes');
+  solSetAccountMode('signup');
+  solOpenAccount();
+ }catch(error){
+  console.warn('SOL first-visit signup prompt could not check saved state:',error);
+ }
+})();
 </script>
 </body></html>
