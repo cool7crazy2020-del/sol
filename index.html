@@ -1720,31 +1720,27 @@ function toggleWishlist(id){id=String(id);wishlist=isSaved(id)?wishlist.filter(x
 function bindProductCards(root){root.querySelectorAll('.product').forEach(el=>{el.onclick=e=>{const heart=e.target.closest('[data-heart]');if(heart){e.stopPropagation();toggleWishlist(heart.dataset.heart);return}if(e.target.closest('button'))e.preventDefault();showProduct(el.dataset.id)};el.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button')){e.preventDefault();showProduct(el.dataset.id)}}})}
 function card(p){return '<article class="product" data-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="View '+safe(p.name)+'"><div class="product-image"><img src="'+safe(p.image)+'" alt="'+safe(p.name)+'" loading="lazy"><button class="wishlist-heart '+(isSaved(p.id)?'saved':'')+'" data-heart="'+safe(p.id)+'" aria-label="'+(isSaved(p.id)?'Remove from wishlist':'Add to wishlist')+'">'+(isSaved(p.id)?'♥':'♡')+'</button>'+(p.sample?'<span class="tag">Preview piece</span>':'')+'<button class="quick" type="button" data-quick="'+safe(p.id)+'" aria-label="Quick view '+safe(p.name)+'">Quick view ↗︎</button></div><div class="product-meta"><div>'+safe(p.name)+'<small>'+safe(p.category)+' · '+safe(p.color||'SOL')+'</small></div><span class="price">'+money(p.price)+'</span></div></article>'}
 function render(){let live=products.filter(p=>p.hidden!==true);$('featured').innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);$('allProducts').innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const recent=recentlyViewed.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('recentProducts').innerHTML=recent.map(card).join('')||'<p class="muted">Pieces you view will appear here.</p>';$('recentSection').style.display=recent.length?'block':'none';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('wishlistProducts').innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');$('wishCount').textContent=wishlist.length;bindProductCards($('featured'));bindProductCards($('allProducts'));bindProductCards($('recentProducts'));bindProductCards($('wishlistProducts'));$('bagCount').textContent=cart.length;renderCart()}
-let studioTapCount=0,studioTapTimer=null;
 async function openStudioGate(){
- if(sessionStorage.getItem('sol-studio-unlocked')==='yes'&&solIsAdmin){go('studio');return}
- if(!solDb){toast('Cloud setup is not ready yet');return}
- const email=window.prompt('SOL Studio admin email');
- if(!email)return;
- const password=window.prompt('SOL Studio password');
- if(!password)return;
- const {error}=await solDb.auth.signInWithPassword({email:email.trim(),password});
- if(error){toast('Sign-in failed: '+error.message);return}
- try{if(!await solCheckAdmin()){await solDb.auth.signOut();toast('This account is not approved for SOL Studio');return}
- sessionStorage.setItem('sol-studio-unlocked','yes');go('studio');toast('Studio signed in securely')}
- catch(error){toast('Admin check failed. Run the Supabase setup SQL first.');console.error(error)}
-}
-function handleStudioTap(){
- studioTapCount++;
- clearTimeout(studioTapTimer);
- if(studioTapCount>=3){
-  studioTapCount=0;
-  openStudioGate();
-  return;
+ try{
+  if(sessionStorage.getItem('sol-studio-unlocked')==='yes'&&solIsAdmin){go('studio');return}
+  if(!solDb){toast('Studio cloud login is not configured yet');return}
+  const email=window.prompt('SOL Studio admin email');
+  if(!email)return;
+  const password=window.prompt('SOL Studio password');
+  if(!password)return;
+  const {error}=await solDb.auth.signInWithPassword({email:email.trim(),password});
+  if(error){toast('Sign-in failed: '+error.message);return}
+  if(!await solCheckAdmin()){await solDb.auth.signOut();toast('This account is not approved for SOL Studio');return}
+  sessionStorage.setItem('sol-studio-unlocked','yes');
+  go('studio');
+  toast('Studio signed in securely');
+ }catch(error){
+  console.error('SOL Studio login failed:',error);
+  toast('Studio could not open. Check the cloud setup and try again.');
  }
- studioTapTimer=setTimeout(()=>{studioTapCount=0},4000);
 }
-// Studio opens after three footer copyright clicks within four seconds.
+function handleStudioTap(){openStudioGate()}
+// One copyright click opens the secure Studio sign-in.
 function go(id){
  if(id==='studio'&&sessionStorage.getItem('sol-studio-unlocked')!=='yes'){openStudioGate();return}
  const target=$(id);
@@ -1906,13 +1902,12 @@ async function initSolCloud(){if(!solDb)return;try{const admin=await solCheckAdm
 
 
 initSolCloud();
-const copyrightButton=document.getElementById('copyrightHotspot');
-if(copyrightButton){
- copyrightButton.addEventListener('click',event=>{
-  event.preventDefault();
-  event.stopPropagation();
-  handleStudioTap();
- });
-}
+document.addEventListener('click',event=>{
+ const copyrightButton=event.target.closest('#copyrightHotspot');
+ if(!copyrightButton)return;
+ event.preventDefault();
+ event.stopPropagation();
+ handleStudioTap();
+},true);
 </script>
 </body></html>
