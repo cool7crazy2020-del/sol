@@ -1710,7 +1710,7 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 const demo=[];
 function readStore(key,fallback,check){try{const value=JSON.parse(localStorage.getItem(key)||'null');return check(value)?value:fallback}catch(error){return fallback}}
 let products=(readStore('sol-products',demo,Array.isArray)).filter(p=>p&&!p.sample),cart=readStore('sol-cart',[],Array.isArray),filter='All',picked='';
-const $=id=>document.getElementById(id),money=n=>'
+const $=id=>document.getElementById(id),money=n=>"$"+Number(n||0).toFixed(2),safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
 let wishlist=readStore('sol-wishlist',[],Array.isArray).map(String),recentlyViewed=readStore('sol-recent',[],Array.isArray).map(String);
 let importedPhotoSets=[];
