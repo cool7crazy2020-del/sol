@@ -1710,7 +1710,205 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 const demo=[];
 function readStore(key,fallback,check){try{const value=JSON.parse(localStorage.getItem(key)||'null');return check(value)?value:fallback}catch(error){return fallback}}
 let products=(readStore('sol-products',demo,Array.isArray)).filter(p=>p&&!p.sample),cart=readStore('sol-cart',[],Array.isArray),filter='All',picked='';
-const $=id=>document.getElementById(id),money=n=>''
+const $=id=>document.getElementById(id),money=n=>'
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
+let wishlist=readStore('sol-wishlist',[],Array.isArray).map(String),recentlyViewed=readStore('sol-recent',[],Array.isArray).map(String);
+let importedPhotoSets=[];
+function isSaved(id){return wishlist.includes(String(id))}
+function saveWishlist(){localStorage.setItem('sol-wishlist',JSON.stringify(wishlist));$('wishCount').textContent=wishlist.length}
+function toggleWishlist(id){id=String(id);wishlist=isSaved(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveWishlist();render();toast(isSaved(id)?'Added to wishlist':'Removed from wishlist')}
+function bindProductCards(root){root.querySelectorAll('.product').forEach(el=>{el.onclick=e=>{const heart=e.target.closest('[data-heart]');if(heart){e.stopPropagation();toggleWishlist(heart.dataset.heart);return}if(e.target.closest('button'))e.preventDefault();showProduct(el.dataset.id)};el.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button')){e.preventDefault();showProduct(el.dataset.id)}}})}
+function card(p){return '<article class="product" data-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="View '+safe(p.name)+'"><div class="product-image"><img src="'+safe(p.image)+'" alt="'+safe(p.name)+'" loading="lazy"><button class="wishlist-heart '+(isSaved(p.id)?'saved':'')+'" data-heart="'+safe(p.id)+'" aria-label="'+(isSaved(p.id)?'Remove from wishlist':'Add to wishlist')+'">'+(isSaved(p.id)?'♥':'♡')+'</button>'+(p.sample?'<span class="tag">Preview piece</span>':'')+'<button class="quick" type="button" data-quick="'+safe(p.id)+'" aria-label="Quick view '+safe(p.name)+'">Quick view ↗︎</button></div><div class="product-meta"><div>'+safe(p.name)+'<small>'+safe(p.category)+' · '+safe(p.color||'SOL')+'</small></div><span class="price">'+money(p.price)+'</span></div></article>'}
+function render(){let live=products.filter(p=>p.hidden!==true);$('featured').innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);$('allProducts').innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const recent=recentlyViewed.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('recentProducts').innerHTML=recent.map(card).join('')||'<p class="muted">Pieces you view will appear here.</p>';$('recentSection').style.display=recent.length?'block':'none';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('wishlistProducts').innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');$('wishCount').textContent=wishlist.length;bindProductCards($('featured'));bindProductCards($('allProducts'));bindProductCards($('recentProducts'));bindProductCards($('wishlistProducts'));$('bagCount').textContent=cart.length;renderCart()}
+let studioTapCount=0,studioTapTimer=null;
+async function openStudioGate(){
+ if(sessionStorage.getItem('sol-studio-unlocked')==='yes'&&solIsAdmin){go('studio');return}
+ if(!solDb){toast('Cloud setup is not ready yet');return}
+ const email=window.prompt('SOL Studio admin email');
+ if(!email)return;
+ const password=window.prompt('SOL Studio password');
+ if(!password)return;
+ const {error}=await solDb.auth.signInWithPassword({email:email.trim(),password});
+ if(error){toast('Sign-in failed: '+error.message);return}
+ try{if(!await solCheckAdmin()){await solDb.auth.signOut();toast('This account is not approved for SOL Studio');return}
+ sessionStorage.setItem('sol-studio-unlocked','yes');go('studio');toast('Studio signed in securely')}
+ catch(error){toast('Admin check failed. Run the Supabase setup SQL first.');console.error(error)}
+}
+function handleStudioTap(){
+ studioTapCount++;
+ clearTimeout(studioTapTimer);
+ if(studioTapCount>=3){
+  studioTapCount=0;
+  openStudioGate();
+  return;
+ }
+ studioTapTimer=setTimeout(()=>{studioTapCount=0},4000);
+}
+// Studio opens after three footer copyright clicks within four seconds.
+function go(id){
+ if(id==='studio'&&sessionStorage.getItem('sol-studio-unlocked')!=='yes'){openStudioGate();return}
+ const target=$(id);
+ if(!target){console.error('SOL page not found:',id);return}
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ target.classList.add('active');
+ window.scrollTo(0,0);
+ if(['shop','wishlist','home'].includes(id))render();
+ if(id==='studio')renderAdmin();
+ ensureSolPreviewControls();
+}
+function showProduct(id){let p=products.find(x=>x.id===id);if(!p)return;picked='';recentlyViewed=[String(id),...recentlyViewed.filter(x=>String(x)!==String(id))].slice(0,8);localStorage.setItem('sol-recent',JSON.stringify(recentlyViewed));const colors=(p.colors||String(p.color||'').split(',').map(x=>x.trim()).filter(Boolean));let activeColor=colors[0]||'';const galleryFor=color=>(p.colorImages&&p.colorImages[color]&&p.colorImages[color].length?p.colorImages[color]:(p.images||[p.image])).filter(Boolean);const initialGallery=galleryFor(activeColor);let galleryIndex=0;let touchStartX=0;let touchStartY=0;$('detailContent').innerHTML='<div><div class="detail-photo"><img id="detailMainImage" src="'+safe(initialGallery[0]||p.image)+'" alt="'+safe(p.name)+'"><button type="button" class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Previous image"><svg class="gallery-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg></button><button type="button" class="gallery-arrow gallery-next" id="galleryNext" aria-label="Next image"><svg class="gallery-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg></button><div class="gallery-position" id="galleryPosition" aria-label="Choose mockup image"></div></div><div class="detail-gallery" id="detailGallery">'+initialGallery.map((src,i)=>'<img src="'+safe(src)+'" data-gallery-src="'+safe(src)+'" alt="'+safe(p.name)+' view '+(i+1)+'" loading="lazy">').join('')+'</div></div><div class="detail-info"><div class="eyebrow">'+safe(p.category)+' / SOL</div><h1>'+safe(p.name)+'</h1><p style="color:#eee">'+money(p.price)+'</p><p>'+safe(p.desc)+'</p>'+(colors.length?'<p class="eyebrow">Select color</p><div class="sizes" id="detailColors">'+colors.map((color,i)=>'<button type="button" data-product-color="'+safe(color)+'" class="'+(i===0?'selected':'')+'">'+safe(color)+'</button>').join('')+'</div>':'')+'<p class="eyebrow">Select size</p><div class="sizes">'+(p.sizes||['One size']).map(s=>'<button data-size="'+safe(s)+'">'+safe(s)+'</button>').join('')+'</div><button class="button dark" id="addCart" style="width:100%">Add to bag</button><button class="button" id="detailWishlist" style="width:100%;margin-top:9px;background:transparent">♡ SAVE TO WISHLIST</button><p class="muted">Designed to be part of your everyday rotation.</p></div>';function updateGallery(){const gallery=galleryFor(activeColor);galleryIndex=Math.min(galleryIndex,Math.max(0,gallery.length-1));$('detailMainImage').src=gallery[galleryIndex]||p.image;$('detailGallery').innerHTML=gallery.map((src,i)=>'<img src="'+safe(src)+'" data-gallery-index="'+i+'" class="'+(i===galleryIndex?'active':'')+'" alt="'+safe(p.name)+' view '+(i+1)+'" loading="lazy">').join('');$('galleryPosition').innerHTML=gallery.length>1?gallery.map((src,i)=>'<button type="button" data-gallery-dot="'+i+'" class="'+(i===galleryIndex?'active':'')+'" aria-label="Show image '+(i+1)+'"></button>').join(''):'';['galleryPrev','galleryNext'].forEach(id=>$(id).hidden=gallery.length<2);$('detailGallery').querySelectorAll('[data-gallery-index]').forEach(img=>img.onclick=()=>{galleryIndex=Number(img.dataset.galleryIndex);updateGallery()});$('galleryPosition').querySelectorAll('[data-gallery-dot]').forEach(dot=>dot.onclick=()=>{galleryIndex=Number(dot.dataset.galleryDot);updateGallery()})}function moveGallery(direction){const gallery=galleryFor(activeColor);if(gallery.length<2)return;galleryIndex=(galleryIndex+direction+gallery.length)%gallery.length;updateGallery()}$('galleryPrev').onclick=()=>moveGallery(-1);$('galleryNext').onclick=()=>moveGallery(1);const galleryTouchSurface=$('detailMainImage').parentElement;galleryTouchSurface.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY},{passive:true});galleryTouchSurface.addEventListener('touchend',e=>{if(e.changedTouches.length!==1)return;const dx=e.changedTouches[0].clientX-touchStartX,dy=e.changedTouches[0].clientY-touchStartY;if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.25)moveGallery(dx<0?1:-1)},{passive:true});updateGallery();go('detail');const colorPicker=$('detailColors');if(colorPicker){colorPicker.querySelectorAll('[data-product-color]').forEach((b,i)=>{b.setAttribute('aria-pressed',String(i===0));b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();activeColor=b.dataset.productColor;galleryIndex=0;colorPicker.querySelectorAll('[data-product-color]').forEach(x=>{const selected=x===b;x.classList.toggle('selected',selected);x.setAttribute('aria-pressed',String(selected))});updateGallery()})})}document.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>{picked=b.dataset.size;document.querySelectorAll('[data-size]').forEach(x=>x.classList.toggle('selected',x===b))});$('addCart').onclick=()=>{if((p.sizes||[]).length&&!picked)return toast('Choose a size first');cart.push({id:p.id,size:picked||'One size',color:activeColor});localStorage.setItem('sol-cart',JSON.stringify(cart));renderCart();toast('Added to bag');openBag()};go('detail');const detailHeart=$('detailWishlist');if(detailHeart)detailHeart.onclick=()=>{toggleWishlist(id);detailHeart.textContent=isSaved(id)?'♥ SAVED':'♡ SAVE TO WISHLIST'}}
+function renderCart(){$('bagCount').textContent=cart.length;$('cartItems').innerHTML=cart.map((c,i)=>{let p=products.find(x=>x.id===c.id);return p?'<div class="cart-item"><img src="'+safe(p.image)+'"><div><b>'+safe(p.name)+'</b><p class="muted">Size: '+safe(c.size)+'</p>'+(c.color?'<p class="muted">Color: '+safe(c.color)+'</p>':'')+'<p class="muted">'+money(p.price)+'</p></div><button class="close" onclick="removeCart('+i+')">×</button></div>':''}).join('')||'<p class="muted" style="padding:22px 0">Your bag is empty.</p>';$('subtotal').textContent=money(cart.reduce((n,c)=>n+(products.find(p=>p.id===c.id)?.price||0),0))}
+function removeCart(i){cart.splice(i,1);localStorage.setItem('sol-cart',JSON.stringify(cart));renderCart()}
+function openBag(){const drawer=$('drawer');$('overlay').classList.add('show');drawer.classList.add('show');document.body.classList.add('bag-open');drawer.setAttribute('aria-hidden','false');$('openBag').setAttribute('aria-expanded','true');$('closeBag').focus()}function closeBag(){const drawer=$('drawer');if(!drawer.classList.contains('show'))return;$('overlay').classList.remove('show');drawer.classList.remove('show');document.body.classList.remove('bag-open');drawer.setAttribute('aria-hidden','true');$('openBag').setAttribute('aria-expanded','false');$('openBag').focus()}
+function renderAdmin(){$('adminList').innerHTML=products.map(p=>'<div class="admin-item"><img src="'+safe(p.image)+'"><span><b>'+safe(p.name)+'</b><br><small>'+money(p.price)+(p.sample?' · sample':'')+'</small></span><button onclick="editProduct(\''+safe(p.id)+'\')">Edit</button><button onclick="toggleProduct(\''+safe(p.id)+'\')">'+(p.hidden?'Show':'Hide')+'</button><button onclick="deleteProduct(\''+safe(p.id)+'\')">Delete</button></div>').join('')}
+function setColorChoices(options=[],selected=[]){const values=[...new Set((options||[]).map(x=>String(x).trim()).filter(Boolean))];const chosen=new Set(selected||[]);$('pColorChoices').innerHTML=values.length?values.map(color=>'<button type="button" class="color-chip '+(chosen.has(color)?'selected':'')+'" data-color-choice="'+safe(color)+'" aria-pressed="'+chosen.has(color)+'">'+safe(color)+'</button>').join(''):'<span class="muted">No colors detected yet. You can add them below.</span>';$('pColorChoices').querySelectorAll('.color-chip').forEach(btn=>btn.onclick=()=>{const on=btn.classList.toggle('selected');btn.setAttribute('aria-pressed',String(on));saveImportDraft()});$('pColorHint').textContent=values.length?'Select the colors you want to offer.':'Add a color manually if needed.'}function addCustomColor(){const input=$('pColor');const additions=input.value.split(',').map(x=>x.trim()).filter(Boolean);if(!additions.length)return;const current=[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice);const selected=[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice);const merged=[...new Set([...current,...additions])];setColorChoices(merged,[...selected,...additions]);input.value='';renderImportedPhotoSets();input.focus()}$('addColorChoice').onclick=addCustomColor;$('pColor').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addCustomColor()}});function renderImportedPhotoSets(){const wrap=$('importedPhotoSets');if(!wrap)return;const available=[...new Set([...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice))];wrap.innerHTML=importedPhotoSets.map((set,i)=>'<div style="border:1px solid #35353c;background:#0c0c0f;padding:12px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><b style="font-size:10px;letter-spacing:.1em;text-transform:uppercase">Photo group '+(i+1)+' · '+set.images.length+' images</b><button type="button" data-remove-photo-set="'+i+'" style="background:none;border:0;color:#aaa;text-decoration:underline;font-size:10px">Remove</button></div><label style="display:block;font-size:9px;color:#aaa;margin:10px 0 6px;letter-spacing:.1em;text-transform:uppercase">These photos belong to</label><select data-photo-color="'+i+'" style="width:100%;padding:10px;background:#111;color:#eee;border:1px solid #444"><option value="">Choose a color…</option>'+available.map(color=>'<option value="'+safe(color)+'" '+(set.color===color?'selected':'')+'>'+safe(color)+'</option>').join('')+'</select><div style="display:flex;gap:6px;overflow:auto;margin-top:10px">'+set.images.slice(0,5).map(src=>'<img src="'+safe(src)+'" style="width:55px;height:65px;object-fit:contain;background:#18181c;border:1px solid #333">').join('')+'</div></div>').join('');wrap.querySelectorAll('[data-photo-color]').forEach(sel=>sel.onchange=()=>{importedPhotoSets[Number(sel.dataset.photoColor)].color=sel.value;saveImportDraft()});wrap.querySelectorAll('[data-remove-photo-set]').forEach(btn=>btn.onclick=()=>{importedPhotoSets.splice(Number(btn.dataset.removePhotoSet),1);renderImportedPhotoSets();syncImportedUrls();saveImportDraft()})}function syncImportedUrls(){$('pImageUrls').value=[...new Set(importedPhotoSets.flatMap(x=>x.images))].join('\n')}function saveImportDraft(){try{const draft={name:$('pName').value,desc:$('pDesc').value,price:$('pPrice').value,category:$('pCategory').value,sizes:[...$('pSizeChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.sizeChoice),selectedSizes:[...$('pSizeChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.sizeChoice),colors:[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice),selectedColors:[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice),photoSets:importedPhotoSets,urls:$('pImageUrls').value};localStorage.setItem('sol-import-draft',JSON.stringify(draft))}catch(e){}}function restoreImportDraft(){try{const d=JSON.parse(localStorage.getItem('sol-import-draft')||'null');if(!d)return;$('pName').value=d.name||'';$('pDesc').value=d.desc||'';$('pPrice').value=d.price||'';$('pCategory').value=d.category||'Tops';setSizeChoices(d.sizes||[],d.selectedSizes||[]);setColorChoices(d.colors||[],d.selectedColors||[]);importedPhotoSets=Array.isArray(d.photoSets)?d.photoSets:[];$('pImageUrls').value=d.urls||'';renderImportedPhotoSets();if(importedPhotoSets.length)$('formTitle').textContent='Continue product setup'}catch(e){localStorage.removeItem('sol-import-draft')}}function setSizeChoices(options=[],selected=[]){const values=[...new Set((options||[]).map(x=>String(x).trim()).filter(Boolean))];const chosen=new Set(selected||[]);$('pSizeChoices').innerHTML=values.length?values.map(size=>'<button type="button" class="color-chip '+(chosen.has(size)?'selected':'')+'" data-size-choice="'+safe(size)+'" aria-pressed="'+chosen.has(size)+'">'+safe(size)+'</button>').join(''):'<span class="muted">No sizes detected yet. Add them below if needed.</span>';$('pSizeChoices').querySelectorAll('.color-chip').forEach(btn=>btn.onclick=()=>{const on=btn.classList.toggle('selected');btn.setAttribute('aria-pressed',String(on));saveImportDraft()});$('pSizeHint').textContent=values.length?'Select the sizes you want to offer.':'Add sizes manually if needed.'}function clearForm(){localStorage.removeItem('sol-import-draft');$('productForm').reset();$('editId').value='';importedPhotoSets=[];renderImportedPhotoSets();setColorChoices();setSizeChoices();$('formTitle').textContent='Add a product'}
+function editProduct(id){let p=products.find(x=>x.id===id);$('editId').value=id;$('pName').value=p.name;$('pDesc').value=p.desc||'';$('pPrice').value=p.price;$('pCategory').value=p.category;$('pSizes').value='';setSizeChoices(p.sizes||[],p.sizes||[]);$('pColor').value='';setColorChoices(p.colors||String(p.color||'').split(',').map(x=>x.trim()).filter(Boolean),p.colors||String(p.color||'').split(',').map(x=>x.trim()).filter(Boolean));importedPhotoSets=Object.entries(p.colorImages||{}).map(([color,images])=>({color,images}));renderImportedPhotoSets();$('pImageUrls').value=(p.images||[p.image]).join('\n');$('formTitle').textContent='Edit product';window.scrollTo(0,0)}
+async function toggleProduct(id){let p=products.find(x=>x.id===id);if(!p)return;p.hidden=!p.hidden;try{p=await solSaveProduct(p);products=products.map(x=>x.id===id?p:x);localStorage.setItem('sol-products',JSON.stringify(products));renderAdmin();render();toast(p.hidden?'Product unpublished':'Product published')}catch(error){p.hidden=!p.hidden;toast('Could not update cloud product');console.error(error)}}
+async function deleteProduct(id){if(confirm('Delete this product?')){try{await solDeleteProduct(id);products=products.filter(p=>p.id!==id);localStorage.setItem('sol-products',JSON.stringify(products));renderAdmin();render();toast('Product deleted')}catch(error){toast('Could not delete cloud product');console.error(error)}}}
+$('productForm').onsubmit=async e=>{e.preventDefault();if(importedPhotoSets.some(set=>!set.color)){toast('Assign a color to every imported photo group');return}let id=$('editId').value,old=products.find(p=>p.id===id),file=$('pImage').files[0],image=old?.image||'';if(file)image=await new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});let images=$('pImageUrls').value.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https?:\/\//i.test(s));if(file)images.unshift(image);else if(old?.images?.length&&!images.length)images=old.images;if(!images.length&&image)images=[image];if(!images.length){toast('Add a product image or at least one mockup URL');return}const colorImages={};importedPhotoSets.forEach(set=>{if(set.color)colorImages[set.color]=[...new Set([...(colorImages[set.color]||[]),...set.images])]});if(old?.colorImages&&!importedPhotoSets.length)Object.assign(colorImages,old.colorImages);let p={id:id||'sol-'+Date.now(),name:$('pName').value.trim(),desc:$('pDesc').value,price:Number($('pPrice').value),category:$('pCategory').value,sizes:[...new Set([...Array.from($('pSizeChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.sizeChoice),...$('pSizes').value.split(',').map(s=>s.trim()).filter(Boolean)])],colors:[...new Set([...Array.from($('pColorChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.colorChoice),...$('pColor').value.split(',').map(s=>s.trim()).filter(Boolean)])],color:[...new Set([...Array.from($('pColorChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.colorChoice),...$('pColor').value.split(',').map(s=>s.trim()).filter(Boolean)])].join(', '),image:images[0],images,colorImages,hidden:old?.hidden||false,sample:false};p=await solSaveProduct(p);if(old)products=products.map(x=>x.id===id?p:x);else products.unshift(p);localStorage.setItem('sol-products',JSON.stringify(products));clearForm();renderAdmin();render();toast(solIsAdmin?'Product saved to shared store':'Product saved on this device')};
+function receiveTapImport(){const prefix='#tapstitch-import=';if(!location.hash.startsWith(prefix))return;try{const data=JSON.parse(decodeURIComponent(location.hash.slice(prefix.length)));if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');go('studio');const firstImport=importedPhotoSets.length===0&&!$('pName').value.trim();if(firstImport){$('pName').value=data.title||'';$('pDesc').value='';$('pPrice').value='';$('pCategory').value='Tops';$('pSizes').value='';setSizeChoices(data.sizes||[],data.sizes||[]);setColorChoices(data.colors||[],data.colors||[]);$('formTitle').textContent='Imported from Tapstitch'}else{const oldColors=[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice);const chosenColors=[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice);setColorChoices([...oldColors,...(data.colors||[])],[...chosenColors,...(data.colors||[])]);const oldSizes=[...$('pSizeChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.sizeChoice);const chosenSizes=[...$('pSizeChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.sizeChoice);setSizeChoices([...oldSizes,...(data.sizes||[])],[...chosenSizes,...(data.sizes||[])])}const oneColor=(data.colors||[]).length===1?data.colors[0]:'';importedPhotoSets.push({images:[...new Set(data.images)],color:oneColor});renderImportedPhotoSets();syncImportedUrls();$('extractorStatus').textContent='Added photo group '+importedPhotoSets.length+' with '+data.images.length+' image(s). Assign its color in the Photo groups section.'+(data.item?' · item '+data.item:'')+(data.colors?.length?' · '+data.colors.length+' color options detected':'')+(data.sizes?.length?' · '+data.sizes.length+' sizes detected':'');history.replaceState(null,'',location.pathname+location.search);saveImportDraft();$('productForm').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){alert('Tapstitch import could not be read: '+e.message);history.replaceState(null,'',location.pathname+location.search)}}
+$('resetForm').onclick=clearForm;
+$('exportCatalog').onclick=()=>{const blob=new Blob([JSON.stringify({brand:'SOL',version:1,products},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='sol-products.json';a.click();URL.revokeObjectURL(url);toast('Catalog exported')};
+$('importCatalog').onclick=()=>$('catalogFile').click();
+$('catalogFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=Array.isArray(data)?data:data.products;if(!Array.isArray(incoming))throw new Error('Invalid catalog');if(!incoming.every(p=>p&&typeof p.name==='string'&&typeof p.price==='number'&&typeof p.image==='string'))throw new Error('Some product entries are incomplete');products=incoming.map(p=>({...p,id:String(p.id||'sol-'+Date.now()+'-'+Math.random().toString(36).slice(2))}));localStorage.setItem('sol-products',JSON.stringify(products));renderAdmin();render();toast('Catalog imported')}catch(err){alert('Could not import this catalog: '+err.message)}e.target.value=''};
+$('sort').onchange=render;
+$('searchToggle').onclick=()=>{const panel=$('searchPanel'),open=!panel.classList.contains('open');panel.classList.toggle('open',open);$('searchToggle').setAttribute('aria-expanded',String(open));if(open){$('searchInput').focus();renderSearch() }};
+function renderSearch(){const q=$('searchInput').value.trim().toLowerCase();if(!q){$('searchResults').innerHTML='<div class="search-empty">Start typing to discover pieces.</div>';return}const matches=products.filter(p=>p.hidden!==true&&[p.name,p.category,p.color,p.desc].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);$('searchResults').innerHTML=matches.map(p=>'<button type="button" class="search-result" data-search-id="'+safe(p.id)+'" aria-label="View '+safe(p.name)+'"><img src="'+safe(p.image)+'" alt=""><span>'+safe(p.name)+'<small>'+safe(p.category)+'</small></span><span>'+money(p.price)+'</span></button>').join('')||'<div class="search-empty">No pieces found. Try another search.</div>';document.querySelectorAll('[data-search-id]').forEach(el=>el.onclick=()=>{$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');showProduct(el.dataset.searchId)})}
+$('searchInput').addEventListener('input',renderSearch);
+document.addEventListener('click',e=>{if(!$('searchPanel').contains(e.target)&&!$('searchToggle').contains(e.target)){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('drawer').classList.contains('show')){closeBag();return}if($('searchPanel').classList.contains('open')){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');$('searchToggle').focus()}}});
+$('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render()});
+document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.category){filter=a.dataset.category;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter))}go(a.dataset.page)}));
+$('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('continueShopping').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
+const themeToggle=$('themeToggle');
+function applySolTheme(theme){const dark=theme==='dark';document.documentElement.dataset.solTheme=dark?'dark':'light';themeToggle.setAttribute('aria-label',dark?'Dark mode active. Switch to light mode':'Light mode active. Switch to dark mode');themeToggle.setAttribute('aria-checked',String(dark));}
+let savedTheme=localStorage.getItem('sol-theme')==='dark'?'dark':'light';applySolTheme(savedTheme);
+themeToggle.addEventListener('click',()=>{savedTheme=savedTheme==='dark'?'light':'dark';localStorage.setItem('sol-theme',savedTheme);applySolTheme(savedTheme);});
+saveWishlist();render();
+restoreImportDraft();
+document.querySelectorAll('#productForm input,#productForm textarea,#productForm select').forEach(el=>el.addEventListener('input',saveImportDraft));
+receiveTapImport();
+
+
+/* Studio-only device preview controls. These controls are injected only after the private Studio gate is passed. */
+let solPreviewMode='desktop';
+/* Mirror the real phone's responsive CSS inside the fixed-width Studio preview.
+   The desktop browser viewport itself does not shrink, so copy the matching mobile
+   media-query rules and scope them to the simulated device surface. */
+function buildSolMobilePreviewCSS(){
+ const targetWidth=390;
+ const out=[];
+ const splitSelectors=value=>{const parts=[];let start=0,depth=0;for(let i=0;i<value.length;i++){if(value[i]==='('||value[i]==='[')depth++;else if(value[i]===')'||value[i]===']')depth--;else if(value[i]===','&&depth===0){parts.push(value.slice(start,i).trim());start=i+1}}parts.push(value.slice(start).trim());return parts.filter(Boolean)};
+ const scopeSelector=selector=>{
+  if(/^:root$/.test(selector))return 'body.sol-mobile-preview';
+  if(/^(html|body)(?=\b|[.#:[\s>+~])/.test(selector))return selector.replace(/^(html|body)/,'body.sol-mobile-preview');
+  return 'body.sol-mobile-preview '+selector;
+ };
+ const mediaApplies=query=>{
+  const q=query.toLowerCase();
+  if(/\bprint\b/.test(q))return false;
+  const max=[...q.matchAll(/max-width\s*:\s*([\d.]+)(px|em|rem)/g)];
+  const min=[...q.matchAll(/min-width\s*:\s*([\d.]+)(px|em|rem)/g)];
+  const px=m=>Number(m[1])*(m[2]==='px'?1:16);
+  if(max.some(m=>targetWidth>px(m)))return false;
+  if(min.some(m=>targetWidth<px(m)))return false;
+  if(/hover\s*:\s*hover/.test(q)||/pointer\s*:\s*fine/.test(q))return false;
+  return max.length>0||min.length>0||/hover\s*:\s*none|pointer\s*:\s*coarse/.test(q);
+ };
+ const walk=(rules,responsive=false)=>{
+  for(const rule of rules){
+   if(rule.type===4){if(mediaApplies(rule.conditionText))walk(rule.cssRules,true);continue}
+   if(rule.type===12){walk(rule.cssRules,responsive);continue}
+   if(rule.type===1&&responsive){
+    const selectors=splitSelectors(rule.selectorText).map(scopeSelector).join(',');
+    out.push(selectors+'{'+rule.style.cssText+'}');
+    continue;
+   }
+   if(responsive&&rule.type===7)out.push(rule.cssText);
+  }
+ };
+ for(const sheet of Array.from(document.styleSheets)){
+  try{walk(sheet.cssRules,false)}catch(error){/* Skip inaccessible stylesheets. */}
+ }
+ let style=document.getElementById('sol-mobile-responsive-mirror');
+ if(!style){style=document.createElement('style');style.id='sol-mobile-responsive-mirror';document.head.appendChild(style)}
+ style.textContent=out.join('\n');
+}
+function setSolPreview(mode){
+ solPreviewMode=mode;
+ document.body.classList.toggle('sol-mobile-preview',mode==='mobile');
+ if(mode==='mobile')buildSolMobilePreviewCSS();
+ const mobile=document.getElementById('solPreviewMobile');
+ const desktop=document.getElementById('solPreviewDesktop');
+ if(mobile)mobile.setAttribute('aria-pressed',String(mode==='mobile'));
+ if(desktop)desktop.setAttribute('aria-pressed',String(mode==='desktop'));
+}
+function ensureSolPreviewControls(){
+ if(sessionStorage.getItem('sol-studio-unlocked')!=='yes'||document.getElementById('solPreviewControls'))return;
+ const bar=document.createElement('div');
+ bar.id='solPreviewControls';bar.className='sol-preview-controls';
+ bar.innerHTML='<button type="button" id="solPreviewDesktop" aria-pressed="true">Desktop</button><button type="button" id="solPreviewMobile" aria-pressed="false">Mobile</button>';
+ document.body.appendChild(bar);
+ document.getElementById('solPreviewDesktop').addEventListener('click',()=>setSolPreview('desktop'));
+ document.getElementById('solPreviewMobile').addEventListener('click',()=>setSolPreview('mobile'));
+}
+
+/* Mobile menu: delegated controls keep the menu reliable and close it after every selection. */
+(function(){
+ const toggle=document.getElementById('mobileMenuToggle');
+ const menu=document.getElementById('mobileMenu');
+ const close=()=>{
+  if(!menu||!toggle)return;
+  menu.classList.remove('open');
+  toggle.setAttribute('aria-expanded','false');
+  toggle.setAttribute('aria-label','Open menu');
+ };
+ if(!toggle||!menu)return;
+ toggle.addEventListener('click',function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  const open=!menu.classList.contains('open');
+  menu.classList.toggle('open',open);
+  toggle.setAttribute('aria-expanded',String(open));
+  toggle.setAttribute('aria-label',open?'Close menu':'Open menu');
+ });
+ menu.addEventListener('click',function(event){
+  const link=event.target.closest('a[data-page]');
+  const action=event.target.closest('button');
+  if(link){close();return;}
+  if(!action)return;
+  event.preventDefault();
+  if(action.id==='mobileMenuSearch'){
+   close();
+   document.getElementById('searchToggle')?.click();
+   return;
+  }
+  if(action.id==='mobileMenuTheme'){
+   close();
+   document.getElementById('themeToggle')?.click();
+  }
+ });
+ document.addEventListener('click',function(event){
+  if(menu.classList.contains('open')&&!menu.contains(event.target)&&!toggle.contains(event.target))close();
+ });
+ document.addEventListener('keydown',function(event){if(event.key==='Escape')close();});
+})();
+;
++Number(n).toFixed(2),safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let solDb=null,solIsAdmin=false;
+try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABASE_PUBLISHABLE_KEY)solDb=window.supabase.createClient(window.SOL_SUPABASE_URL,window.SOL_SUPABASE_PUBLISHABLE_KEY)}catch(error){console.error('SOL cloud setup:',error)}
+async function solCheckAdmin(){if(!solDb)return false;const {data:{user}}=await solDb.auth.getUser();if(!user)return false;const {data,error}=await solDb.from('sol_admins').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;solIsAdmin=!!data;return solIsAdmin}
+async function solUploadImage(src,id,index){if(!solDb||!solIsAdmin||!String(src||'').startsWith('data:'))return src;const response=await fetch(src);const blob=await response.blob();const ext=(blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');const path=id+'/'+Date.now()+'-'+index+'.'+ext;const {error}=await solDb.storage.from('sol-products').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'});if(error)throw error;return solDb.storage.from('sol-products').getPublicUrl(path).data.publicUrl}
+async function solPrepareProduct(p){let i=0;const replace=async value=>solUploadImage(value,p.id,++i);p.image=await replace(p.image);p.images=await Promise.all((p.images||[]).map(replace));for(const color of Object.keys(p.colorImages||{}))p.colorImages[color]=await Promise.all(p.colorImages[color].map(replace));return p}
+async function solSaveProduct(p){if(!solDb||!solIsAdmin)return p;const ready=await solPrepareProduct({...p});const {error}=await solDb.from('sol_products').upsert({id:ready.id,name:ready.name,category:ready.category,price:ready.price,data:ready,is_published:ready.hidden!==true,updated_at:new Date().toISOString()});if(error)throw error;return ready}
+async function solDeleteProduct(id){if(!solDb||!solIsAdmin)return;const {error}=await solDb.from('sol_products').delete().eq('id',String(id));if(error)throw error}
+async function initSolCloud(){if(!solDb)return;try{const admin=await solCheckAdmin();let query=solDb.from('sol_products').select('data');if(!admin)query=query.eq('is_published',true);const {data,error}=await query.order('updated_at',{ascending:false});if(error)throw error;products=(data||[]).map(row=>row.data).filter(p=>p&&!p.sample);localStorage.setItem('sol-products',JSON.stringify(products));render();if(admin)renderAdmin()}catch(error){console.error('SOL cloud load failed:',error);toast('Cloud connection needs setup — local catalog kept')}}
+
+
+initSolCloud();
+</script>
+</body></html>
++Number(n||0).toFixed(2),safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
 let wishlist=readStore('sol-wishlist',[],Array.isArray).map(String),recentlyViewed=readStore('sol-recent',[],Array.isArray).map(String);
 let importedPhotoSets=[];
