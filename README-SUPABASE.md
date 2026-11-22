@@ -1,6 +1,6 @@
 # SOL shared publishing setup
 
-This prepares the secure Supabase database for SOL's public product catalog. The storefront is **not connected yet**; it still uses browser-local products until the project URL and public anon key are configured and the frontend integration is deployed.
+This prepares the secure Supabase database for SOL's public product catalog. The storefront frontend is now configured with the browser-safe project URL and publishable key in `supabase-config.js`. The shared catalog will work after the SQL setup and admin membership steps below are completed.
 
 ## 1. Create the Supabase project
 
@@ -30,9 +30,11 @@ Open **Project Settings → API** and copy:
 
 These two values are intended for browser use with the Row Level Security policies in `schema.sql`. Never share or put the **service_role / secret key** in the website, GitHub, or chat.
 
-## 4. Finish the storefront connection
+## 4. Sign in to SOL Studio
 
-The frontend still needs to be connected to this project's URL and publishable key. Until that integration is complete, adding products in Studio only saves them in the current browser and does not make them public to other visitors.
+The storefront loads published products from `sol_products`. To manage the catalog, open SOL Studio and enter the email and password for the adult-managed Supabase admin account. The app checks that the signed-in user is listed in `sol_admins` before allowing Studio access.
+
+New products are saved to the shared database. The Hide/Show control unpublishes or republishes a product. Uploaded product images are placed in the `sol-products` Storage bucket. If cloud setup has not been completed, the storefront keeps the local browser catalog and displays a setup warning.
 
 ## Publishing behavior planned
 
