@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>
+(function(){
+ try{
+  var params=new URLSearchParams(window.location.search);
+  if(params.has('sol-import')&&params.get('sol-import-unlocked')!=='1'){
+   window.location.replace('/tapstitch-import.html'+window.location.search+window.location.hash);
+  }
+ }catch(error){console.error('SOL import handoff redirect failed:',error)}
+})();
+</script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#090909">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=1"><meta name="theme-color" content="#090909"><meta name="description" content="SOL — independent streetwear. Explore the latest clothing, collections, and everyday essentials."><meta property="og:type" content="website"><meta property="og:title" content="SOL — Independent Streetwear"><meta property="og:description" content="Explore the latest SOL clothing and collections."><meta property="og:image" content="https://cool7crazy2020-del.github.io/sol/assets/sol-logo.jpg"><meta name="twitter:card" content="summary">
