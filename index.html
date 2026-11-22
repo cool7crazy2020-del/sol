@@ -1721,11 +1721,18 @@ function bindProductCards(root){root.querySelectorAll('.product').forEach(el=>{e
 function card(p){return '<article class="product" data-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="View '+safe(p.name)+'"><div class="product-image"><img src="'+safe(p.image)+'" alt="'+safe(p.name)+'" loading="lazy"><button class="wishlist-heart '+(isSaved(p.id)?'saved':'')+'" data-heart="'+safe(p.id)+'" aria-label="'+(isSaved(p.id)?'Remove from wishlist':'Add to wishlist')+'">'+(isSaved(p.id)?'♥':'♡')+'</button>'+(p.sample?'<span class="tag">Preview piece</span>':'')+'<button class="quick" type="button" data-quick="'+safe(p.id)+'" aria-label="Quick view '+safe(p.name)+'">Quick view ↗︎</button></div><div class="product-meta"><div>'+safe(p.name)+'<small>'+safe(p.category)+' · '+safe(p.color||'SOL')+'</small></div><span class="price">'+money(p.price)+'</span></div></article>'}
 function render(){let live=products.filter(p=>p.hidden!==true);$('featured').innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);$('allProducts').innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const recent=recentlyViewed.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('recentProducts').innerHTML=recent.map(card).join('')||'<p class="muted">Pieces you view will appear here.</p>';$('recentSection').style.display=recent.length?'block':'none';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('wishlistProducts').innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');$('wishCount').textContent=wishlist.length;bindProductCards($('featured'));bindProductCards($('allProducts'));bindProductCards($('recentProducts'));bindProductCards($('wishlistProducts'));$('bagCount').textContent=cart.length;renderCart()}
 let studioTapCount=0,studioTapTimer=null;
+function finishPendingTapImport(){
+ let data;
+ try{data=JSON.parse(sessionStorage.getItem('sol-pending-tap-import')||'null')}catch(e){sessionStorage.removeItem('sol-pending-tap-import');return false}
+ if(!data)return false;
+ try{applyTapImport(data);sessionStorage.removeItem('sol-pending-tap-import');return true}
+ catch(e){alert('Tapstitch import could not be completed: '+e.message);return false}
+}
 function openStudioGate(){
- if(sessionStorage.getItem('sol-studio-unlocked')==='yes'){go('studio');return}
+ if(sessionStorage.getItem('sol-studio-unlocked')==='yes'){go('studio');finishPendingTapImport();return}
  const entered=window.prompt('SOL Studio passcode');
  if(entered===null)return;
- if(entered==='solstuff'){sessionStorage.setItem('sol-studio-unlocked','yes');toast('Studio unlocked');go('studio')}
+ if(entered==='solstuff'){sessionStorage.setItem('sol-studio-unlocked','yes');toast('Studio unlocked');go('studio');finishPendingTapImport()}
  else toast('Incorrect passcode');
 }
 $('copyrightHotspot').addEventListener('click',()=>{
@@ -1756,7 +1763,37 @@ async function toggleProduct(id){let p=products.find(x=>x.id===id);if(!p)return;
 async function deleteProduct(id){if(confirm('Delete this product?')){try{await solDeleteProduct(id);products=products.filter(p=>p.id!==id);localStorage.setItem('sol-products',JSON.stringify(products));renderAdmin();render();toast('Product deleted')}catch(error){toast('Could not delete cloud product');console.error(error)}}}
 $('productForm').onsubmit=async e=>{e.preventDefault();if(importedPhotoSets.some(set=>!set.color)){toast('Assign a color to every imported photo group');return}let id=$('editId').value,old=products.find(p=>p.id===id),file=$('pImage').files[0],image=old?.image||'';if(file)image=await new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});let images=$('pImageUrls').value.split(/\r?\n/).map(s=>s.trim()).filter(s=>/^https?:\/\//i.test(s));if(file)images.unshift(image);else if(old?.images?.length&&!images.length)images=old.images;if(!images.length&&image)images=[image];if(!images.length){toast('Add a product image or at least one mockup URL');return}const colorImages={};importedPhotoSets.forEach(set=>{if(set.color)colorImages[set.color]=[...new Set([...(colorImages[set.color]||[]),...set.images])]});if(old?.colorImages&&!importedPhotoSets.length)Object.assign(colorImages,old.colorImages);let p={id:id||'sol-'+Date.now(),name:$('pName').value.trim(),desc:$('pDesc').value,price:Number($('pPrice').value),category:$('pCategory').value,sizes:[...new Set([...Array.from($('pSizeChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.sizeChoice),...$('pSizes').value.split(',').map(s=>s.trim()).filter(Boolean)])],colors:[...new Set([...Array.from($('pColorChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.colorChoice),...$('pColor').value.split(',').map(s=>s.trim()).filter(Boolean)])],color:[...new Set([...Array.from($('pColorChoices').querySelectorAll('.color-chip.selected')).map(b=>b.dataset.colorChoice),...$('pColor').value.split(',').map(s=>s.trim()).filter(Boolean)])].join(', '),image:images[0],images,colorImages,hidden:old?.hidden||false,sample:false};p=await solSaveProduct(p);if(old)products=products.map(x=>x.id===id?p:x);else products.unshift(p);localStorage.setItem('sol-products',JSON.stringify(products));clearForm();renderAdmin();render();toast(solIsAdmin?'Product saved to shared store':'Product saved on this device')};
 function applyTapImport(data){if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');go('studio');const firstImport=importedPhotoSets.length===0&&!$('pName').value.trim();if(firstImport){$('pName').value=data.title||'';$('pDesc').value='';$('pPrice').value='';$('pCategory').value='Tops';$('pSizes').value='';setSizeChoices(data.sizes||[],data.sizes||[]);setColorChoices(data.colors||[],data.colors||[]);$('formTitle').textContent='Imported from Tapstitch'}else{const oldColors=[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice);const chosenColors=[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice);setColorChoices([...oldColors,...(data.colors||[])],[...chosenColors,...(data.colors||[])]);const oldSizes=[...$('pSizeChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.sizeChoice);const chosenSizes=[...$('pSizeChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.sizeChoice);setSizeChoices([...oldSizes,...(data.sizes||[])],[...chosenSizes,...(data.sizes||[])])}const oneColor=(data.colors||[]).length===1?data.colors[0]:'';importedPhotoSets.push({images:[...new Set(data.images)],color:oneColor});renderImportedPhotoSets();syncImportedUrls();$('extractorStatus').textContent='Added photo group '+importedPhotoSets.length+' with '+data.images.length+' image(s). Assign its color in the Photo groups section.'+(data.item?' · item '+data.item:'')+(data.colors?.length?' · '+data.colors.length+' color options detected':'')+(data.sizes?.length?' · '+data.sizes.length+' sizes detected':'');saveImportDraft();$('productForm').scrollIntoView({behavior:'smooth',block:'start'});}
-function receiveTapImport(){const prefix='#tapstitch-import=';if(!location.hash.startsWith(prefix))return;let data;try{data=JSON.parse(decodeURIComponent(location.hash.slice(prefix.length)));if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');}catch(e){alert('Tapstitch import could not be read: '+e.message);history.replaceState(null,'',location.pathname+location.search);return;}history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>{if(sessionStorage.getItem('sol-studio-unlocked')!=='yes'){const entered=window.prompt('SOL Studio passcode');if(entered!=='solstuff'){if(entered!==null)toast('Incorrect passcode');return;}sessionStorage.setItem('sol-studio-unlocked','yes');}try{applyTapImport(data);}catch(e){alert('Tapstitch import could not be completed: '+e.message)}},350);}
+function receiveTapImport(){
+ const prefix='#tapstitch-import=';
+ if(!location.hash.startsWith(prefix))return;
+ let data;
+ try{
+  data=JSON.parse(decodeURIComponent(location.hash.slice(prefix.length)));
+  if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');
+  sessionStorage.setItem('sol-pending-tap-import',JSON.stringify(data));
+ }catch(e){
+  alert('Tapstitch import could not be read: '+e.message);
+  history.replaceState(null,'',location.pathname+location.search);
+  return;
+ }
+ history.replaceState(null,'',location.pathname+location.search);
+ setTimeout(()=>{
+  if(sessionStorage.getItem('sol-studio-unlocked')==='yes'){finishPendingTapImport();return}
+  try{
+   const entered=window.prompt('SOL Studio passcode');
+   if(entered==='solstuff'){
+    sessionStorage.setItem('sol-studio-unlocked','yes');
+    finishPendingTapImport();
+   }else if(entered!==null){
+    toast('Incorrect passcode. Your Tapstitch import is saved; unlock Studio to continue.');
+   }else{
+    toast('Tapstitch import saved. Unlock Studio to finish importing.');
+   }
+  }catch(e){
+   toast('Tapstitch import saved. Unlock Studio to finish importing.');
+  }
+ },700);
+}
 
 $('resetForm').onclick=clearForm;
 $('exportCatalog').onclick=()=>{const blob=new Blob([JSON.stringify({brand:'SOL',version:1,products},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='sol-products.json';a.click();URL.revokeObjectURL(url);toast('Catalog exported')};
