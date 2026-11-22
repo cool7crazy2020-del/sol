@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SOL Tapstitch Extractor",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Extract product details and mockup image URLs from your signed-in Tapstitch product page into SOL.",
   "permissions": [
     "activeTab",
@@ -12,7 +12,8 @@
   "host_permissions": [
     "https://tapstitch.com/*",
     "https://www.tapstitch.com/*",
-    "https://cool7crazy2020-del.github.io/sol/*"
+    "https://cool7crazy2020-del.github.io/sol/*",
+    "https://shopsol.vercel.app/*"
   ],
   "background": {
     "service_worker": "background.js"
