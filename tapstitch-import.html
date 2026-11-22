@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090b">
+<title>SOL Studio Import</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#09090b;color:#f4f3f1;font:14px/1.5 Arial,sans-serif;display:grid;place-items:center;padding:22px}.card{width:min(100%,420px);border:1px solid #333;padding:30px;background:#111;border-radius:3px;box-shadow:0 24px 80px #0008}.eyebrow{font-size:10px;letter-spacing:.22em;color:#aaa}h1{font-size:25px;line-height:1.15;margin:12px 0 8px}p{color:#aaa;margin:0 0 22px}input{width:100%;padding:14px;background:#080808;color:white;border:1px solid #555;font-size:16px;margin-bottom:12px}button{width:100%;padding:14px;background:#f4f3f1;color:#090909;border:0;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}button:disabled{opacity:.5;cursor:wait}.error{color:#ff9999;min-height:20px;font-size:12px;margin:0 0 10px}.meta{font-size:11px;color:#888;margin-top:16px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="eyebrow">SOL / PRIVATE STUDIO</div>
+<h1 id="heading">Unlock to create product</h1>
+<p id="description">Your Tapstitch product is ready. Enter the Studio passcode to send it into a new product draft.</p>
+<form id="unlockForm">
+<input id="passcode" type="password" autocomplete="current-password" placeholder="Studio passcode" required>
+<div class="error" id="error" role="alert"></div>
+<button id="submit" type="submit">Open new product</button>
+</form>
+<div class="meta" id="productMeta"></div>
+</main>
+<script>
+(function(){
+ const params=new URLSearchParams(location.search);
+ const raw=params.get('sol-import');
+ const form=document.getElementById('unlockForm');
+ const input=document.getElementById('passcode');
+ const error=document.getElementById('error');
+ const submit=document.getElementById('submit');
+ let data=null;
+ try{
+  if(!raw) throw new Error('No Tapstitch import data was found in this link. Go back to Tapstitch and run the SOL Extractor again.');
+  data=JSON.parse(raw);
+  if(!data||!Array.isArray(data.images)||!data.images.length) throw new Error('This import has no mockup images. Run the extractor again on the Tapstitch product page.');
+  data.images=data.images.filter(url=>typeof url==='string'&&/^https?:\\/\\//i.test(url));
+  if(!data.images.length) throw new Error('The mockup image links are invalid. Run the extractor again.');
+ }catch(e){
+  document.getElementById('heading').textContent='Import link problem';
+  document.getElementById('description').textContent=e.message;
+  form.hidden=true;
+  return;
+ }
+ document.getElementById('productMeta').textContent=(data.title||'Tapstitch product')+' · '+data.images.length+' mockup image(s)';
+ form.addEventListener('submit',function(e){
+  e.preventDefault();
+  if(input.value!=='solstuff'){error.textContent='Incorrect passcode. Try again.';input.select();return}
+  submit.disabled=true;
+  submit.textContent='Opening Studio…';
+  try{
+   sessionStorage.setItem('sol-studio-unlocked','yes');
+   sessionStorage.setItem('sol-pending-tap-import',JSON.stringify(data));
+   const target=new URL('/',location.origin);
+   target.searchParams.set('sol-import',JSON.stringify(data));
+   target.searchParams.set('sol-import-unlocked','1');
+   location.replace(target.toString());
+  }catch(err){
+   submit.disabled=false;submit.textContent='Open new product';
+   error.textContent='Could not prepare the import in this browser. Please try again.';
+  }
+ });
+ input.focus();
+})();
+</script>
+</body>
+</html>
