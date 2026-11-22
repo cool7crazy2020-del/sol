@@ -47,6 +47,13 @@ create policy "admins can delete products"
 on public.sol_products for delete to authenticated
 using (exists (select 1 from public.sol_admins a where a.user_id = auth.uid()));
 
+-- Explicit API grants are required in addition to RLS policies.
+-- RLS controls which rows can be accessed; GRANT controls table-level access.
+grant usage on schema public to anon, authenticated;
+grant select on table public.sol_products to anon, authenticated;
+grant insert, update, delete on table public.sol_products to authenticated;
+grant select on table public.sol_admins to authenticated;
+
 -- Public product images. Upload/delete is restricted to signed-in SOL admins.
 insert into storage.buckets (id, name, public)
 values ('sol-products', 'sol-products', true)
