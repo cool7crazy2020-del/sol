@@ -34,7 +34,7 @@
   if(!raw) throw new Error('No Tapstitch import data was found in this link. Go back to Tapstitch and run the SOL Extractor again.');
   data=JSON.parse(raw);
   if(!data||!Array.isArray(data.images)||!data.images.length) throw new Error('This import has no mockup images. Run the extractor again on the Tapstitch product page.');
-  data.images=data.images.filter(url=>typeof url==='string'&&/^https?:\\/\\//i.test(url));
+  data.images=data.images.filter(url=>typeof url==='string'&&(url.startsWith('https://')||url.startsWith('http://')));
   if(!data.images.length) throw new Error('The mockup image links are invalid. Run the extractor again.');
  }catch(e){
   document.getElementById('heading').textContent='Import link problem';
