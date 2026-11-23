@@ -2138,18 +2138,21 @@ async function loadSolOrders(){
   }).join('');
  }catch(error){console.error('SOL order history error:',error);list.innerHTML='<div class="orders-empty">We could not load your orders right now. Please try again later.</div>'}
 }
+const solAccountPromptSeenKey='sol-first-visit-signup-seen-v1';
+function solHasSeenAccountPrompt(){try{if(localStorage.getItem(solAccountPromptSeenKey)==='yes')return true}catch(error){}return document.cookie.split(';').some(cookie=>cookie.trim()===solAccountPromptSeenKey+'=yes')}
+function solMarkAccountPromptSeen(){try{localStorage.setItem(solAccountPromptSeenKey,'yes')}catch(error){}try{document.cookie=solAccountPromptSeenKey+'=yes; Max-Age=31536000; Path=/; SameSite=Lax'+(location.protocol==='https:'?'; Secure':'')}catch(error){}}
 function solShowAccount(user){const signedIn=!!user;$('solAccountForms').style.display=signedIn?'none':'block';$('solAccountSignedIn').style.display=signedIn?'block':'none';$('solAccountTitle').textContent=signedIn?'Your account':(solAccountMode==='signup'?'Create your account':'Welcome back');$('solAccountIntro').textContent=signedIn?'You are signed in to SOL.':'';$('accountOpen').textContent=signedIn?'My account':'Account';$('solAccountEmailLabel').textContent=user?.email||'';}
-function solOpenAccount(){$('solAccountModal').style.display='flex';$('solAccountModal').setAttribute('aria-hidden','false');try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(error){}if(solDb)solDb.auth.getUser().then(({data})=>solShowAccount(data.user));}
-function solCloseAccount(){$('solAccountModal').style.display='none';$('solAccountModal').setAttribute('aria-hidden','true');try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(error){}}
+function solOpenAccount(){$('solAccountModal').style.display='flex';$('solAccountModal').setAttribute('aria-hidden','false');solMarkAccountPromptSeen();if(solDb)solDb.auth.getUser().then(({data})=>solShowAccount(data.user));}
+function solCloseAccount(){$('solAccountModal').style.display='none';$('solAccountModal').setAttribute('aria-hidden','true');solMarkAccountPromptSeen();}
 $('accountOpen').addEventListener('click',solOpenAccount);
 $('mobileAccountOpen').addEventListener('click',()=>{document.getElementById('mobileMenu').classList.remove('open');document.getElementById('mobileMenuToggle').setAttribute('aria-expanded','false');solOpenAccount()});
 $('solAccountClose').addEventListener('click',solCloseAccount);
 $('solAccountModal').addEventListener('click',e=>{if(e.target===$('solAccountModal'))solCloseAccount()});
 $('solAccountSwitch').addEventListener('click',()=>solSetAccountMode(solAccountMode==='signup'?'signin':'signup'));
-$('solAccountSubmit').addEventListener('click',async()=>{const email=$('solAccountEmail').value.trim(),password=$('solAccountPassword').value,button=$('solAccountSubmit'),status=$('solAccountStatus');if(!email||!password){status.textContent='Enter your email and password.';return}if(password.length<8){status.textContent='Use a password with at least 8 characters.';return}if(!solDb){status.textContent='Account service is temporarily unavailable.';return}button.disabled=true;button.textContent=solAccountMode==='signup'?'CREATING…':'SIGNING IN…';status.textContent='';try{if(solAccountMode==='signup'){const {data,error}=await solDb.auth.signUp({email,password});if(error)throw error;try{localStorage.setItem('sol-first-visit-signup-seen-v1','yes')}catch(storageError){}if(data.session){solShowAccount(data.user);status.textContent='Your SOL account is ready.'}else{status.textContent='Check your email for a confirmation link to finish creating your account.'}}else{const {data,error}=await solDb.auth.signInWithPassword({email,password});if(error)throw error;solShowAccount(data.user);status.textContent='You are signed in.'}}catch(error){status.textContent=error.message||'Something went wrong. Please try again.'}finally{button.disabled=false;button.textContent=solAccountMode==='signup'?'CREATE ACCOUNT':'SIGN IN'}});
+$('solAccountSubmit').addEventListener('click',async()=>{const email=$('solAccountEmail').value.trim(),password=$('solAccountPassword').value,button=$('solAccountSubmit'),status=$('solAccountStatus');if(!email||!password){status.textContent='Enter your email and password.';return}if(password.length<8){status.textContent='Use a password with at least 8 characters.';return}if(!solDb){status.textContent='Account service is temporarily unavailable.';return}button.disabled=true;button.textContent=solAccountMode==='signup'?'CREATING…':'SIGNING IN…';status.textContent='';try{if(solAccountMode==='signup'){const {data,error}=await solDb.auth.signUp({email,password});if(error)throw error;solMarkAccountPromptSeen();if(data.session){solShowAccount(data.user);status.textContent='Your SOL account is ready.'}else{status.textContent='Check your email for a confirmation link to finish creating your account.'}}else{const {data,error}=await solDb.auth.signInWithPassword({email,password});if(error)throw error;solMarkAccountPromptSeen();solShowAccount(data.user);status.textContent='You are signed in.'}}catch(error){status.textContent=error.message||'Something went wrong. Please try again.'}finally{button.disabled=false;button.textContent=solAccountMode==='signup'?'CREATE ACCOUNT':'SIGN IN'}});
 $('solAccountSignOut').addEventListener('click',async()=>{if(!solDb)return;const {error}=await solDb.auth.signOut();if(error){$('solAccountStatus').textContent=error.message;return}solShowAccount(null);solSetAccountMode('signup');$('solAccountStatus').textContent='You have been signed out.'});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('solAccountModal').style.display==='flex')solCloseAccount()});
-try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABASE_PUBLISHABLE_KEY)solDb=window.supabase.createClient(window.SOL_SUPABASE_URL,window.SOL_SUPABASE_PUBLISHABLE_KEY)}catch(error){console.error('SOL cloud setup:',error)}
+try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABASE_PUBLISHABLE_KEY)solDb=window.supabase.createClient(window.SOL_SUPABASE_URL,window.SOL_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}catch(error){console.error('SOL cloud setup:',error)}
 async function solCheckAdmin(){if(!solDb)return false;const {data:{user}}=await solDb.auth.getUser();if(!user)return false;const {data,error}=await solDb.from('sol_admins').select('user_id').eq('user_id',user.id).maybeSingle();if(error)throw error;solIsAdmin=!!data;return solIsAdmin}
 async function solUploadImage(src,id,index){if(!solDb||!solIsAdmin||!String(src||'').startsWith('data:'))return src;const response=await fetch(src);const blob=await response.blob();const ext=(blob.type.split('/')[1]||'jpg').replace('jpeg','jpg');const path=id+'/'+Date.now()+'-'+index+'.'+ext;const {error}=await solDb.storage.from('sol-products').upload(path,blob,{upsert:true,contentType:blob.type||'image/jpeg'});if(error)throw error;return solDb.storage.from('sol-products').getPublicUrl(path).data.publicUrl}
 async function solPrepareProduct(p){let i=0;const replace=async value=>solUploadImage(value,p.id,++i);p.image=await replace(p.image);p.images=await Promise.all((p.images||[]).map(replace));for(const color of Object.keys(p.colorImages||{}))p.colorImages[color]=await Promise.all(p.colorImages[color].map(replace));return p}
@@ -2278,19 +2281,20 @@ async function initSolCloud(){
 
 initSolCloud();
 
-// Show the signup invitation once per browser on the first storefront visit.
+// Show the signup invitation only on the first visit. After it is dismissed,
+// the account modal is opened only when a visitor deliberately clicks Account.
 (async function solMaybeShowFirstVisitSignup(){
- const seenKey='sol-first-visit-signup-seen-v1';
  try{
-  if(localStorage.getItem(seenKey)==='yes')return;
+  if(solHasSeenAccountPrompt())return;
   if(solDb){
    const {data,error}=await solDb.auth.getSession();
    if(error)throw error;
-   if(data&&data.session){localStorage.setItem(seenKey,'yes');return;}
+   if(data&&data.session){solMarkAccountPromptSeen();return;}
   }
-  localStorage.setItem(seenKey,'yes');
+  solMarkAccountPromptSeen();
   solSetAccountMode('signup');
-  solOpenAccount();
+  $('solAccountModal').style.display='flex';
+  $('solAccountModal').setAttribute('aria-hidden','false');
  }catch(error){
   console.warn('SOL first-visit signup prompt could not check saved state:',error);
  }
