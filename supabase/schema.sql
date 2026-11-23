@@ -87,3 +87,20 @@ using (
   bucket_id = 'sol-products'
   and exists (select 1 from public.sol_admins a where a.user_id = auth.uid())
 );
+
+
+-- Private order records written only by the Stripe webhook using the Supabase service-role key.
+create table if not exists public.sol_orders (
+  id uuid primary key default gen_random_uuid(),
+  stripe_session_id text not null unique,
+  customer_email text,
+  amount_total integer not null default 0,
+  currency text not null default 'usd',
+  payment_status text not null,
+  shipping_details jsonb not null default '{}'::jsonb,
+  items jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table public.sol_orders enable row level security;
+-- Intentionally no anon/authenticated policies or grants: orders are server-side only.
