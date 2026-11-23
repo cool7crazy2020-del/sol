@@ -4,13 +4,23 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
-const SHIPPING_RATE = process.env.STRIPE_SHIPPING_RATE_ID;
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!SUPABASE_URL || !SUPABASE_KEY || !STRIPE_KEY || !STRIPE_PUBLISHABLE_KEY || !SHIPPING_RATE) {
-    return res.status(503).json({ error: 'Checkout is not fully configured yet. Please try again later.' });
+  const required = {
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY: SUPABASE_KEY,
+    STRIPE_SECRET_KEY: STRIPE_KEY,
+    STRIPE_PUBLISHABLE_KEY
+  };
+  const missing = Object.entries(required).filter(([, value]) => !value || !String(value).trim()).map(([name]) => name);
+  if (missing.length) {
+    console.error('SOL checkout missing environment variables:', missing.join(', '));
+    return res.status(503).json({
+      error: 'Checkout configuration is incomplete.',
+      missing
+    });
   }
   try {
     const rawItems = Array.isArray(req.body && req.body.items) ? req.body.items : [];
@@ -34,11 +44,23 @@ module.exports = async function handler(req, res) {
 
     const form = new URLSearchParams();
     form.set('mode', 'payment');
-    form.set('ui_mode', 'embedded');
-    form.set('return_url', SITE_URL + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
+    form.set('ui_mode', 'embedded_page');
+    form.set('branding_settings[background_color]', '#F4F1EA');
+    form.set('branding_settings[button_color]', '#171717');
+    form.set('branding_settings[border_style]', 'rounded');
+    form.set('branding_settings[font_family]', 'inter');
+    form.set('branding_settings[display_name]', 'SOL');
+    const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
+    const returnHost = /^(?:[a-z0-9-]+\.)*vercel\.app$/.test(requestHost) || requestHost === 'shopsol.vercel.app'
+      ? requestHost
+      : new URL(SITE_URL).host;
+    form.set('return_url', 'https://' + returnHost + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
     form.set('billing_address_collection', 'required');
     form.set('shipping_address_collection[allowed_countries][0]', 'US');
-    form.set('shipping_options[0][shipping_rate]', SHIPPING_RATE);
+    form.set('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+    form.set('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '300');
+    form.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+    form.set('shipping_options[0][shipping_rate_data][display_name]', 'Shipping');
     form.set('phone_number_collection[enabled]', 'true');
     form.set('allow_promotion_codes', 'true');
     form.set('metadata[store]', 'SOL');
@@ -61,7 +83,8 @@ module.exports = async function handler(req, res) {
     });
     const session = await stripeResponse.json();
     if (!stripeResponse.ok) {
-      console.error('Stripe Checkout creation failed:', session && session.error && session.error.type);
+      const stripeError = session && session.error ? session.error : {};
+      console.error('SOL_STRIPE_API_ERROR_DETAILS', JSON.stringify({ type: stripeError.type || null, code: stripeError.code || null, param: stripeError.param || null, message: stripeError.message || null, requestId: stripeResponse.headers.get('request-id') || null }));
       return res.status(502).json({ error: 'Stripe could not start checkout. Please try again.' });
     }
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY });
