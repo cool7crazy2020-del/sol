@@ -1,12 +1,13 @@
 # SOL Stripe Checkout setup
 
-The storefront uses Stripe-hosted Checkout. The browser never receives the Stripe secret key, and the server calculates prices from published rows in Supabase rather than trusting prices sent by the browser.
+The storefront uses Stripe Embedded Checkout, mounted inside the SOL cart flow. The browser never receives the Stripe secret key, and the server calculates prices from published rows in Supabase rather than trusting prices sent by the browser.
 
 ## Vercel environment variables
 
 Add these to the SOL Vercel project (Production, Preview, and Development as appropriate):
 
 - `STRIPE_SECRET_KEY`: secret key from the Stripe account owned/managed by the parent or legal guardian.
+- `STRIPE_PUBLISHABLE_KEY`: publishable key from the same Stripe account (safe to expose to the browser; the server returns it for Stripe.js).
 - `STRIPE_SHIPPING_RATE_ID`: a shipping rate created in Stripe (for example, the store's actual shipping price). Do not guess a shipping price.
 - `SUPABASE_URL`: `https://ltwtdfztusajgmigbyrb.supabase.co`
 - `SUPABASE_PUBLISHABLE_KEY`: the Supabase publishable key shown in `supabase-config.js`. This is not a service-role key.
