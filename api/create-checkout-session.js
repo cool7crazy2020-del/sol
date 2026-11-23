@@ -4,6 +4,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -12,7 +13,8 @@ module.exports = async function handler(req, res) {
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY: SUPABASE_KEY,
     STRIPE_SECRET_KEY: STRIPE_KEY,
-    STRIPE_PUBLISHABLE_KEY
+    STRIPE_PUBLISHABLE_KEY,
+    SUPABASE_SERVICE_ROLE_KEY
   };
   const missing = Object.entries(required).filter(([, value]) => !value || !String(value).trim()).map(([name]) => name);
   if (missing.length) {
@@ -23,6 +25,27 @@ module.exports = async function handler(req, res) {
     });
   }
   try {
+    const authorization = String(req.headers.authorization || '');
+    const accessToken = authorization.match(/^Bearer\\s+(.+)$/i)?.[1];
+    if (!accessToken) return res.status(401).json({ error: 'Sign in with the SOL admin account to test checkout.' });
+    const userResponse = await fetch(SUPABASE_URL + '/auth/v1/user', {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + accessToken }
+    });
+    if (!userResponse.ok) return res.status(401).json({ error: 'Your session is invalid. Sign in again.' });
+    const user = await userResponse.json();
+    if (!user || !user.id) return res.status(401).json({ error: 'Your session is invalid. Sign in again.' });
+    const adminUrl = new URL(SUPABASE_URL + '/rest/v1/sol_admins');
+    adminUrl.searchParams.set('select', 'user_id');
+    adminUrl.searchParams.set('user_id', 'eq.' + user.id);
+    adminUrl.searchParams.set('limit', '1');
+    const adminResponse = await fetch(adminUrl, {
+      headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY }
+    });
+    if (!adminResponse.ok) throw new Error('Could not verify SOL admin access.');
+    const adminRows = await adminResponse.json();
+    if (!Array.isArray(adminRows) || !adminRows.length) {
+      return res.status(403).json({ error: 'Drop day is coming soon. Checkout is currently admin-only.' });
+    }
     const rawItems = Array.isArray(req.body && req.body.items) ? req.body.items : [];
     if (!rawItems.length || rawItems.length > 20) return res.status(400).json({ error: 'Your bag is empty or contains too many items.' });
     const items = rawItems.map(x => ({
