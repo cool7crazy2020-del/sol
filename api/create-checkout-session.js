@@ -1,7 +1,7 @@
 // SOL: create a Stripe-hosted Checkout Session using only server-verified published products.
 const SITE_URL = process.env.SOL_SITE_URL || 'https://shopsol.vercel.app';
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const SHIPPING_RATE = process.env.STRIPE_SHIPPING_RATE_ID;
 
@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
     query.searchParams.set('select', 'id,name,price,data');
     query.searchParams.set('is_published', 'eq.true');
     query.searchParams.set('id', 'in.(' + ids.map(x => '"' + x.replace(/["\\]/g, '') + '"').join(',') + ')');
-    const catalogResponse = await fetch(query, { headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY } });
+    const catalogResponse = await fetch(query, { headers: { apikey: SUPABASE_KEY } });
     if (!catalogResponse.ok) throw new Error('Could not verify SOL products.');
     const catalog = await catalogResponse.json();
     const byId = new Map(catalog.map(row => [String(row.id), row]));
