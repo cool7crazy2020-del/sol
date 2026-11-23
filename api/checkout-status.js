@@ -11,6 +11,7 @@ module.exports = async function handler(req, res) {
     });
     const session = await response.json();
     if (!response.ok) return res.status(502).json({ error: 'Could not verify payment yet.' });
+    if (!session.metadata || session.metadata.store !== 'SOL') return res.status(404).json({ error: 'Checkout session not found.' });
     return res.status(200).json({ payment_status: session.payment_status, status: session.status });
   } catch (error) {
     console.error('SOL payment verification error:', error.message);
