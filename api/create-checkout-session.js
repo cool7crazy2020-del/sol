@@ -47,7 +47,11 @@ module.exports = async function handler(req, res) {
     const form = new URLSearchParams();
     form.set('mode', 'payment');
     form.set('ui_mode', 'embedded_page');
-    form.set('return_url', SITE_URL + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
+    const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
+    const returnHost = /^(?:[a-z0-9-]+\\.)*vercel\\.app$/.test(requestHost) || requestHost === 'shopsol.vercel.app'
+      ? requestHost
+      : new URL(SITE_URL).host;
+    form.set('return_url', 'https://' + returnHost + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
     form.set('billing_address_collection', 'required');
     form.set('shipping_address_collection[allowed_countries][0]', 'US');
     form.set('shipping_options[0][shipping_rate]', SHIPPING_RATE);
