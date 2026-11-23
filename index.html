@@ -2130,23 +2130,52 @@ $('solAdminSignIn').addEventListener('click',async e=>{
   status.textContent='Signed in. Checking SOL admin access…';
   await initSolCloud();
 
-// SOL payment return messages. A successful return is verified by the server before the cart is cleared.
+// Verify successful checkout returns independently of admin sign-in, then show the purchased items.
 (async function solHandlePaymentReturn(){
  const params=new URLSearchParams(window.location.search);
  const sessionId=params.get('session_id');
  if(params.get('payment')==='cancelled'){toast('Checkout cancelled. Your bag is still saved.');return}
  if(params.get('payment')!=='success'||!sessionId)return;
  try{
-  const response=await fetch('/api/checkout-status?session_id='+encodeURIComponent(sessionId));
+  const response=await fetch('/api/checkout-status?session_id='+encodeURIComponent(sessionId),{cache:'no-store'});
   const result=await response.json().catch(()=>({}));
   if(!response.ok||result.payment_status!=='paid')throw new Error(result.error||'Payment is not confirmed yet.');
+  const moneyValue=(minor,currency)=>new Intl.NumberFormat('en-US',{style:'currency',currency:(currency||'usd').toUpperCase()}).format((minor||0)/100);
   cart=[];localStorage.setItem('sol-cart','[]');renderCart();
-  const notice=document.createElement('div');notice.setAttribute('role','status');notice.style.cssText='position:fixed;z-index:2147483001;inset:20px 20px auto;background:#f4f2ed;color:#0c0c0e;padding:22px;text-align:center;box-shadow:0 8px 40px #0005';
-  notice.innerHTML='<strong>THANK YOU FOR YOUR ORDER</strong><p style="margin:8px 0 0">Your payment was confirmed. A receipt will be sent by email.</p><button type="button" style="margin-top:12px;padding:9px 18px" id="solPaymentNoticeClose">Continue</button>';
-  document.body.appendChild(notice);notice.querySelector('#solPaymentNoticeClose').onclick=()=>notice.remove();
+  const overlay=document.createElement('div');
+  overlay.id='solOrderConfirmation';
+  overlay.setAttribute('role','dialog');
+  overlay.setAttribute('aria-modal','true');
+  overlay.setAttribute('aria-labelledby','solOrderTitle');
+  overlay.style.cssText='position:fixed;inset:0;z-index:2147483001;overflow:auto;background:rgba(8,8,9,.96);color:#f7f6f2;display:flex;align-items:center;justify-content:center;padding:28px 18px;font-family:inherit';
+  const panel=document.createElement('section');
+  panel.style.cssText='width:min(100%,620px);border:1px solid #39393d;background:#111113;padding:clamp(24px,5vw,48px);box-shadow:0 24px 80px #0008';
+  const eyebrow=document.createElement('p');eyebrow.textContent='SOL / ORDER CONFIRMATION';eyebrow.style.cssText='font-size:10px;letter-spacing:.22em;color:#aaa;margin:0 0 24px';
+  const mark=document.createElement('div');mark.textContent='✓';mark.setAttribute('aria-hidden','true');mark.style.cssText='width:44px;height:44px;border:1px solid #aaa;border-radius:50%;display:grid;place-items:center;font-size:22px;margin-bottom:20px';
+  const title=document.createElement('h1');title.id='solOrderTitle';title.textContent='ORDER CONFIRMED';title.style.cssText='font-size:clamp(27px,6vw,42px);letter-spacing:.06em;line-height:1.1;margin:0 0 12px';
+  const intro=document.createElement('p');intro.textContent='Thank you for your order. Your payment was successful.';intro.style.cssText='color:#c4c4c4;margin:0 0 30px;line-height:1.6';
+  const itemsTitle=document.createElement('h2');itemsTitle.textContent='WHAT YOU ORDERED';itemsTitle.style.cssText='font-size:11px;letter-spacing:.16em;margin:0 0 14px';
+  const itemList=document.createElement('div');itemList.style.cssText='border-top:1px solid #39393d;border-bottom:1px solid #39393d;margin-bottom:20px';
+  (result.items||[]).forEach(item=>{
+   const row=document.createElement('div');row.style.cssText='display:flex;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid #29292d';
+   const name=document.createElement('div');name.style.cssText='font-size:14px;line-height:1.5';name.textContent=item.description||'SOL item';
+   const qty=document.createElement('div');qty.style.cssText='color:#999;font-size:12px;margin-top:4px';qty.textContent='Qty '+(item.quantity||1);
+   name.appendChild(qty);
+   const price=document.createElement('div');price.style.cssText='font-size:14px;white-space:nowrap';price.textContent=moneyValue(item.amount_total,item.currency);
+   row.append(name,price);itemList.appendChild(row);
+  });
+  if(!itemList.children.length){const empty=document.createElement('p');empty.textContent='Your items are confirmed.';empty.style.cssText='color:#bbb;padding:16px 0';itemList.appendChild(empty)}
+  const total=document.createElement('div');total.style.cssText='display:flex;justify-content:space-between;gap:16px;font-size:14px;font-weight:700;margin:18px 0 28px';
+  const totalLabel=document.createElement('span');totalLabel.textContent='TOTAL PAID';
+  const totalValue=document.createElement('span');totalValue.textContent=moneyValue(result.amount_total,result.currency);total.append(totalLabel,totalValue);
+  const note=document.createElement('p');note.textContent='A payment receipt will be sent to your email.';note.style.cssText='font-size:12px;color:#aaa;line-height:1.6;margin:0 0 24px';
+  const button=document.createElement('button');button.type='button';button.textContent='CONTINUE SHOPPING';button.style.cssText='width:100%;padding:16px 20px;background:#f4f2ed;color:#111;border:0;font:inherit;font-size:11px;letter-spacing:.12em;cursor:pointer';
+  button.onclick=()=>{overlay.remove();go('shop')};
+  panel.append(eyebrow,mark,title,intro,itemsTitle,itemList,total,note,button);overlay.appendChild(panel);document.body.appendChild(overlay);
   history.replaceState({},'',window.location.pathname);
  }catch(error){console.warn('SOL payment confirmation pending:',error);toast('We are checking your payment. Your bag has been kept safe.')}
 })();
+
 
   if(solIsAdmin)status.textContent='You are signed in as a SOL admin. New products will publish to everyone.';
   else status.textContent='Signed in, but this account is not listed as a SOL admin in Supabase.';
