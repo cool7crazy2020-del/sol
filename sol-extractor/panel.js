@@ -49,12 +49,13 @@ $("send").addEventListener("click", async () => {
     target.search = "";
     target.searchParams.set("import", String(Date.now()));
     target.hash = "tapstitch-import=" + encodeURIComponent(JSON.stringify(latest));
-    if (existing) {
-      await chrome.tabs.update(existing.id, {url:target.toString(), active:true});
-      if (existing.windowId !== undefined) await chrome.windows.update(existing.windowId, {focused:true});
-    } else {
-      await chrome.tabs.create({url:target.toString(), active:true});
-    }
+    // Reuse an already-open SOL tab. If none exists, navigate the current
+    // Tapstitch tab to SOL instead of creating another browser tab.
+    const destinationTabId = existing ? existing.id : currentTabId;
+    if (destinationTabId == null) throw new Error("Could not find the current browser tab.");
+    await chrome.tabs.update(destinationTabId, {url:target.toString(), active:true});
+    const destination = existing || await chrome.tabs.get(destinationTabId);
+    if (destination.windowId !== undefined) await chrome.windows.update(destination.windowId, {focused:true});
     $("message").textContent = "Product data sent to SOL. Check the Studio product form.";
   } catch (error) {
     $("message").textContent = "Could not send to SOL: " + (error.message || "Unknown error");
