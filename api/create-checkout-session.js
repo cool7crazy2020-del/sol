@@ -1,4 +1,4 @@
-// SOL: create a Stripe-hosted Checkout Session using only server-verified published products.
+// SOL: create a Stripe Embedded Checkout Session using only server-verified published products.
 const SITE_URL = process.env.SOL_SITE_URL || 'https://shopsol.vercel.app';
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
