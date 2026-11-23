@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
     const session = await stripeResponse.json();
     if (!stripeResponse.ok) {
       const stripeError = session && session.error ? session.error : {};
-      console.error('Stripe Checkout creation failed:', JSON.stringify({ type: stripeError.type, code: stripeError.code, param: stripeError.param, message: stripeError.message }));
+      console.error('SOL_STRIPE_API_ERROR_DETAILS', JSON.stringify({ type: stripeError.type || null, code: stripeError.code || null, param: stripeError.param || null, message: stripeError.message || null, requestId: stripeResponse.headers.get('request-id') || null }));
       return res.status(502).json({ error: 'Stripe could not start checkout. Please try again.' });
     }
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY });
