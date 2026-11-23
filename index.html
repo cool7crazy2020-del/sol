@@ -1690,12 +1690,14 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 #solDropIntro:after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:repeating-linear-gradient(118deg,transparent 0 22px,#ffffff09 23px,transparent 25px 49px),linear-gradient(155deg,transparent 35%,#d8dce022 49%,transparent 64%);mix-blend-mode:screen}
 #solDropIntro.sol-drop-hidden{opacity:0;visibility:hidden;pointer-events:none}
 .sol-drop-inner{position:relative;z-index:1;width:min(100%,850px);text-align:center;animation:solDropReveal 1.1s cubic-bezier(.2,.75,.25,1) both}
+.sol-drop-brand{margin:0 0 17px;color:#d5d6da;font:600 10px 'DM Sans',sans-serif;letter-spacing:.72em;text-transform:uppercase;padding-left:.72em;text-shadow:0 1px 12px #fff5}
 .sol-drop-title{font:400 clamp(43px,9vw,108px)/.98 'Bodoni Moda',serif;letter-spacing:-.055em;margin:0 auto 24px;text-transform:uppercase}
 .sol-drop-title span{display:block;background:linear-gradient(115deg,#77777e 0%,#fff 23%,#a7a7ad 42%,#f9f9f8 58%,#73737a 78%,#eee 100%);background-size:220% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:solDropShine 5s ease-in-out infinite}
 .sol-drop-sub{font-size:10px;letter-spacing:.28em;color:#c4c5ca;text-transform:uppercase;margin:0 0 42px}
-#solViewWebsite{min-width:190px;padding:17px 26px;border:1px solid #d7d7d9;background:#e9e9eb;color:#09090b;font:600 9px 'DM Sans',sans-serif;letter-spacing:.23em;text-transform:uppercase;transition:background .25s,color .25s,border-color .25s,transform .25s}
-#solViewWebsite:hover{background:transparent;color:#f4f4f4;border-color:#aaa;transform:translateY(-2px)}
-#solViewWebsite:focus-visible{outline:2px solid white;outline-offset:5px}
+#solViewWebsite{min-width:240px;padding:21px 34px;border:1px solid #fff;background:linear-gradient(115deg,#f7f7f8 0%,#bfc2c9 22%,#fff 48%,#c5c8ce 72%,#f7f7f8 100%);background-size:200% 100%;color:#08090b;font:700 11px 'DM Sans',sans-serif;letter-spacing:.28em;text-transform:uppercase;box-shadow:0 0 0 1px #ffffff35,0 12px 36px #0009,0 0 30px #dfe3ed35;transition:background-position .4s,box-shadow .25s,transform .25s}
+#solViewWebsite:hover{background-position:100% 0;box-shadow:0 0 0 1px #ffffff70,0 15px 42px #000b,0 0 42px #e7ebf077;transform:translateY(-3px) scale(1.025)}
+#solViewWebsite:focus-visible{outline:2px solid white;outline-offset:6px}
+@media(max-width:560px){#solViewWebsite{min-width:220px;padding:19px 28px;font-size:10px}}
 .sol-foot{display:flex;align-items:center;justify-content:center;gap:12px}
 .drop-day-footer{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:10px 16px;border:1px solid #686a70;background:linear-gradient(115deg,#5c5f66 0%,#f2f3f4 18%,#8f9299 35%,#fff 49%,#777a81 66%,#e6e7e9 82%,#55585f 100%);background-size:220% 100%;color:#09090b;font:600 9px 'DM Sans',sans-serif;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;box-shadow:0 4px 18px #0005;transition:background-position .45s,transform .25s,border-color .25s}
 .drop-day-footer:hover{background-position:100% 0;transform:translateY(-2px);border-color:#d9dbe0}
@@ -1711,6 +1713,7 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
  <div class="sol-drop-inner">
+  <p class="sol-drop-brand">SOL</p>
   <h1 class="sol-drop-title" id="solDropTitle"><span>DROP DAY</span><span>COMING SOON</span></h1>
   <p class="sol-drop-sub">DROP DATE REVEALED IN 20 DAYS</p>
   <button type="button" id="solViewWebsite">View Website</button>
