@@ -1761,7 +1761,7 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 
 <footer class="sol-foot"><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Copyright">©</button></footer>
 
-<div class="overlay" id="overlay"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true"><div class="drawer-head"><h2 id="bagTitle">Your bag</h2><button type="button" class="close" id="closeBag" aria-label="Close shopping bag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Storefront preview only. Checkout and payment processing are not connected yet.</p><button type="button" class="button" id="continueShopping" style="width:100%;margin:0 0 9px;background:transparent">Continue shopping</button><button type="button" class="button dark" id="checkout" style="width:100%">Checkout preview</button></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="overlay" id="overlay"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true"><div class="drawer-head"><h2 id="bagTitle">Your bag</h2><button type="button" class="close" id="closeBag" aria-label="Close shopping bag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Secure checkout powered by Stripe. Shipping and applicable taxes are shown during checkout.</p><button type="button" class="button" id="continueShopping" style="width:100%;margin:0 0 9px;background:transparent">Continue shopping</button><button type="button" class="button dark" id="checkout" style="width:100%">Continue to secure checkout</button></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/supabase-config.js"></script>
 <script>
@@ -1880,7 +1880,19 @@ document.addEventListener('click',e=>{if(!$('searchPanel').contains(e.target)&&!
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('drawer').classList.contains('show')){closeBag();return}if($('searchPanel').classList.contains('open')){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');$('searchToggle').focus()}}});
 $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));render()});
 document.querySelectorAll('[data-page]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();if(a.dataset.category){filter=a.dataset.category;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter))}go(a.dataset.page)}));
-$('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('continueShopping').onclick=closeBag;$('overlay').onclick=closeBag;$('checkout').onclick=()=>toast('Checkout is a preview — payments are not connected');
+$('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('continueShopping').onclick=closeBag;$('overlay').onclick=closeBag;
+$('checkout').onclick=async()=>{
+ const button=$('checkout');
+ if(!cart.length){toast('Your bag is empty');return}
+ button.disabled=true;button.textContent='Preparing secure checkout…';
+ try{
+  const response=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:cart.map(item=>({id:String(item.id),size:String(item.size||'One size'),color:String(item.color||'')}))})});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(result.error||'Checkout could not be started. Please try again.');
+  if(!result.url)throw new Error('Stripe did not return a checkout link.');
+  window.location.assign(result.url);
+ }catch(error){console.error('SOL checkout error:',error);toast(error.message||'Checkout unavailable right now');button.disabled=false;button.textContent='Continue to secure checkout'}
+};
 const themeToggle=$('themeToggle');
 function applySolTheme(theme){const dark=theme==='dark';document.documentElement.dataset.solTheme=dark?'dark':'light';themeToggle.setAttribute('aria-label',dark?'Dark mode active. Switch to light mode':'Light mode active. Switch to dark mode');themeToggle.setAttribute('aria-checked',String(dark));}
 let savedTheme=localStorage.getItem('sol-theme')==='dark'?'dark':'light';applySolTheme(savedTheme);
@@ -2037,6 +2049,25 @@ $('solAdminSignIn').addEventListener('click',async e=>{
   if(error)throw error;
   status.textContent='Signed in. Checking SOL admin access…';
   await initSolCloud();
+
+// SOL payment return messages. A successful return is verified by the server before the cart is cleared.
+(async function solHandlePaymentReturn(){
+ const params=new URLSearchParams(window.location.search);
+ const sessionId=params.get('session_id');
+ if(params.get('payment')==='cancelled'){toast('Checkout cancelled. Your bag is still saved.');return}
+ if(params.get('payment')!=='success'||!sessionId)return;
+ try{
+  const response=await fetch('/api/checkout-status?session_id='+encodeURIComponent(sessionId));
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||result.payment_status!=='paid')throw new Error(result.error||'Payment is not confirmed yet.');
+  cart=[];localStorage.setItem('sol-cart','[]');renderCart();
+  const notice=document.createElement('div');notice.setAttribute('role','status');notice.style.cssText='position:fixed;z-index:2147483001;inset:20px 20px auto;background:#f4f2ed;color:#0c0c0e;padding:22px;text-align:center;box-shadow:0 8px 40px #0005';
+  notice.innerHTML='<strong>THANK YOU FOR YOUR ORDER</strong><p style="margin:8px 0 0">Your payment was confirmed. A receipt will be sent by email.</p><button type="button" style="margin-top:12px;padding:9px 18px" id="solPaymentNoticeClose">Continue</button>';
+  document.body.appendChild(notice);notice.querySelector('#solPaymentNoticeClose').onclick=()=>notice.remove();
+  history.replaceState({},'',window.location.pathname);
+ }catch(error){console.warn('SOL payment confirmation pending:',error);toast('We are checking your payment. Your bag has been kept safe.')}
+})();
+
   if(solIsAdmin)status.textContent='You are signed in as a SOL admin. New products will publish to everyone.';
   else status.textContent='Signed in, but this account is not listed as a SOL admin in Supabase.';
  }catch(error){
