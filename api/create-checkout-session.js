@@ -73,7 +73,8 @@ module.exports = async function handler(req, res) {
     });
     const session = await stripeResponse.json();
     if (!stripeResponse.ok) {
-      console.error('Stripe Checkout creation failed:', session && session.error && session.error.type);
+      const stripeError = session && session.error ? session.error : {};
+      console.error('Stripe Checkout creation failed:', JSON.stringify({ type: stripeError.type, code: stripeError.code, param: stripeError.param, message: stripeError.message }));
       return res.status(502).json({ error: 'Stripe could not start checkout. Please try again.' });
     }
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY });
