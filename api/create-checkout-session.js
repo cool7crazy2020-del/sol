@@ -3,12 +3,13 @@ const SITE_URL = process.env.SOL_SITE_URL || 'https://shopsol.vercel.app';
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
+const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
 const SHIPPING_RATE = process.env.STRIPE_SHIPPING_RATE_ID;
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!SUPABASE_URL || !SUPABASE_KEY || !STRIPE_KEY || !SHIPPING_RATE) {
+  if (!SUPABASE_URL || !SUPABASE_KEY || !STRIPE_KEY || !STRIPE_PUBLISHABLE_KEY || !SHIPPING_RATE) {
     return res.status(503).json({ error: 'Checkout is not fully configured yet. Please try again later.' });
   }
   try {
@@ -33,8 +34,8 @@ module.exports = async function handler(req, res) {
 
     const form = new URLSearchParams();
     form.set('mode', 'payment');
-    form.set('success_url', SITE_URL + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
-    form.set('cancel_url', SITE_URL + '/?payment=cancelled');
+    form.set('ui_mode', 'embedded');
+    form.set('return_url', SITE_URL + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
     form.set('billing_address_collection', 'required');
     form.set('shipping_address_collection[allowed_countries][0]', 'US');
     form.set('shipping_options[0][shipping_rate]', SHIPPING_RATE);
@@ -63,7 +64,7 @@ module.exports = async function handler(req, res) {
       console.error('Stripe Checkout creation failed:', session && session.error && session.error.type);
       return res.status(502).json({ error: 'Stripe could not start checkout. Please try again.' });
     }
-    return res.status(200).json({ url: session.url });
+    return res.status(200).json({ clientSecret: session.client_secret, publishableKey: STRIPE_PUBLISHABLE_KEY });
   } catch (error) {
     console.error('SOL checkout setup error:', error.message);
     return res.status(500).json({ error: 'Unable to prepare checkout right now.' });
