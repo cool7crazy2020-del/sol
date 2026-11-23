@@ -4,7 +4,6 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
-const SHIPPING_RATE = process.env.STRIPE_SHIPPING_RATE_ID;
 
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -13,8 +12,7 @@ module.exports = async function handler(req, res) {
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY: SUPABASE_KEY,
     STRIPE_SECRET_KEY: STRIPE_KEY,
-    STRIPE_PUBLISHABLE_KEY,
-    STRIPE_SHIPPING_RATE_ID: SHIPPING_RATE
+    STRIPE_PUBLISHABLE_KEY
   };
   const missing = Object.entries(required).filter(([, value]) => !value || !String(value).trim()).map(([name]) => name);
   if (missing.length) {
@@ -54,7 +52,10 @@ module.exports = async function handler(req, res) {
     form.set('return_url', 'https://' + returnHost + '/?payment=success&session_id={CHECKOUT_SESSION_ID}');
     form.set('billing_address_collection', 'required');
     form.set('shipping_address_collection[allowed_countries][0]', 'US');
-    form.set('shipping_options[0][shipping_rate]', SHIPPING_RATE);
+    form.set('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+    form.set('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '300');
+    form.set('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+    form.set('shipping_options[0][shipping_rate_data][display_name]', 'Shipping');
     form.set('phone_number_collection[enabled]', 'true');
     form.set('allow_promotion_codes', 'true');
     form.set('metadata[store]', 'SOL');
