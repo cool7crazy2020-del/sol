@@ -9,8 +9,20 @@ const SHIPPING_RATE = process.env.STRIPE_SHIPPING_RATE_ID;
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!SUPABASE_URL || !SUPABASE_KEY || !STRIPE_KEY || !STRIPE_PUBLISHABLE_KEY || !SHIPPING_RATE) {
-    return res.status(503).json({ error: 'Checkout is not fully configured yet. Please try again later.' });
+  const required = {
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY: SUPABASE_KEY,
+    STRIPE_SECRET_KEY: STRIPE_KEY,
+    STRIPE_PUBLISHABLE_KEY,
+    STRIPE_SHIPPING_RATE_ID: SHIPPING_RATE
+  };
+  const missing = Object.entries(required).filter(([, value]) => !value || !String(value).trim()).map(([name]) => name);
+  if (missing.length) {
+    console.error('SOL checkout missing environment variables:', missing.join(', '));
+    return res.status(503).json({
+      error: 'Checkout configuration is incomplete.',
+      missing
+    });
   }
   try {
     const rawItems = Array.isArray(req.body && req.body.items) ? req.body.items : [];
