@@ -24,16 +24,20 @@ function validSignature(raw, header, secret) {
   });
 }
 module.exports = async function handler(req, res) {
+  let stage = 'request';
   if (req.method !== 'POST') return res.status(405).send('Method not allowed');
   if (!STRIPE_KEY || !WEBHOOK_SECRET || !SUPABASE_URL || !SERVICE_KEY) return res.status(500).send('Webhook is not configured');
   try {
+    stage = 'read_signature';
     const raw = await readRawBody(req);
     if (!validSignature(raw, req.headers['stripe-signature'], WEBHOOK_SECRET)) return res.status(400).send('Invalid signature');
+    stage = 'parse_event';
     const event = JSON.parse(raw.toString('utf8'));
     if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type)) return res.status(200).json({ received: true });
     const session = event.data && event.data.object;
     if (!session || !session.id || !session.metadata || session.metadata.store !== 'SOL') return res.status(200).json({ received: true });
     if (session.payment_status !== 'paid') return res.status(200).json({ received: true });
+    stage = 'stripe_line_items';
     const lineResponse = await fetch('https://api.stripe.com/v1/checkout/sessions/' + encodeURIComponent(session.id) + '/line_items?limit=100', {
       headers: { Authorization: 'Bearer ' + STRIPE_KEY }
     });
@@ -54,6 +58,7 @@ module.exports = async function handler(req, res) {
       shipping_details: session.shipping_details || session.customer_details && session.customer_details.address || {},
       items
     };
+    stage = 'supabase_save';
     const save = await fetch(SUPABASE_URL + '/rest/v1/sol_orders?on_conflict=stripe_session_id', {
       method: 'POST',
       headers: {
@@ -64,10 +69,14 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify(order)
     });
-    if (!save.ok) throw new Error('Unable to save order to SOL database');
+    if (!save.ok) {
+      const details = (await save.text()).slice(0, 1200);
+      console.error('SOL_WEBHOOK_DATABASE_ERROR', JSON.stringify({ status: save.status, details }));
+      throw new Error('Supabase order save failed with HTTP ' + save.status);
+    }
     return res.status(200).json({ received: true });
   } catch (error) {
-    console.error('SOL Stripe webhook error:', error.message);
+    console.error('SOL_WEBHOOK_PROCESSING_ERROR', JSON.stringify({ stage, message: error.message }));
     return res.status(500).send('Webhook processing failed');
   }
 };
