@@ -1886,9 +1886,11 @@ function applyTapImport(data){
   setSizeChoices([...oldSizes,...(data.sizes||[])],[...chosenSizes,...(data.sizes||[])]);
   $('formTitle').textContent='Edit product · add color photos';
  }
+ const existingUrls=editing?$('pImageUrls').value.split(/\r?\n/).map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x)):[];
  const oneColor=(data.colors||[]).length===1?data.colors[0]:'';
  importedPhotoSets.push({images:[...new Set(data.images)],color:oneColor});
  renderImportedPhotoSets();syncImportedUrls();
+ if(existingUrls.length)$('pImageUrls').value=[...new Set([...existingUrls,...$('pImageUrls').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean)])].join('\n');
  $('extractorStatus').textContent='Added photo group '+importedPhotoSets.length+' with '+data.images.length+' image(s). Assign its color in the Photo groups section.'+(data.item?' · item '+data.item:'')+(data.colors?.length?' · '+data.colors.length+' color options detected':'')+(data.sizes?.length?' · '+data.sizes.length+' sizes detected':'');
  saveImportDraft();$('productForm').scrollIntoView({behavior:'smooth',block:'start'});
 }
