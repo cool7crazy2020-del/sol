@@ -1685,31 +1685,34 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 <style id="sol-my-orders-public">.order-card{border:1px solid #303037;padding:22px;margin:14px 0;background:#101014}.order-card-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #303037;padding-bottom:14px;margin-bottom:12px}.order-card-items{color:#c5c5cb;font-size:12px;line-height:1.9}.order-card-total{font-size:13px;letter-spacing:.08em;margin-top:12px}.orders-empty{padding:42px 20px;border:1px solid #303037;color:#aaa;text-align:center;line-height:1.8}</style>
 
 <style id="sol-drop-day-style">
-#solDropIntro{position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:28px;background:radial-gradient(ellipse at 50% 42%,#202024 0%,#09090b 48%,#030304 100%);color:#f5f4f1;opacity:1;visibility:visible;transition:opacity .8s ease,visibility .8s ease;overflow:hidden}
-#solDropIntro:before,#solDropIntro:after{content:"";position:absolute;left:50%;top:50%;width:min(78vw,760px);aspect-ratio:1;border:1px solid #ffffff12;border-radius:50%;transform:translate(-50%,-50%);animation:solDropOrbit 18s linear infinite}
-#solDropIntro:after{width:min(58vw,540px);border-color:#ffffff0b;animation-direction:reverse;animation-duration:24s}
+#solDropIntro{position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:28px;background:linear-gradient(132deg,#050506 0%,#17191d 32%,#08090b 58%,#222329 78%,#050506 100%);color:#f5f4f1;opacity:1;visibility:visible;transition:opacity .8s ease,visibility .8s ease;overflow:hidden;isolation:isolate}
+#solDropIntro:before{content:"";position:absolute;inset:-35%;z-index:-1;background:linear-gradient(112deg,transparent 0 19%,#ffffff08 21%,#ffffff22 22%,#73778055 23%,#f4f5f766 24%,#85899144 25%,#ffffff0b 27%,transparent 30% 43%,#ffffff0a 46%,#dfe2e833 47%,#ffffff66 48%,#73778055 49%,#ffffff0b 51%,transparent 54% 100%);transform:rotate(-13deg);animation:solChromeDrift 16s ease-in-out infinite alternate}
+#solDropIntro:after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:repeating-linear-gradient(118deg,transparent 0 22px,#ffffff09 23px,transparent 25px 49px),linear-gradient(155deg,transparent 35%,#d8dce022 49%,transparent 64%);mix-blend-mode:screen}
 #solDropIntro.sol-drop-hidden{opacity:0;visibility:hidden;pointer-events:none}
 .sol-drop-inner{position:relative;z-index:1;width:min(100%,850px);text-align:center;animation:solDropReveal 1.1s cubic-bezier(.2,.75,.25,1) both}
-.sol-drop-mark{font-size:9px;letter-spacing:.55em;color:#a7a7ad;margin:0 0 clamp(35px,8vh,76px);text-transform:uppercase}
-.sol-drop-title{font:400 clamp(43px,9vw,108px)/.98 'Bodoni Moda',serif;letter-spacing:-.055em;margin:0 auto 22px;text-transform:uppercase}
+.sol-drop-title{font:400 clamp(43px,9vw,108px)/.98 'Bodoni Moda',serif;letter-spacing:-.055em;margin:0 auto 24px;text-transform:uppercase}
 .sol-drop-title span{display:block;background:linear-gradient(115deg,#77777e 0%,#fff 23%,#a7a7ad 42%,#f9f9f8 58%,#73737a 78%,#eee 100%);background-size:220% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:solDropShine 5s ease-in-out infinite}
-.sol-drop-sub{font-size:9px;letter-spacing:.32em;color:#96969e;text-transform:uppercase;margin:0 0 42px}
+.sol-drop-sub{font-size:10px;letter-spacing:.28em;color:#c4c5ca;text-transform:uppercase;margin:0 0 42px}
 #solViewWebsite{min-width:190px;padding:17px 26px;border:1px solid #d7d7d9;background:#e9e9eb;color:#09090b;font:600 9px 'DM Sans',sans-serif;letter-spacing:.23em;text-transform:uppercase;transition:background .25s,color .25s,border-color .25s,transform .25s}
 #solViewWebsite:hover{background:transparent;color:#f4f4f4;border-color:#aaa;transform:translateY(-2px)}
 #solViewWebsite:focus-visible{outline:2px solid white;outline-offset:5px}
+.sol-foot{display:flex;align-items:center;justify-content:center;gap:12px}
+.drop-day-footer{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:10px 16px;border:1px solid #686a70;background:linear-gradient(115deg,#5c5f66 0%,#f2f3f4 18%,#8f9299 35%,#fff 49%,#777a81 66%,#e6e7e9 82%,#55585f 100%);background-size:220% 100%;color:#09090b;font:600 9px 'DM Sans',sans-serif;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;box-shadow:0 4px 18px #0005;transition:background-position .45s,transform .25s,border-color .25s}
+.drop-day-footer:hover{background-position:100% 0;transform:translateY(-2px);border-color:#d9dbe0}
+.drop-day-footer:focus-visible{outline:2px solid #d9dbe0;outline-offset:4px}
+.drop-day-footer-mark{font-size:13px;line-height:1;letter-spacing:0}
 @keyframes solDropReveal{from{opacity:0;transform:translateY(24px);filter:blur(9px)}to{opacity:1;transform:none;filter:blur(0)}}
 @keyframes solDropShine{0%,100%{background-position:0% center}50%{background-position:100% center}}
-@keyframes solDropOrbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){#solDropIntro:before,#solDropIntro:after,.sol-drop-inner,.sol-drop-title span{animation:none}#solDropIntro{transition:none}}
-@media(max-width:560px){.sol-drop-mark{letter-spacing:.38em;margin-bottom:48px}.sol-drop-sub{font-size:8px;letter-spacing:.2em;line-height:1.8}}
+@keyframes solChromeDrift{from{transform:translate3d(-2%,1%,0) rotate(-13deg)}to{transform:translate3d(2%,-1%,0) rotate(-9deg)}}
+@media(prefers-reduced-motion:reduce){#solDropIntro:before,.sol-drop-inner,.sol-drop-title span{animation:none}#solDropIntro,.drop-day-footer{transition:none}}
+@media(max-width:560px){.sol-drop-sub{font-size:8px;letter-spacing:.2em;line-height:1.8}.drop-day-footer{font-size:8px;letter-spacing:.18em}}
 </style>
 </head>
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
  <div class="sol-drop-inner">
-  <p class="sol-drop-mark">SOL / THE NEXT CHAPTER</p>
   <h1 class="sol-drop-title" id="solDropTitle"><span>DROP DAY</span><span>COMING SOON</span></h1>
-  <p class="sol-drop-sub">A new standard is on its way</p>
+  <p class="sol-drop-sub">DROP DATE REVEALED IN 20 DAYS</p>
   <button type="button" id="solViewWebsite">View Website</button>
  </div>
 </div>
@@ -1791,7 +1794,7 @@ body.sol-mobile-preview #mobileMenu{z-index:2147483001!important;pointer-events:
 <section id="studio" class="page admin"><div class="eyebrow">SOL / Backstage</div><h1>Studio</h1><p class="muted">Add your Tapstitch products here. Copy the product details, upload your product mockup, and publish it to the storefront. Sign in below to publish products to everyone.</p><div class="panel" id="solCloudPanel" style="margin:22px 0"><h2>Public publishing</h2><p class="muted" id="solAdminStatus" aria-live="polite">Checking shared catalog…</p><div id="solAdminAuthForm"><div class="field"><label for="solAdminEmail">Admin email</label><input id="solAdminEmail" type="email" autocomplete="username" required></div><div class="field"><label for="solAdminPassword">Admin password</label><input id="solAdminPassword" type="password" autocomplete="current-password" required></div><button class="button dark" type="button" id="solAdminSignIn">Sign in to publish</button></div><button class="button" type="button" id="solAdminLogout" style="display:none;margin-top:12px">Sign out</button></div><p class="muted"></p><div class="panel" style="margin:26px 0 0"><h2>SOL Tapstitch extractor</h2><p class="muted">Open any Tapstitch product page, then use the SOL Extractor side panel. No product-link pasting needed.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0"><a class="button dark" href="https://github.com/cool7crazy2020-del/sol/releases/download/sol-extractor-latest/SOL-Extractor.zip" target="_blank" rel="noopener">Download latest SOL Extractor · v1.1.0</a><a class="button" href="https://github.com/cool7crazy2020-del/sol/tree/main/sol-extractor" target="_blank" rel="noopener" style="background:transparent">View extension files</a></div><ol class="muted" style="padding-left:20px;line-height:1.9"><li>Download and unzip the extension.</li><li>Open <b>chrome://extensions</b> in Chrome and turn on Developer mode.</li><li>Click <b>Load unpacked</b> and select the <b>sol-extractor</b> folder inside the unzipped SOL folder.</li><li>Reload your Tapstitch product tab once so Chrome loads the extractor, then open SOL.</li><li>Click the SOL Extractor puzzle-piece/extension icon in Chrome and pin it if you want.</li><li>Open a signed-in Tapstitch product page, open the SOL Extractor side panel, and click <b>Extract product</b>.</li><li>Click <b>Send to SOL Studio</b>. The product name, mockups, sizes, and colors are sent straight to the Studio form.</li></ol><p class="muted" id="extractorStatus" aria-live="polite">The extension only reads the active Tapstitch product page when you press Extract. Only loaded images can be collected; temporary or protected image URLs may not work in the public store.</p></div><div class="admin-grid"><div class="panel"><h2 id="formTitle">Add a product</h2><form id="productForm"><input type="hidden" id="editId"><div class="field"><label>Product name</label><input id="pName" required></div><div class="field"><label>Description</label><textarea id="pDesc"></textarea></div><div class="field"><label>Price (USD)</label><input id="pPrice" type="number" min="0" step=".01" required></div><div class="field"><label>Category</label><select id="pCategory"><option>Tops</option><option>Outerwear</option><option>Bottoms</option></select></div><div class="field"><label>Available sizes</label><div id="pSizeChoices" class="color-choices"><span class="muted">Import a Tapstitch product to detect its sizes.</span></div><input id="pSizes" placeholder="Add sizes manually (e.g. XS, S, M)" style="margin-top:10px"><p class="muted" id="pSizeHint">Select all sizes you want to offer.</p></div><div class="field"><label>Available colors</label><div id="pColorChoices" class="color-choices"><span class="muted">Import a Tapstitch product to detect its color options.</span></div><div style="display:flex;gap:8px;margin-top:10px"><input id="pColor" placeholder="Type a color (e.g. Washed Black)" style="flex:1;min-width:0"><button type="button" class="button" id="addColorChoice" style="white-space:nowrap;padding:12px 15px;background:transparent">Add color +</button></div><p class="muted" id="pColorHint">Select multiple detected colors, or add your own one at a time.</p></div><div class="field"><label>Product image / Tapstitch mockup</label><input id="pImage" type="file" accept="image/*"></div><div class="field"><label>Extracted mockup image URLs — one per line</label><textarea id="pImageUrls" placeholder="Imported image URLs will collect here"></textarea><div id="importedPhotoSets" style="display:grid;gap:10px;margin-top:12px"></div><p class="muted">Each extraction is kept as its own photo group. Assign each group to its matching product color.</p></div><button class="button dark" style="width:100%">Save product</button><button type="button" id="resetForm" class="button" style="width:100%;margin-top:8px;background:transparent">Clear form</button></form></div><div class="panel"><h2>Your products</h2><p class="muted">Manage your Tapstitch catalog here. Changes save in this browser. Export your catalog when you want me to publish the products on the live SOL site.</p><a href="https://www.tapstitch.com/" target="_blank" rel="noopener" class="eyebrow">Open Tapstitch ↗︎</a><div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0"><button type="button" class="button dark" id="exportCatalog">Export catalog</button><button type="button" class="button" id="importCatalog" style="background:transparent">Import catalog</button><input type="file" id="catalogFile" accept="application/json,.json" hidden></div><div id="adminList"></div></div></div></section>
 </main>
 
-<footer class="sol-foot"><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Copyright">©</button></footer>
+<footer class="sol-foot"><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Copyright">©</button><button type="button" class="drop-day-footer" id="solDropFooterButton" aria-label="Open the SOL drop day announcement"><span class="drop-day-footer-mark" aria-hidden="true">✦</span><span>DROP DAY</span></button></footer>
 
 <div class="overlay" id="overlay"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true"><div class="drawer-head"><h2 id="bagTitle">Your bag</h2><button type="button" class="close" id="closeBag" aria-label="Close shopping bag">×</button></div><div id="cartItems"></div><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Secure checkout powered by Stripe. Shipping and applicable taxes are shown during checkout.</p><button type="button" class="button" id="continueShopping" style="width:100%;margin:0 0 9px;background:transparent">Continue shopping</button><button type="button" class="button dark" id="checkout" style="width:100%">Continue to secure checkout</button></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://js.stripe.com/v3/"></script>
@@ -2281,17 +2284,31 @@ initSolCloud();
  }
 })();
 
-// First-visit SOL drop-day intro. The choice is remembered on this browser.
+// First-visit SOL drop-day intro; the footer mark can reopen it any time.
 (function solDropDayIntro(){
  const intro=document.getElementById('solDropIntro');
  const button=document.getElementById('solViewWebsite');
+ const footerButton=document.getElementById('solDropFooterButton');
  const key='sol-drop-day-intro-seen-v1';
  if(!intro||!button)return;
- try{if(localStorage.getItem(key)==='yes'){intro.remove();return}}catch(error){}
+ const closeIntro=()=>{
+  intro.classList.add('sol-drop-hidden');
+  button.blur();
+ };
+ const openIntro=()=>{
+  intro.classList.remove('sol-drop-hidden');
+  intro.querySelector('.sol-drop-inner')?.classList.remove('sol-drop-replay');
+  void intro.offsetWidth;
+  intro.querySelector('.sol-drop-inner')?.classList.add('sol-drop-replay');
+ };
+ try{if(localStorage.getItem(key)==='yes')intro.classList.add('sol-drop-hidden')}catch(error){}
  button.addEventListener('click',()=>{
   try{localStorage.setItem(key,'yes')}catch(error){}
-  intro.classList.add('sol-drop-hidden');
-  window.setTimeout(()=>intro.remove(),850);
+  closeIntro();
+ });
+ footerButton?.addEventListener('click',openIntro);
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!intro.classList.contains('sol-drop-hidden'))closeIntro();
  });
 })();
 </script>
