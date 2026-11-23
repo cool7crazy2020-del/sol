@@ -9,7 +9,7 @@ Add these to the SOL Vercel project (Production, Preview, and Development as app
 - `STRIPE_SECRET_KEY`: secret key from the Stripe account owned/managed by the parent or legal guardian.
 - `STRIPE_SHIPPING_RATE_ID`: a shipping rate created in Stripe (for example, the store's actual shipping price). Do not guess a shipping price.
 - `SUPABASE_URL`: `https://ltwtdfztusajgmigbyrb.supabase.co`
-- `SUPABASE_ANON_KEY`: the Supabase publishable/anon key. This is not a service-role key.
+- `SUPABASE_PUBLISHABLE_KEY`: the Supabase publishable key shown in `supabase-config.js`. This is not a service-role key.
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabase service-role key, server-side only, used by the webhook to save orders. Never put this in frontend files or share it in chat.
 - `SOL_SITE_URL`: `https://shopsol.vercel.app`
 
