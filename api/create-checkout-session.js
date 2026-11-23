@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
   }
   try {
     const authorization = String(req.headers.authorization || '');
-    const accessToken = authorization.match(/^Bearer\\s+(.+)$/i)?.[1];
+    const accessToken = authorization.toLowerCase().startsWith('bearer ') ? authorization.slice(7).trim() : '';
     if (!accessToken) return res.status(401).json({ error: 'Sign in with the SOL admin account to test checkout.' });
     const userResponse = await fetch(SUPABASE_URL + '/auth/v1/user', {
       headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + accessToken }
