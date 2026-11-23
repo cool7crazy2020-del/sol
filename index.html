@@ -1787,8 +1787,20 @@ function finishPendingTapImport(){
  let data;
  try{data=JSON.parse(sessionStorage.getItem('sol-pending-tap-import')||'null')}catch(e){sessionStorage.removeItem('sol-pending-tap-import');return false}
  if(!data)return false;
- try{applyTapImport(data);sessionStorage.removeItem('sol-pending-tap-import');return true}
- catch(e){alert('Tapstitch import could not be completed: '+e.message);return false}
+ showTapImportChoice(data);
+ return true;
+}
+function showTapImportChoice(data){
+ const existing=document.getElementById('solTapImportChoice');if(existing)existing.remove();
+ const options=products.map(p=>'<option value="'+safe(p.id)+'">'+safe(p.name)+'</option>').join('');
+ const modal=document.createElement('div');modal.id='solTapImportChoice';
+ modal.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.82);display:grid;place-items:center;padding:20px';
+ modal.innerHTML='<div style="width:min(100%,440px);background:#101014;color:#f4f3f1;border:1px solid #3a3a42;padding:26px;box-shadow:0 20px 80px #000"><div style="font-size:10px;letter-spacing:.2em;color:#999;margin-bottom:12px">SOL / TAPSTITCH IMPORT</div><h2 style="font:italic 400 34px Bodoni Moda,serif;margin:0 0 8px">Where should these images go?</h2><p style="font-size:12px;color:#aaa;line-height:1.6;margin:0 0 20px">Choose a new product, or add these photos to a product already in your SOL catalog.</p><button type="button" id="solImportNewProduct" style="width:100%;padding:14px;background:#eee;color:#111;border:0;font-weight:700;cursor:pointer">Create a new product</button><div style="height:1px;background:#333;margin:18px 0"></div><label for="solImportExistingProduct" style="display:block;font-size:9px;letter-spacing:.15em;color:#aaa;margin-bottom:8px">ADD IMAGES TO AN EXISTING PRODUCT</label><select id="solImportExistingProduct" '+(products.length?'':'disabled')+' style="box-sizing:border-box;width:100%;padding:13px;background:#08080a;color:#eee;border:1px solid #444;margin-bottom:10px">'+(options||'<option value="">No products available yet</option>')+'</select><button type="button" id="solImportAddExisting" '+(products.length?'':'disabled')+' style="width:100%;padding:14px;background:#222;color:#eee;border:1px solid #555;font-weight:700;cursor:pointer">Add images to selected product</button><button type="button" id="solImportCancelChoice" style="width:100%;padding:12px;margin-top:10px;background:transparent;color:#aaa;border:1px solid #444;cursor:pointer">Cancel</button></div>';
+ document.body.appendChild(modal);
+ const finish=()=>{sessionStorage.removeItem('sol-pending-tap-import');modal.remove()};
+ modal.querySelector('#solImportNewProduct').onclick=()=>{finish();clearForm();applyTapImport(data)};
+ modal.querySelector('#solImportAddExisting').onclick=()=>{const id=modal.querySelector('#solImportExistingProduct').value;const product=products.find(p=>String(p.id)===String(id));if(!product){toast('Choose a product first');return}finish();editProduct(product.id);applyTapImport(data)};
+ modal.querySelector('#solImportCancelChoice').onclick=()=>modal.remove();
 }
 function openStudioGate(){
  if(sessionStorage.getItem('sol-studio-unlocked')==='yes'){go('studio');finishPendingTapImport();return}
