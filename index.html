@@ -1851,7 +1851,35 @@ $('productForm').onsubmit=async e=>{e.preventDefault();if(importedPhotoSets.some
  toast(error.message||'Saved on this device only. Sign in to publish.');
  console.error('SOL product publishing failed:',error);
 }};
-function applyTapImport(data){if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');clearForm();go('studio');const firstImport=true;if(firstImport){$('pName').value=data.title||'';$('pDesc').value='';$('pPrice').value='';$('pCategory').value='Tops';$('pSizes').value='';setSizeChoices(data.sizes||[],data.sizes||[]);setColorChoices(data.colors||[],data.colors||[]);$('formTitle').textContent='Imported from Tapstitch'}else{const oldColors=[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice);const chosenColors=[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice);setColorChoices([...oldColors,...(data.colors||[])],[...chosenColors,...(data.colors||[])]);const oldSizes=[...$('pSizeChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.sizeChoice);const chosenSizes=[...$('pSizeChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.sizeChoice);setSizeChoices([...oldSizes,...(data.sizes||[])],[...chosenSizes,...(data.sizes||[])])}const oneColor=(data.colors||[]).length===1?data.colors[0]:'';importedPhotoSets.push({images:[...new Set(data.images)],color:oneColor});renderImportedPhotoSets();syncImportedUrls();$('extractorStatus').textContent='Added photo group '+importedPhotoSets.length+' with '+data.images.length+' image(s). Assign its color in the Photo groups section.'+(data.item?' · item '+data.item:'')+(data.colors?.length?' · '+data.colors.length+' color options detected':'')+(data.sizes?.length?' · '+data.sizes.length+' sizes detected':'');saveImportDraft();$('productForm').scrollIntoView({behavior:'smooth',block:'start'});}
+function applyTapImport(data){
+ if(!data||!Array.isArray(data.images)||!data.images.length)throw new Error('No mockup images were received');
+ const editing=!!$('editId').value;
+ if(!editing){
+  clearForm();go('studio');
+  $('pName').value=data.title||'';
+  $('pDesc').value='';
+  $('pPrice').value='';
+  $('pCategory').value='Tops';
+  $('pSizes').value='';
+  setSizeChoices(data.sizes||[],data.sizes||[]);
+  setColorChoices(data.colors||[],data.colors||[]);
+  $('formTitle').textContent='Imported from Tapstitch';
+ }else{
+  go('studio');
+  const oldColors=[...$('pColorChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.colorChoice);
+  const chosenColors=[...$('pColorChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.colorChoice);
+  setColorChoices([...oldColors,...(data.colors||[])],[...chosenColors,...(data.colors||[])]);
+  const oldSizes=[...$('pSizeChoices').querySelectorAll('.color-chip')].map(b=>b.dataset.sizeChoice);
+  const chosenSizes=[...$('pSizeChoices').querySelectorAll('.color-chip.selected')].map(b=>b.dataset.sizeChoice);
+  setSizeChoices([...oldSizes,...(data.sizes||[])],[...chosenSizes,...(data.sizes||[])]);
+  $('formTitle').textContent='Edit product · add color photos';
+ }
+ const oneColor=(data.colors||[]).length===1?data.colors[0]:'';
+ importedPhotoSets.push({images:[...new Set(data.images)],color:oneColor});
+ renderImportedPhotoSets();syncImportedUrls();
+ $('extractorStatus').textContent='Added photo group '+importedPhotoSets.length+' with '+data.images.length+' image(s). Assign its color in the Photo groups section.'+(data.item?' · item '+data.item:'')+(data.colors?.length?' · '+data.colors.length+' color options detected':'')+(data.sizes?.length?' · '+data.sizes.length+' sizes detected':'');
+ saveImportDraft();$('productForm').scrollIntoView({behavior:'smooth',block:'start'});
+}
 function receiveTapImport(){
  const hashPrefix='#tapstitch-import=';
  const queryPayload=new URLSearchParams(location.search).get('sol-import');
