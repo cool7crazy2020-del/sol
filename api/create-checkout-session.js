@@ -45,6 +45,11 @@ module.exports = async function handler(req, res) {
     const form = new URLSearchParams();
     form.set('mode', 'payment');
     form.set('ui_mode', 'embedded_page');
+    form.set('branding_settings[background_color]', '#F4F1EA');
+    form.set('branding_settings[button_color]', '#171717');
+    form.set('branding_settings[border_style]', 'rounded');
+    form.set('branding_settings[font_family]', 'inter');
+    form.set('branding_settings[display_name]', 'SOL');
     const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
     const returnHost = /^(?:[a-z0-9-]+\.)*vercel\.app$/.test(requestHost) || requestHost === 'shopsol.vercel.app'
       ? requestHost
