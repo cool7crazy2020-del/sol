@@ -1774,6 +1774,21 @@ html.sol-drop-seen #solDropIntro{opacity:0;visibility:hidden;pointer-events:none
 <script defer src="/_vercel/insights/script.js"></script>
 
 <style id="SOL_RETURNS_ICON_ALIGNMENT">.sol-returns-footer{display:inline-flex;align-items:center;gap:6px;vertical-align:middle}.sol-returns-car{display:block;width:13px;height:10px;flex:0 0 auto;color:#e8e8e8}</style>
+<style id="sol-all-pieces-page-design">
+.sol-all-pieces-cta{padding:8px 5vw 76px!important}
+.sol-all-pieces-link{position:relative;display:flex;min-height:118px;width:100%;align-items:center;justify-content:center;flex-direction:column;gap:8px;overflow:hidden;background:#09090b;color:#f4f2ed;border:1px solid #343438;transition:background .25s,border-color .25s;text-align:center}
+.sol-all-pieces-link:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.08) 48%,transparent 78%);transform:translateX(-100%);transition:transform .8s ease}
+.sol-all-pieces-link:hover{border-color:#aaa}
+.sol-all-pieces-link:hover:before{transform:translateX(100%)}
+.sol-all-pieces-link-label{font-size:8px;letter-spacing:.24em;color:#a8a8a8}
+.sol-all-pieces-link-title{font:500 clamp(24px,3vw,34px)/1 "Bodoni Moda",serif;letter-spacing:.08em;text-transform:uppercase}
+.sol-all-pieces-link-arrow{position:absolute;right:26px;top:50%;transform:translateY(-50%);font-size:22px;color:#bdbdc2}
+.sol-all-pieces-page{padding:64px 5vw 90px!important;min-height:70vh}
+.sol-all-pieces-heading{margin:0 0 42px}
+.sol-all-pieces-heading .eyebrow{color:#85827c}
+.sol-all-pieces-heading h1{font:500 clamp(48px,8vw,92px)/.98 "Bodoni Moda",serif;letter-spacing:-.055em;margin:14px 0 0;color:var(--ink)}
+@media(max-width:560px){.sol-all-pieces-cta{padding:4px 14px 48px!important}.sol-all-pieces-link{min-height:104px}.sol-all-pieces-link-arrow{right:15px;font-size:19px}.sol-all-pieces-page{padding:40px 14px 60px!important}.sol-all-pieces-heading{margin-bottom:28px}.sol-all-pieces-heading h1{font-size:clamp(46px,14vw,66px)}}
+</style>
 </head>
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
@@ -1851,11 +1866,12 @@ html.sol-drop-seen #solDropIntro{opacity:0;visibility:hidden;pointer-events:none
   <a class="category" href="#shop" data-page="shop" data-category="Outerwear"><span>HOODIES & ZIPUPS ↗︎</span></a>
   <a class="category" href="#shop" data-page="shop" data-category="Bottoms"><span>BOTTOMS ↗︎</span></a>
  </div></section>
- <section class="section sol-all-pieces-cta" style="padding-top:8px;padding-bottom:74px"><a class="button dark" href="#shop" data-page="shop" style="display:flex;width:100%;min-height:58px;align-items:center;justify-content:center">VIEW ALL PIECES <span aria-hidden="true" style="margin-left:10px">↗</span></a></section>
+ <section class="section sol-all-pieces-cta"><a class="sol-all-pieces-link" href="#allPieces" data-page="allPieces"><span class="sol-all-pieces-link-label">EXPLORE THE FULL COLLECTION</span><span class="sol-all-pieces-link-title">ALL PIECES</span><span class="sol-all-pieces-link-arrow" aria-hidden="true">↗</span></a></section>
  
 
 </section>
-<section id="shop" class="page shop"><div class="eyebrow">SOL / Official store</div><h1>Shop all</h1><div class="filters"><div class="filter-list" id="filters"><button class="active" data-filter="All">All</button><button data-filter="Tops">Tops</button><button data-filter="Outerwear">Hoodies & zip-ups</button><button data-filter="Bottoms">Bottoms</button></div><select id="sort"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div><div class="product-grid" id="allProducts"></div></section>
+<section id="allPieces" class="page shop sol-all-pieces-page"><div class="sol-all-pieces-heading"><div class="eyebrow">SOL / THE COLLECTION</div><h1>All pieces</h1></div><div class="product-grid" id="allPiecesProducts"></div></section>
+ <section id="shop" class="page shop"><div class="eyebrow">SOL / Official store</div><h1>Shop all</h1><div class="filters"><div class="filter-list" id="filters"><button class="active" data-filter="All">All</button><button data-filter="Tops">Tops</button><button data-filter="Outerwear">Hoodies & zip-ups</button><button data-filter="Bottoms">Bottoms</button></div><select id="sort"><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div><div class="product-grid" id="allProducts"></div></section>
 <section id="wishlist" class="page shop"><div class="page-heading-row"><div><div class="eyebrow">SOL / YOUR SELECTION</div><h1>Wishlist</h1></div><div class="eyebrow" id="wishlistCountLabel">0 SAVED PIECES</div></div><div class="product-grid" id="wishlistProducts"></div></section>
 <section id="orders" class="page shop"><div class="eyebrow">SOL / YOUR ACCOUNT</div><h1>My Orders</h1><p class="muted" id="ordersIntro">Your SOL purchases, all in one place.</p><div id="ordersList" style="margin-top:28px"></div></section>
 <section id="detail" class="page"><div class="detail" id="detailContent"></div></section>
@@ -1881,7 +1897,7 @@ function saveWishlist(){localStorage.setItem('sol-wishlist',JSON.stringify(wishl
 function toggleWishlist(id){id=String(id);wishlist=isSaved(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveWishlist();render();toast(isSaved(id)?'Added to wishlist':'Removed from wishlist')}
 function bindProductCards(root){root.querySelectorAll('.product').forEach(el=>{el.onclick=e=>{const heart=e.target.closest('[data-heart]');if(heart){e.stopPropagation();toggleWishlist(heart.dataset.heart);return}if(e.target.closest('button'))e.preventDefault();showProduct(el.dataset.id)};el.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button')){e.preventDefault();showProduct(el.dataset.id)}}})}
 function card(p){return '<article class="product" data-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="View '+safe(p.name)+'"><div class="product-image"><img src="'+safe(p.image)+'" alt="'+safe(p.name)+'" loading="lazy"><button class="wishlist-heart '+(isSaved(p.id)?'saved':'')+'" data-heart="'+safe(p.id)+'" aria-label="'+(isSaved(p.id)?'Remove from wishlist':'Add to wishlist')+'">'+(isSaved(p.id)?'♥':'♡')+'</button>'+(p.sample?'<span class="tag">Preview piece</span>':'')+'<button class="quick" type="button" data-quick="'+safe(p.id)+'" aria-label="Quick view '+safe(p.name)+'">Quick view ↗︎</button></div><div class="product-meta"><div>'+safe(p.name)+'<small>'+safe(p.category)+' · '+safe(p.color||'SOL')+'</small></div><span class="price">'+money(p.price)+'</span></div></article>'}
-function render(){let live=products.filter(p=>p.hidden!==true);$('featured').innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);$('allProducts').innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('wishlistProducts').innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');$('wishCount').textContent=wishlist.length;bindProductCards($('featured'));bindProductCards($('allProducts'));bindProductCards($('wishlistProducts'));if($('bagCount'))$('bagCount').textContent=cart.length;renderCart()}
+function render(){let live=products.filter(p=>p.hidden!==true);$('featured').innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';if($('allPiecesProducts'))$('allPiecesProducts').innerHTML=live.map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);$('allProducts').innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);$('wishlistProducts').innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');$('wishCount').textContent=wishlist.length;bindProductCards($('featured'));if($('allPiecesProducts'))bindProductCards($('allPiecesProducts'));bindProductCards($('allProducts'));bindProductCards($('wishlistProducts'));if($('bagCount'))$('bagCount').textContent=cart.length;renderCart()}
 let studioTapCount=0,studioTapTimer=null;
 function finishPendingTapImport(){
  let data;
@@ -1934,7 +1950,7 @@ function go(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
  target.classList.add('active');
  window.scrollTo(0,0);
- if(['shop','wishlist','home'].includes(id))render();
+ if(['shop','wishlist','home','allPieces'].includes(id))render();
  if(id==='orders')loadSolOrders();
  if(id==='studio')renderAdmin();
  ensureSolPreviewControls();
