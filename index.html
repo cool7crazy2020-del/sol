@@ -1944,14 +1944,14 @@ function renderCart(){
  if($('bagCount'))$('bagCount').textContent=cart.length;
  const subtotal=cart.reduce((n,c)=>n+(products.find(p=>p.id===c.id)?.price||0),0);
  const qualifies=cart.length>=2;
- const discount=qualifies?Math.round(subtotal*5)/100:0;
+ const discountedSubtotal=qualifies?cart.reduce((n,c)=>n+Math.round((products.find(p=>p.id===c.id)?.price||0)*100*0.95)/100,0):subtotal;
  $('cartItems').innerHTML=cart.map((c,i)=>{let p=products.find(x=>x.id===c.id);let colorImage=c.color&&p?.colorImages?.[c.color]?.[0];return p?'<div class="cart-item"><img src="'+safe(colorImage||p.image)+'"><div><b>'+safe(p.name)+'</b><p class="muted">Size: '+safe(c.size)+'</p>'+(c.color?'<p class="muted">Color: '+safe(c.color)+'</p>':'')+'<p class="muted">'+money(p.price)+'</p></div><button class="close" onclick="removeCart('+i+')">×</button></div>':''}).join('')||'<p class="muted" style="padding:22px 0">Your bag is empty.</p>';
  const offer=$('solCartOffer');
  if(offer){
   offer.textContent=qualifies?'5% OFF UNLOCKED — YOUR DISCOUNT IS APPLIED.':cart.length===1?'ADD ONE MORE ITEM TO UNLOCK 5% OFF YOUR ORDER.':'ADD 2 ITEMS TO UNLOCK 5% OFF YOUR ORDER.';
   offer.style.color=qualifies?'#d8d8d8':'#999';
  }
- $('subtotal').innerHTML=qualifies?'<span style="text-decoration:line-through;color:#888;font-weight:400;margin-right:8px">'+money(subtotal)+'</span>'+money(subtotal-discount):money(subtotal);
+ $('subtotal').innerHTML=qualifies?'<span style="text-decoration:line-through;color:#888;font-weight:400;margin-right:8px">'+money(subtotal)+'</span>'+money(discountedSubtotal):money(subtotal);
 }
 function removeCart(i){cart.splice(i,1);localStorage.setItem('sol-cart',JSON.stringify(cart));renderCart()}
 function openBag(){const drawer=$('drawer');$('overlay').classList.add('show');drawer.classList.add('show');document.body.classList.add('bag-open');drawer.setAttribute('aria-hidden','false');$('openBag').setAttribute('aria-expanded','true');$('closeBag').focus()}function closeBag(){const drawer=$('drawer');if(!drawer.classList.contains('show'))return;$('overlay').classList.remove('show');drawer.classList.remove('show');document.body.classList.remove('bag-open');drawer.setAttribute('aria-hidden','true');$('openBag').setAttribute('aria-expanded','false');$('openBag').focus()}
