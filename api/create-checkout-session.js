@@ -64,6 +64,8 @@ module.exports = async function handler(req, res) {
     form.set('phone_number_collection[enabled]', 'true');
     form.set('allow_promotion_codes', 'true');
     form.set('metadata[store]', 'SOL');
+    const qualifiesForDiscount = items.length >= 2;
+    form.set('metadata[discount]', qualifiesForDiscount ? '10% (2+ items)' : 'none');
     items.forEach((item, i) => {
       const product = byId.get(item.id);
       const price = Number(product.price);
@@ -71,7 +73,8 @@ module.exports = async function handler(req, res) {
       const base = 'line_items[' + i + ']';
       form.set(base + '[quantity]', '1');
       form.set(base + '[price_data][currency]', 'usd');
-      form.set(base + '[price_data][unit_amount]', String(Math.round(price * 100)));
+      const finalUnitAmount = Math.round(price * 100 * (qualifiesForDiscount ? 0.90 : 1));
+      form.set(base + '[price_data][unit_amount]', String(finalUnitAmount));
       form.set(base + '[price_data][product_data][name]', String(product.name).slice(0, 120));
       const details = [item.size !== 'One size' ? 'Size: ' + item.size : '', item.color ? 'Color: ' + item.color : ''].filter(Boolean).join(' · ');
       if (details) form.set(base + '[price_data][product_data][description]', details);
