@@ -1950,6 +1950,7 @@ function renderCart(){
  if(offer){
   offer.textContent=qualifies?'10% OFF UNLOCKED — YOUR DISCOUNT IS APPLIED.':cart.length===1?'ADD ONE MORE ITEM TO UNLOCK 10% OFF YOUR ORDER.':'ADD 2 ITEMS TO UNLOCK 10% OFF YOUR ORDER.';
   offer.style.color=qualifies?'#d8d8d8':'#999';
+  if(document.documentElement.dataset.solTheme!=='dark')offer.style.color='#111';
  }
  $('subtotal').innerHTML=qualifies?'<span style="text-decoration:line-through;color:#888;font-weight:400;margin-right:8px">'+money(subtotal)+'</span>'+money(discountedSubtotal):money(subtotal);
 }
