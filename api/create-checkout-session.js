@@ -46,7 +46,6 @@ module.exports = async function handler(req, res) {
     if (!Array.isArray(adminRows) || !adminRows.length) {
       return res.status(403).json({ error: 'Drop day is coming soon. Checkout is currently admin-only.' });
     }
-  try {
     const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
     const liveMode = STRIPE_KEY.startsWith('sk_live_');
     const publishableLiveMode = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_');
