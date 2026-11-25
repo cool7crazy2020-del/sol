@@ -2064,9 +2064,12 @@ $('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('continueShopping'
 $('checkout').onclick=async()=>{
  const button=$('checkout');
  if(!cart.length){toast('Your bag is empty');return}
+ if(!solIsAdmin){toast('Drop day is coming soon. Checkout is currently admin-only.');return}
  button.disabled=true;button.textContent='Preparing secure checkout…';
  try{
-  const response=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:cart.map(item=>({id:String(item.id),size:String(item.size||'One size'),color:String(item.color||'')}))})});
+  const {data:{session},error:sessionError}=await solDb.auth.getSession();
+  if(sessionError||!session?.access_token)throw new Error('Sign in with the SOL admin account to test checkout.');
+  const response=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({items:cart.map(item=>({id:String(item.id),size:String(item.size||'One size'),color:String(item.color||'')}))})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||'Checkout could not be started. Please try again.');
   if(!result.clientSecret||!result.publishableKey)throw new Error('Stripe did not return embedded checkout details.');
