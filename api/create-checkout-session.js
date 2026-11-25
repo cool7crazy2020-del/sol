@@ -25,26 +25,16 @@ module.exports = async function handler(req, res) {
     });
   }
   try {
-    const authorization = String(req.headers.authorization || '');
-    const accessToken = authorization.toLowerCase().startsWith('bearer ') ? authorization.slice(7).trim() : '';
-    if (!accessToken) return res.status(401).json({ error: 'Sign in with the SOL admin account to test checkout.' });
-    const userResponse = await fetch(SUPABASE_URL + '/auth/v1/user', {
-      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + accessToken }
-    });
-    if (!userResponse.ok) return res.status(401).json({ error: 'Your session is invalid. Sign in again.' });
-    const user = await userResponse.json();
-    if (!user || !user.id) return res.status(401).json({ error: 'Your session is invalid. Sign in again.' });
-    const adminUrl = new URL(SUPABASE_URL + '/rest/v1/sol_admins');
-    adminUrl.searchParams.set('select', 'user_id');
-    adminUrl.searchParams.set('user_id', 'eq.' + user.id);
-    adminUrl.searchParams.set('limit', '1');
-    const adminResponse = await fetch(adminUrl, {
-      headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY }
-    });
-    if (!adminResponse.ok) throw new Error('Could not verify SOL admin access.');
-    const adminRows = await adminResponse.json();
-    if (!Array.isArray(adminRows) || !adminRows.length) {
-      return res.status(403).json({ error: 'Drop day is coming soon. Checkout is currently admin-only.' });
+    const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
+    const liveMode = STRIPE_KEY.startsWith('sk_live_');
+    const publishableLiveMode = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_');
+    if (liveMode !== publishableLiveMode) {
+      console.error('SOL Stripe key mode mismatch.');
+      return res.status(503).json({ error: 'Checkout payment configuration is inconsistent.' });
+    }
+    // Never allow production live credentials to create real charges from preview deployments.
+    if (liveMode && requestHost !== 'shopsol.vercel.app') {
+      return res.status(403).json({ error: 'Live checkout is only available on the official SOL store.' });
     }
     const rawItems = Array.isArray(req.body && req.body.items) ? req.body.items : [];
     if (!rawItems.length || rawItems.length > 20) return res.status(400).json({ error: 'Your bag is empty or contains too many items.' });
@@ -74,7 +64,6 @@ module.exports = async function handler(req, res) {
     form.set('branding_settings[border_style]', 'rounded');
     form.set('branding_settings[font_family]', 'inter');
     form.set('branding_settings[display_name]', 'SOL');
-    const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
     const returnHost = /^(?:[a-z0-9-]+\.)*vercel\.app$/.test(requestHost) || requestHost === 'shopsol.vercel.app'
       ? requestHost
       : new URL(SITE_URL).host;
