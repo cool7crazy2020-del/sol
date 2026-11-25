@@ -2,8 +2,8 @@
 const SITE_URL = process.env.SOL_SITE_URL || 'https://shopsol.vercel.app';
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
-const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
+const STRIPE_KEY = (process.env.STRIPE_SECRET_KEY || '').trim();
+const STRIPE_PUBLISHABLE_KEY = (process.env.STRIPE_PUBLISHABLE_KEY || '').trim();
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 module.exports = async function handler(req, res) {
