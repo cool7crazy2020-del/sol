@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
     const liveMode = STRIPE_KEY.startsWith('sk_live_');
     const publishableLiveMode = STRIPE_PUBLISHABLE_KEY.startsWith('pk_live_');
     if (liveMode !== publishableLiveMode) {
-      console.error('SOL Stripe key mode mismatch.');
+      console.error('SOL Stripe key mode mismatch diagnostics:', JSON.stringify({ secretPresent: Boolean(STRIPE_KEY), publishablePresent: Boolean(STRIPE_PUBLISHABLE_KEY), secretPrefix: STRIPE_KEY.slice(0, 7), publishablePrefix: STRIPE_PUBLISHABLE_KEY.slice(0, 7), secretLength: STRIPE_KEY.length, publishableLength: STRIPE_PUBLISHABLE_KEY.length, secretLive: liveMode, publishableLive: publishableLiveMode }));
       return res.status(503).json({ error: 'Checkout payment configuration is inconsistent.' });
     }
     // Never allow production live credentials to create real charges from preview deployments.
