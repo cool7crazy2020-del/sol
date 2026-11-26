@@ -1890,6 +1890,56 @@ html[data-sol-theme="light"] .product-image{background:#e9e6df}
 html[data-sol-theme="light"] .nav a:hover,html[data-sol-theme="light"] .nav button:hover,html[data-sol-theme="light"] .subnav a:hover{color:#fff}
 </style>
 
+<style id="SOL_DROP_ENTRY_TRANSITION">
+/* Two-second chrome-sweep transition from the drop announcement into the store. */
+#solEnterTransition{
+ position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;
+ overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;
+ background:#070709;
+}
+#solEnterTransition::before{
+ content:"";position:absolute;inset:-35%;
+ background:linear-gradient(112deg,transparent 30%,#777b84 42%,#f8f9fb 48%,#fff 50%,#aeb3bd 54%,transparent 66%);
+ transform:translate3d(-120%,0,0) skewX(-12deg);
+}
+#solEnterTransition::after{
+ content:"";position:absolute;inset:0;
+ background:radial-gradient(ellipse at center,#e8eaf0 0%,#aeb2bb 12%,#33343a 36%,#08080a 72%);
+ opacity:0;transform:scale(.25);
+}
+#solEnterTransition span{
+ position:relative;z-index:1;color:#f4f4f5;
+ font:italic 400 clamp(72px,17vw,210px)/1 'Bodoni Moda',serif;
+ letter-spacing:.12em;padding-left:.12em;
+ opacity:0;transform:scale(.78);text-shadow:0 0 35px #fff8;
+}
+#solEnterTransition.active{visibility:visible;opacity:1}
+#solEnterTransition.active::before{animation:solEnterChromeSweep 2s cubic-bezier(.76,0,.2,1) both}
+#solEnterTransition.active::after{animation:solEnterFlash 2s cubic-bezier(.2,.7,.2,1) both}
+#solEnterTransition.active span{animation:solEnterWordmark 2s cubic-bezier(.2,.75,.25,1) both}
+@keyframes solEnterChromeSweep{
+ 0%{transform:translate3d(-120%,0,0) skewX(-12deg);opacity:0}
+ 16%{opacity:1}
+ 62%{transform:translate3d(0,0,0) skewX(-12deg);opacity:1}
+ 100%{transform:translate3d(120%,0,0) skewX(-12deg);opacity:0}
+}
+@keyframes solEnterFlash{
+ 0%,24%{opacity:0;transform:scale(.25)}
+ 52%{opacity:.9;transform:scale(1.25)}
+ 100%{opacity:0;transform:scale(1.8)}
+}
+@keyframes solEnterWordmark{
+ 0%,25%{opacity:0;transform:scale(.78);filter:blur(14px)}
+ 53%{opacity:1;transform:scale(1);filter:blur(0)}
+ 78%{opacity:1;letter-spacing:.12em}
+ 100%{opacity:0;transform:scale(1.12);filter:blur(5px)}
+}
+@media(prefers-reduced-motion:reduce){
+ #solEnterTransition.active::before,#solEnterTransition.active::after,#solEnterTransition.active span{animation:none}
+ #solEnterTransition.active{display:none}
+}
+</style>
+
 
 </head>
 <body>
@@ -1901,6 +1951,7 @@ html[data-sol-theme="light"] .nav a:hover,html[data-sol-theme="light"] .nav butt
   <button type="button" id="solViewWebsite">View Website</button>
  </div>
 </div>
+<div id="solEnterTransition" aria-hidden="true"><span>SOL</span></div>
 
 <header>
  <div class="head">
@@ -2604,8 +2655,21 @@ initSolCloud();
  };
  try{if(localStorage.getItem(key)==='yes')intro.classList.add('sol-drop-hidden')}catch(error){}
  button.addEventListener('click',()=>{
+  if(button.disabled)return;
+  button.disabled=true;
   try{localStorage.setItem(key,'yes')}catch(error){}
-  closeIntro();
+  const transition=document.getElementById('solEnterTransition');
+  if(!transition||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+   closeIntro();button.disabled=false;return;
+  }
+  transition.classList.remove('active');
+  void transition.offsetWidth;
+  transition.classList.add('active');
+  window.setTimeout(()=>{
+   closeIntro();
+   transition.classList.remove('active');
+   button.disabled=false;
+  },2000);
  });
  footerButton?.addEventListener('click',openIntro);
  document.addEventListener('keydown',event=>{
