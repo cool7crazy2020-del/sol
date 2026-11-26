@@ -1796,6 +1796,22 @@ html[data-sol-theme="light"] .sol-all-pieces-link{color:#111}
 html[data-sol-theme="light"] .sol-all-pieces-link-label{color:#555}
 html[data-sol-theme="light"] .sol-all-pieces-link-arrow{color:#111}
 </style>
+<style id="sol-sitewide-polish">
+/* Site-wide finishing touches */
+#solBackToTop{position:fixed;right:22px;bottom:22px;z-index:18;width:46px;height:46px;display:grid;place-items:center;border:1px solid #7778;background:#111;color:#f4f2ed;border-radius:50%;font-size:20px;line-height:1;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .2s,color .2s;box-shadow:0 8px 28px #0002}
+#solBackToTop.is-visible{opacity:1;visibility:visible;transform:translateY(0)}
+#solBackToTop:hover{background:#e8e7e4;color:#111;border-color:#e8e7e4}
+html[data-sol-theme="light"] #solBackToTop{background:#f8f6f0;color:#111;border-color:#bdb8ad}
+html[data-sol-theme="light"] #solBackToTop:hover{background:#111;color:#fff;border-color:#111}
+.product-image img,.detail-photo img,.detail-gallery img{backface-visibility:hidden}
+.product-meta{align-items:flex-start;line-height:1.55}
+.product-meta>div{min-width:0}
+.product-meta>div:first-child{overflow-wrap:anywhere}
+.search-panel input:focus-visible,.field input:focus-visible,.field textarea:focus-visible,.field select:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+::placeholder{opacity:.58}
+@media(max-width:560px){#solBackToTop{right:14px;bottom:max(14px,env(safe-area-inset-bottom));width:42px;height:42px}}
+@media(prefers-reduced-motion:reduce){#solBackToTop{transition:none}}
+</style>
 </head>
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
@@ -1901,6 +1917,7 @@ html[data-sol-theme="light"] .sol-all-pieces-link-arrow{color:#111}
 <footer class="sol-foot"><button type="button" class="sol-feedback-footer" id="solFeedbackOpen">ANY FEEDBACK? MESSAGE US</button><button type="button" class="copyright-hotspot" id="copyrightHotspot" aria-label="Copyright">©</button><button type="button" class="drop-day-footer" id="solDropFooterButton" aria-label="Open the SOL drop day announcement"><span class="drop-day-footer-mark" aria-hidden="true">✦</span><span>DROP DAY</span></button><a class="drop-day-footer sol-tiktok-footer" href="https://www.tiktok.com/@solshop29" target="_blank" rel="noopener noreferrer" aria-label="Visit SOL on TikTok"><span aria-hidden="true">♪</span><span>TIKTOK</span></a><a class="drop-day-footer sol-returns-footer" href="/returns.html" aria-label="Read SOL returns and refunds policy"><svg class="sol-returns-car" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><path d="M3.2 9.2 4.8 5.5c.3-.7.9-1.1 1.7-1.1h10.1c.8 0 1.4.4 1.7 1.1l1.6 3.7c.8.2 1.3.9 1.3 1.7v2.2h-2.1a2 2 0 0 1-3.9 0H8.8a2 2 0 0 1-3.9 0H2.8v-2.2c0-.8.2-1.4.4-1.7Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M5 9h14M7 6.1l-1 2.4m11-2.4 1 2.4" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><circle cx="6.9" cy="12.7" r="1.05" fill="currentColor"/><circle cx="17.1" cy="12.7" r="1.05" fill="currentColor"/></svg><span>RETURNS</span></a></footer>
 
 <div class="overlay" id="overlay"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true"><div class="drawer-head"><h2 id="bagTitle">Your bag</h2><button type="button" class="close" id="closeBag" aria-label="Close shopping bag">×</button></div><div id="cartItems"></div><p id="solCartOffer" style="margin:14px 0 8px;font-size:10px;line-height:1.6;letter-spacing:.12em;text-transform:uppercase;color:#999">ADD 2 ITEMS TO UNLOCK 10% OFF YOUR ORDER.</p><div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div><p class="muted">Secure checkout powered by Stripe. Shipping and applicable taxes are shown during checkout.</p><button type="button" class="button" id="continueShopping" style="width:100%;margin:0 0 9px;background:transparent">Continue shopping</button><button type="button" class="button dark" id="checkout" style="width:100%">Continue to checkout</button></aside><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button type="button" id="solBackToTop" aria-label="Back to top" title="Back to top">↑</button>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/supabase-config.js"></script>
@@ -1911,6 +1928,16 @@ let products=(readStore('sol-products',demo,Array.isArray)).filter(p=>p&&!p.samp
 const $=id=>document.getElementById(id),money=n=>"$"+Number(n||0).toFixed(2),safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
 let wishlist=readStore('sol-wishlist',[],Array.isArray).map(String),recentlyViewed=readStore('sol-recent',[],Array.isArray).map(String);
+const solBackToTop=$('solBackToTop');
+window.addEventListener('scroll',()=>{solBackToTop.classList.toggle('is-visible',window.scrollY>520)},{passive:true});
+solBackToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+document.addEventListener('keydown',e=>{
+ if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')&&!document.activeElement?.isContentEditable){
+  e.preventDefault();
+  if(!$('searchPanel').classList.contains('open'))$('searchToggle').click();
+  else $('searchInput').focus();
+ }
+});
 let importedPhotoSets=[];
 function isSaved(id){return wishlist.includes(String(id))}
 function saveWishlist(){localStorage.setItem('sol-wishlist',JSON.stringify(wishlist));$('wishCount').textContent=wishlist.length}
