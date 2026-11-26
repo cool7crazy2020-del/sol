@@ -1812,6 +1812,21 @@ html[data-sol-theme="light"] #solBackToTop:hover{background:#111;color:#fff;bord
 @media(max-width:560px){#solBackToTop{right:14px;bottom:max(14px,env(safe-area-inset-bottom));width:42px;height:42px}}
 @media(prefers-reduced-motion:reduce){#solBackToTop{transition:none}}
 </style>
+<style id="sol-second-polish">
+.sol-recent-section{padding-top:34px;padding-bottom:48px}
+.sol-recent-section .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.sol-recent-section .section-head h2{margin:7px 0 0}
+.sol-text-button{border:0;background:none;color:inherit;text-decoration:underline;text-underline-offset:4px;font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:8px 0}
+.sol-text-button:hover{opacity:.62}
+.product-image{overflow:hidden}
+.product-image img{transition:transform .55s cubic-bezier(.2,.7,.2,1),opacity .25s}
+.product:hover .product-image img{transform:scale(1.035)}
+.product:focus-visible{outline:2px solid currentColor;outline-offset:5px}
+.wishlist-heart{transition:transform .18s ease,background .18s ease,color .18s ease}
+.wishlist-heart:active{transform:scale(.88)}
+#toast{max-width:min( calc(100vw - 32px), 420px);border:1px solid #ffffff24;backdrop-filter:blur(12px);box-shadow:0 12px 38px #0002}
+@media(prefers-reduced-motion:reduce){.product-image img,.wishlist-heart{transition:none}.product:hover .product-image img{transform:none}}
+</style>
 </head>
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
@@ -1903,6 +1918,7 @@ html[data-sol-theme="light"] #solBackToTop:hover{background:#111;color:#fff;bord
   <a class="category" href="#shop" data-page="shop" data-category="Bottoms"><span>BOTTOMS ↗︎</span></a>
  </div></section>
  <section class="section sol-all-pieces-cta"><a class="sol-all-pieces-link" href="#allPieces" data-page="allPieces"><span class="sol-all-pieces-link-label">EXPLORE THE FULL COLLECTION</span><span class="sol-all-pieces-link-title">ALL PIECES</span></a></section>
+ <section class="section sol-recent-section" id="solRecentSection" style="display:none"><div class="section-head"><div><div class="eyebrow">PICK UP WHERE YOU LEFT OFF</div><h2>Recently viewed</h2></div><button type="button" id="solClearRecent" class="sol-text-button">Clear</button></div><div class="product-grid" id="solRecentProducts"></div></section>
  
 
 </section>
@@ -1944,7 +1960,7 @@ function saveWishlist(){localStorage.setItem('sol-wishlist',JSON.stringify(wishl
 function toggleWishlist(id){id=String(id);wishlist=isSaved(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveWishlist();render();toast(isSaved(id)?'Added to wishlist':'Removed from wishlist')}
 function bindProductCards(root){root.querySelectorAll('.product').forEach(el=>{el.onclick=e=>{const heart=e.target.closest('[data-heart]');if(heart){e.stopPropagation();toggleWishlist(heart.dataset.heart);return}if(e.target.closest('button'))e.preventDefault();showProduct(el.dataset.id)};el.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button')){e.preventDefault();showProduct(el.dataset.id)}}})}
 function card(p){return '<article class="product" data-id="'+safe(p.id)+'" role="button" tabindex="0" aria-label="View '+safe(p.name)+'"><div class="product-image"><img src="'+safe(p.image)+'" alt="'+safe(p.name)+'" loading="lazy"><button class="wishlist-heart '+(isSaved(p.id)?'saved':'')+'" data-heart="'+safe(p.id)+'" aria-label="'+(isSaved(p.id)?'Remove from wishlist':'Add to wishlist')+'">'+(isSaved(p.id)?'♥':'♡')+'</button>'+(p.sample?'<span class="tag">Preview piece</span>':'')+'<button class="quick" type="button" data-quick="'+safe(p.id)+'" aria-label="Quick view '+safe(p.name)+'">Quick view ↗︎</button></div><div class="product-meta"><div>'+safe(p.name)+'<small>'+safe(p.category)+' · '+safe(p.color||'SOL')+'</small></div><span class="price">'+money(p.price)+'</span></div></article>'}
-function render(){let live=products.filter(p=>p.hidden!==true);const featured=$('featured');if(featured)featured.innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';const allPieces=$('allPiecesProducts');if(allPieces)allPieces.innerHTML=live.map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);const allProducts=$('allProducts');if(allProducts)allProducts.innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);const wishlistProducts=$('wishlistProducts');if(wishlistProducts)wishlistProducts.innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';if($('wishlistCountLabel'))$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');if($('wishCount'))$('wishCount').textContent=wishlist.length;[featured,allPieces,allProducts,wishlistProducts].filter(Boolean).forEach(bindProductCards);if($('bagCount'))$('bagCount').textContent=cart.length;renderCart()}
+function render(){let live=products.filter(p=>p.hidden!==true);const featured=$('featured');if(featured)featured.innerHTML=live.slice(0,4).map(card).join('')||'<p class="muted">No products yet.</p>';const recentProducts=$('solRecentProducts'),recentSection=$('solRecentSection');if(recentProducts&&recentSection){const recent=recentlyViewed.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean).slice(0,4);recentProducts.innerHTML=recent.map(card).join('');recentSection.style.display=recent.length?'block':'none';bindProductCards(recentProducts);}const allPieces=$('allPiecesProducts');if(allPieces)allPieces.innerHTML=live.map(card).join('')||'<p class="muted">No products yet.</p>';let list=live.filter(p=>filter==='All'||p.category===filter),sort=$('sort')?.value;if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);const allProducts=$('allProducts');if(allProducts)allProducts.innerHTML=list.map(card).join('')||'<p class="muted">No products in this category yet.</p>';const saved=wishlist.map(id=>live.find(p=>String(p.id)===String(id))).filter(Boolean);const wishlistProducts=$('wishlistProducts');if(wishlistProducts)wishlistProducts.innerHTML=saved.map(card).join('')||'<div class="empty-state" style="grid-column:1/-1"><h2>Nothing saved yet.</h2><p>Keep the pieces that catch your eye close.</p><button class="button dark" onclick="go(\'shop\')">Explore the collection</button></div>';if($('wishlistCountLabel'))$('wishlistCountLabel').textContent=saved.length+' SAVED '+(saved.length===1?'PIECE':'PIECES');if($('wishCount'))$('wishCount').textContent=wishlist.length;[featured,allPieces,allProducts,wishlistProducts].filter(Boolean).forEach(bindProductCards);if($('bagCount'))$('bagCount').textContent=cart.length;renderCart()}
 let studioTapCount=0,studioTapTimer=null;
 function finishPendingTapImport(){
  let data;
@@ -2098,6 +2114,7 @@ $('sort').onchange=render;
 $('searchToggle').onclick=()=>{const panel=$('searchPanel'),open=!panel.classList.contains('open');panel.classList.toggle('open',open);$('searchToggle').setAttribute('aria-expanded',String(open));if(open){$('searchInput').focus();renderSearch() }};
 function renderSearch(){const q=$('searchInput').value.trim().toLowerCase();if(!q){$('searchResults').innerHTML='<div class="search-empty">Start typing to discover pieces.</div>';return}const matches=products.filter(p=>p.hidden!==true&&[p.name,p.category,p.color,p.desc].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);$('searchResults').innerHTML=matches.map(p=>'<button type="button" class="search-result" data-search-id="'+safe(p.id)+'" aria-label="View '+safe(p.name)+'"><img src="'+safe(p.image)+'" alt=""><span>'+safe(p.name)+'<small>'+safe(p.category)+'</small></span><span>'+money(p.price)+'</span></button>').join('')||'<div class="search-empty">No pieces found. Try another search.</div>';document.querySelectorAll('[data-search-id]').forEach(el=>el.onclick=()=>{$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');showProduct(el.dataset.searchId)})}
 $('searchInput').addEventListener('input',renderSearch);
+if($('solClearRecent'))$('solClearRecent').addEventListener('click',()=>{recentlyViewed=[];localStorage.removeItem('sol-recent');if($('solRecentSection'))$('solRecentSection').style.display='none';toast('Recently viewed cleared')});
 
 document.addEventListener('click',e=>{if(!$('searchPanel').contains(e.target)&&!$('searchToggle').contains(e.target)){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false')}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('drawer').classList.contains('show')){closeBag();return}if($('searchPanel').classList.contains('open')){$('searchPanel').classList.remove('open');$('searchToggle').setAttribute('aria-expanded','false');$('searchToggle').focus()}}});
