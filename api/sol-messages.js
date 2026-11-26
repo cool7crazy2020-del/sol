@@ -5,7 +5,7 @@ const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 async function authenticate(req) {
-  const match = String(req.headers.authorization || '').match(/^Bearer\\s+(.+)$/i);
+  const match = String(req.headers.authorization || '').match(/^Bearer\s+(.+)$/i);
   if (!match) return null;
   const response = await fetch(SUPABASE_URL + '/auth/v1/user', {
     headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: 'Bearer ' + match[1] }
