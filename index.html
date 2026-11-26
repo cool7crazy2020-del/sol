@@ -1827,6 +1827,68 @@ html[data-sol-theme="light"] #solBackToTop:hover{background:#111;color:#fff;bord
 #toast{max-width:min( calc(100vw - 32px), 420px);border:1px solid #ffffff24;backdrop-filter:blur(12px);box-shadow:0 12px 38px #0002}
 @media(prefers-reduced-motion:reduce){.product-image img,.wishlist-heart{transition:none}.product:hover .product-image img{transform:none}}
 </style>
+
+<style id="sol-finish-polish-2026">
+/* SOL finish pass: quieter motion, clearer controls, and consistent spacing. */
+html{scroll-padding-top:140px}
+::selection{background:#d8d5ce;color:#101012}
+.nav a,.nav button,.subnav a{position:relative;transition:color .2s ease,opacity .2s ease}
+.nav a::after,.subnav a::after{content:"";position:absolute;left:0;right:0;bottom:3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .22s ease}
+.nav a:hover::after,.subnav a:hover::after{transform:scaleX(1)}
+.button,.filter-list button,.sizes button,.quick,.sol-feedback-footer,.drop-day-footer{transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .2s ease,opacity .2s ease}
+.button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.button:active,.filter-list button:active,.sizes button:active{transform:scale(.985)}
+.product{transition:opacity .2s ease}
+.product-image{isolation:isolate}
+.product-image img{display:block;backface-visibility:hidden}
+.product:hover .product-meta>div:first-child{color:var(--muted)}
+.product-meta{line-height:1.55}
+.product-meta .price{font-variant-numeric:tabular-nums}
+.category{border-radius:1px}
+.category span{transition:transform .25s ease,background-color .25s ease}
+.category:hover span{transform:translateY(-3px);background:rgba(5,5,7,.88)}
+.filter-list button:hover,.sizes button:hover{border-color:currentColor}
+.filters select{max-width:100%;color:inherit}
+.field input,.field select,.field textarea,.filters select,#solAccountEmail,#solAccountPassword{border-radius:2px;transition:border-color .2s ease,box-shadow .2s ease}
+.field input:focus,.field select:focus,.field textarea:focus,.filters select:focus,#solAccountEmail:focus,#solAccountPassword:focus,#solFeedbackMessage:focus{outline:none;border-color:#999;box-shadow:0 0 0 3px #9992}
+.drawer{overscroll-behavior:contain;padding-bottom:max(25px,env(safe-area-inset-bottom))}
+.drawer-head{position:sticky;top:-25px;background:var(--paper);z-index:2;padding-top:5px}
+#overlay{backdrop-filter:blur(3px)}
+.toast{max-width:min(90vw,440px);text-align:center;line-height:1.5;border:1px solid #ffffff24;box-shadow:0 10px 35px #0005;border-radius:2px;padding:13px 20px}
+.sol-foot{padding-bottom:max(18px,env(safe-area-inset-bottom))}
+.sol-foot button,.sol-foot a{min-height:42px}
+#solBackToTop{transition:opacity .2s ease,transform .2s ease,background-color .2s ease}
+#solBackToTop:hover{transform:translateY(-3px)}
+.skip-link{z-index:2147483005}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{scroll-margin:120px}
+@media(max-width:560px){
+ .section,.shop{padding-left:4vw;padding-right:4vw}
+ .section-head{gap:14px;align-items:flex-end}
+ .section-head h2{font-size:clamp(30px,9vw,42px)}
+ .product-grid{column-gap:9px;row-gap:22px}
+ .product-meta{font-size:10px;gap:6px}
+ .product-meta small{font-size:7px;letter-spacing:.09em}
+ .product-image{border-radius:1px}
+ .quick{opacity:1;transform:none;left:7px;right:7px;bottom:7px;padding:10px;font-size:8px;background:#f6f5f1ed}
+ .shop h1{font-size:clamp(42px,12vw,58px)}
+ .detail-info h1{overflow-wrap:anywhere}
+ .drawer{padding:18px}
+ .drawer-head{top:-18px}
+ .toast{bottom:calc(14px + env(safe-area-inset-bottom))}
+}
+@media(hover:none){
+ .product:hover .product-image img,.category:hover img,.category:hover::before{transform:none}
+ .nav a::after,.subnav a::after{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+html[data-sol-theme="light"] .toast{background:#f5f3ee;color:#111;border-color:#1112}
+html[data-sol-theme="light"] .drawer-head{background:var(--paper)}
+html[data-sol-theme="light"] .product-image{background:#e9e6df}
+html[data-sol-theme="light"] .nav a:hover,html[data-sol-theme="light"] .nav button:hover,html[data-sol-theme="light"] .subnav a:hover{color:#fff}
+</style>
 </head>
 <body>
 <div id="solDropIntro" role="dialog" aria-modal="true" aria-labelledby="solDropTitle">
