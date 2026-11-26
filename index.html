@@ -1913,6 +1913,7 @@ html[data-sol-theme="light"] .nav a:hover,html[data-sol-theme="light"] .nav butt
  opacity:0;transform:scale(.78);filter:drop-shadow(0 0 28px #fff8);
 }
 #solEnterTransition.active{visibility:visible;opacity:1}
+#solEnterTransition.active.exit{opacity:0;transition:opacity .45s ease}
 #solEnterTransition.active::before{animation:solEnterChromeSweep 2s cubic-bezier(.76,0,.2,1) both}
 #solEnterTransition.active::after{animation:solEnterFlash 2s cubic-bezier(.2,.7,.2,1) both}
 #solEnterTransition.active .sol-enter-logo{animation:solEnterWordmark 2s cubic-bezier(.2,.75,.25,1) both}
@@ -2665,9 +2666,15 @@ initSolCloud();
   void transition.offsetWidth;
   transition.classList.add('active');
   window.setTimeout(()=>{
+   /* Keep the black transition layer covering the drop page while it fades away. */
    closeIntro();
-   transition.classList.remove('active');
-   button.disabled=false;
+   window.setTimeout(()=>{
+    transition.classList.add('exit');
+    window.setTimeout(()=>{
+     transition.classList.remove('active','exit');
+     button.disabled=false;
+    },460);
+   },820);
   },2000);
  });
  footerButton?.addEventListener('click',openIntro);
