@@ -2285,7 +2285,7 @@ $('solFeedbackSend').addEventListener('click',async()=>{
   const response=await fetch('/api/sol-messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({message})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||'Could not send your message.');
-  $('solFeedbackMessage').value='';status.textContent='Message sent. Thank you for contacting SOL.';
+  $('solFeedbackMessage').value='';status.textContent='Message sent. Thank you for contacting SOL.';setTimeout(solCloseFeedbackModal,1200);
  }catch(error){status.textContent=error.message||'Could not send your message. Please try again.'}
  finally{button.disabled=false;button.textContent='SEND MESSAGE'}
 });
