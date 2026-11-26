@@ -1847,7 +1847,8 @@ html[data-sol-theme="light"] .sol-all-pieces-link-arrow{color:#111}
   <h2 id="solFeedbackTitle">Send us a message</h2>
   <p style="color:#aaa;font-size:13px;line-height:1.6">Your message will be sent privately to the SOL team.</p>
   <label id="solFeedbackMessageLabel" for="solFeedbackMessage" style="display:block;font-size:9px;letter-spacing:.15em;margin:20px 0 8px">YOUR MESSAGE</label>
-  <textarea id="solFeedbackMessage" maxlength="3000" rows="6" placeholder="How can we help?" style="display:block;width:100%;box-sizing:border-box;padding:13px;background:#171719;border:1px solid #414146;color:#fff;resize:vertical"></textarea>
+  <textarea id="solFeedbackMessage" maxlength="3000" rows="6" placeholder="How can we help?" aria-describedby="solFeedbackCount" style="display:block;width:100%;box-sizing:border-box;padding:14px;background:#171719;border:1px solid #414146;color:#fff;resize:vertical;min-height:140px;border-radius:2px;line-height:1.6;transition:border-color .2s,box-shadow .2s"></textarea>
+   <p id="solFeedbackCount" aria-live="polite" style="margin:7px 0 0;text-align:right;font-size:10px;letter-spacing:.08em;color:#777">0 / 3000</p>
   <p id="solFeedbackStatus" role="status" aria-live="polite" style="font-size:12px;color:#aaa;min-height:18px"></p>
   <button type="button" id="solFeedbackSend" style="width:100%;padding:14px;background:#f2f0eb;color:#111;border:0;font-weight:700">SEND MESSAGE</button>
  </div>
@@ -2260,7 +2261,7 @@ try{if(window.supabase?.createClient&&window.SOL_SUPABASE_URL&&window.SOL_SUPABA
 let solPendingMessageAfterSignIn=false;
 function solOpenFeedbackModal(){
  const modal=$('solFeedbackModal');if(!modal)return;
- modal.style.display='flex';modal.setAttribute('aria-hidden','false');$('solFeedbackMessageLabel').style.display='block';$('solFeedbackMessage').style.display='block';$('solFeedbackSend').style.display='block';$('solFeedbackStatus').style.fontSize='12px';$('solFeedbackStatus').style.minHeight='18px';$('solFeedbackStatus').style.fontWeight='400';$('solFeedbackStatus').textContent='';$('solFeedbackMessage').focus();
+ modal.style.display='flex';modal.setAttribute('aria-hidden','false');$('solFeedbackMessageLabel').style.display='block';$('solFeedbackMessage').style.display='block';$('solFeedbackSend').style.display='block';$('solFeedbackCount').style.display='block';$('solFeedbackMessage').value='';$('solFeedbackCount').textContent='0 / 3000';$('solFeedbackStatus').style.fontSize='12px';$('solFeedbackStatus').style.minHeight='18px';$('solFeedbackStatus').style.fontWeight='400';$('solFeedbackStatus').textContent='';$('solFeedbackMessage').focus();
 }
 function solCloseFeedbackModal(){const modal=$('solFeedbackModal');if(!modal)return;modal.style.display='none';modal.setAttribute('aria-hidden','true')}
 async function solOpenFeedbackComposer(){
@@ -2269,7 +2270,9 @@ async function solOpenFeedbackComposer(){
  if(error||!session){solPendingMessageAfterSignIn=true;solSetAccountMode('signin');solOpenAccount();$('solAccountStatus').textContent='Please sign in to send SOL a message.';return}
  solOpenFeedbackModal();
 }
-$('solFeedbackOpen').addEventListener('click',solOpenFeedbackComposer);
+$('solFeedbackMessage').addEventListener('input',()=>{$('solFeedbackCount').textContent=$('solFeedbackMessage').value.length.toLocaleString()+' / 3,000';});
+ $('solFeedbackMessage').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')$('solFeedbackSend').click()});
+ $('solFeedbackOpen').addEventListener('click',solOpenFeedbackComposer);
 $('solFeedbackClose').addEventListener('click',solCloseFeedbackModal);
 $('solFeedbackModal').addEventListener('click',e=>{if(e.target===$('solFeedbackModal'))solCloseFeedbackModal()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('solFeedbackModal')?.style.display==='flex')solCloseFeedbackModal()});
@@ -2285,7 +2288,7 @@ $('solFeedbackSend').addEventListener('click',async()=>{
   const response=await fetch('/api/sol-messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({message})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||'Could not send your message.');
-  $('solFeedbackMessage').value='';$('solFeedbackMessageLabel').style.setProperty('display','none','important');$('solFeedbackMessage').style.setProperty('display','none','important');$('solFeedbackSend').style.setProperty('display','none','important');status.style.fontSize='20px';status.style.fontWeight='600';status.style.lineHeight='1.5';status.style.minHeight='0';status.textContent='Message sent. Thank you for contacting SOL.';setTimeout(solCloseFeedbackModal,1800);
+  $('solFeedbackMessage').value='';$('solFeedbackMessageLabel').style.setProperty('display','none','important');$('solFeedbackMessage').style.setProperty('display','none','important');$('solFeedbackCount').style.setProperty('display','none','important');$('solFeedbackSend').style.setProperty('display','none','important');status.style.fontSize='20px';status.style.fontWeight='600';status.style.lineHeight='1.5';status.style.minHeight='0';status.textContent='Message sent. Thank you for contacting SOL.';setTimeout(solCloseFeedbackModal,1800);
  }catch(error){status.textContent=error.message||'Could not send your message. Please try again.'}
  finally{button.disabled=false;button.textContent='SEND MESSAGE'}
 });
