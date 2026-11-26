@@ -2285,7 +2285,7 @@ $('solFeedbackSend').addEventListener('click',async()=>{
   const response=await fetch('/api/sol-messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({message})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||'Could not send your message.');
-  $('solFeedbackMessage').value='';$('solFeedbackMessageLabel').style.display='none';$('solFeedbackMessage').style.display='none';$('solFeedbackSend').style.display='none';status.style.fontSize='20px';status.style.fontWeight='600';status.style.lineHeight='1.5';status.style.minHeight='0';status.textContent='Message sent. Thank you for contacting SOL.';setTimeout(solCloseFeedbackModal,1800);
+  $('solFeedbackMessage').value='';$('solFeedbackMessageLabel').style.setProperty('display','none','important');$('solFeedbackMessage').style.setProperty('display','none','important');$('solFeedbackSend').style.setProperty('display','none','important');status.style.fontSize='20px';status.style.fontWeight='600';status.style.lineHeight='1.5';status.style.minHeight='0';status.textContent='Message sent. Thank you for contacting SOL.';setTimeout(solCloseFeedbackModal,1800);
  }catch(error){status.textContent=error.message||'Could not send your message. Please try again.'}
  finally{button.disabled=false;button.textContent='SEND MESSAGE'}
 });
