@@ -2666,15 +2666,13 @@ initSolCloud();
   void transition.offsetWidth;
   transition.classList.add('active');
   window.setTimeout(()=>{
-   /* Keep the black transition layer covering the drop page while it fades away. */
+   /* Fade the drop page beneath the transition, then hand off immediately. */
    closeIntro();
+   transition.classList.add('exit');
    window.setTimeout(()=>{
-    transition.classList.add('exit');
-    window.setTimeout(()=>{
-     transition.classList.remove('active','exit');
-     button.disabled=false;
-    },460);
-   },820);
+    transition.classList.remove('active','exit');
+    button.disabled=false;
+   },460);
   },2000);
  });
  footerButton?.addEventListener('click',openIntro);
