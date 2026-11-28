@@ -19,8 +19,8 @@ async function isAdmin(user) {
 }
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 function makeCode() {
-  const raw = crypto.randomBytes(5).toString('hex').toUpperCase();
-  return 'SOL-' + raw.slice(0, 5) + '-' + raw.slice(5);
+  const raw = crypto.randomBytes(6).toString('hex').toUpperCase();
+  return 'SOL-' + raw.slice(0, 6) + '-' + raw.slice(6);
 }
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
     const action = String(req.body?.action || '');
     if (action === 'redeem') {
       const code = String(req.body?.code || '').trim().toUpperCase().replace(/\s+/g, '');
-      if (!/^SOL-[A-F0-9]{5}-[A-F0-9]{5}$/.test(code)) return res.status(400).json({ error: 'Enter a valid SOL access code.' });
+      if (!/^SOL-[A-F0-9]{6}-[A-F0-9]{6}$/.test(code)) return res.status(400).json({ error: 'Enter a valid SOL access code.' });
       const q = new URLSearchParams({ select: 'id,expires_at,revoked_at,redeemed_by', code_hash: 'eq.' + hash(code), limit: '1' });
       const found = await fetch(URL + '/rest/v1/sol_early_access_codes?' + q, { headers: headers() });
       if (!found.ok) throw new Error('Could not verify that code.');
