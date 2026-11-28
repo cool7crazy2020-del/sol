@@ -1,11 +1,13 @@
 const $=id=>document.getElementById(id);
 let extracted=null;
-const activeTapstitch=tab=>!!tab?.url&&/https?:\\/\\/(www\\.)?tapstitch\\.com\\//i.test(tab.url);
+function isTapstitch(tab){try{const u=new URL(tab?.url||"");return u.hostname==="tapstitch.com"||u.hostname==="www.tapstitch.com"}catch(_){return false}}
 $("extractProduct").addEventListener("click",async()=>{
  const button=$("extractProduct"),status=$("extractStatus");button.disabled=true;status.textContent="Reading the active Tapstitch product page…";$("productPreview").replaceChildren();$("sendToStudio").disabled=true;extracted=null;
  try{
   const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});
-  if(!activeTapstitch(tab)||!/products-pool\\/product|product\\//i.test(new URL(tab.url).pathname))throw new Error("Open a Tapstitch product details page first.");
+  if(!isTapstitch(tab))throw new Error("Open a Tapstitch product details page first.");
+  const path=new URL(tab.url).pathname;
+  if(path.includes("/order/checkout"))throw new Error("Open a product details page, not checkout.");
   const result=await chrome.tabs.sendMessage(tab.id,{type:"SOL_EXTRACT_TAPSTITCH"});
   if(!result?.ok)throw new Error(result?.error||"Product extraction failed.");
   extracted=result.data;
@@ -39,7 +41,7 @@ $("fillAddress").addEventListener("click",async()=>{
   let data;try{data=JSON.parse($("orderData").value)}catch(_){throw new Error("Paste valid SOL order JSON first.")}
   if(!data||!data.shipping_details)throw new Error("This order data has no shipping address.");
   const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});
-  if(!tab?.url||!tab.url.includes("tapstitch.com/order/checkout"))throw new Error("Open Tapstitch checkout and the Edit address form first.");
+  if(!isTapstitch(tab)||!new URL(tab.url).pathname.includes("/order/checkout"))throw new Error("Open Tapstitch checkout and the Edit address form first.");
   const result=await chrome.tabs.sendMessage(tab.id,{type:"SOL_FILL_TAPSTITCH_ADDRESS",order:data});
   if(!result?.ok)throw new Error(result?.error||"Could not fill the address.");
   message.textContent=result.message||"Address fields filled. Review them carefully; nothing was saved or submitted.";
