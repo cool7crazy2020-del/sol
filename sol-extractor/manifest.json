@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SOL Tapstitch Order Assistant",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Prepare Tapstitch checkout addresses from SOL paid orders. Never submits payments.",
   "permissions": [
     "activeTab",
@@ -27,10 +27,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://tapstitch.com/account/products-pool/product/*",
-        "https://www.tapstitch.com/account/products-pool/product/*",
-        "https://tapstitch.com/order/checkout*",
-        "https://www.tapstitch.com/order/checkout*"
+        "https://tapstitch.com/*",
+        "https://www.tapstitch.com/*"
       ],
       "js": [
         "content.js"
