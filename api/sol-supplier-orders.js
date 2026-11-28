@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !SUPABASE_SERVICE_ROLE_KEY) {
     return res.status(503).json({ error: 'Order preparation is not configured.' });
   }
-  const match = String(req.headers.authorization || '').match(/^Bearer\\s+(.+)$/i);
+  const match = String(req.headers.authorization || '').match(/^Bearer\s+(.+)$/i);
   if (!match) return res.status(401).json({ error: 'Sign in to SOL Studio.' });
   try {
     const userResponse = await fetch(SUPABASE_URL + '/auth/v1/user', {
