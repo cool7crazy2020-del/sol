@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SOL Tapstitch Extractor",
-  "version": "1.1.1",
-  "description": "Extract product details and mockup image URLs from your signed-in Tapstitch product page into SOL.",
+  "name": "SOL Tapstitch Order Assistant",
+  "version": "1.2.0",
+  "description": "Prepare Tapstitch checkout addresses from SOL paid orders. Never submits payments.",
   "permissions": [
     "activeTab",
     "tabs",
@@ -19,7 +19,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Open SOL Extractor"
+    "default_title": "Open SOL Order Assistant"
   },
   "side_panel": {
     "default_path": "panel.html"
@@ -28,7 +28,9 @@
     {
       "matches": [
         "https://tapstitch.com/account/products-pool/product/*",
-        "https://www.tapstitch.com/account/products-pool/product/*"
+        "https://www.tapstitch.com/account/products-pool/product/*",
+        "https://tapstitch.com/order/checkout*",
+        "https://www.tapstitch.com/order/checkout*"
       ],
       "js": [
         "content.js"
