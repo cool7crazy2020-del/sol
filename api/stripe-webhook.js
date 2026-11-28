@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
       amount_total: session.amount_total || 0,
       currency: session.currency || 'usd',
       payment_status: session.payment_status,
-      shipping_details: session.shipping_details || session.customer_details && session.customer_details.address || {},
+      shipping_details: { ...(session.shipping_details || {}), phone: session.shipping_details && session.shipping_details.phone || session.customer_details && session.customer_details.phone || null },
       items
     };
     stage = 'supabase_save';
