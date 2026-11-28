@@ -2847,8 +2847,8 @@ initSolCloud();
  async function load(){
   refresh.disabled=true;status.textContent='Loading paid orders…';list.replaceChildren();
   try{
-   if(!window.solDb)throw new Error('SOL account service is unavailable. Refresh Studio and sign in again.');
-   const {data:{session}}=await window.solDb.auth.getSession();
+   if(typeof solDb==='undefined'||!solDb)throw new Error('SOL account service is unavailable. Refresh Studio and sign in again.');
+   const {data:{session}}=await solDb.auth.getSession();
    if(!session)throw new Error('Sign in to the SOL admin account first.');
    const response=await fetch('/api/sol-supplier-orders',{headers:{Authorization:'Bearer '+session.access_token},cache:'no-store'});
    const result=await response.json().catch(()=>({}));
