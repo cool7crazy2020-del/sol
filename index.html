@@ -2780,7 +2780,7 @@ initSolCloud();
   if(Date.now()>=publicDate)return;
   e.preventDefault();e.stopImmediatePropagation();if(checking)return;checking=true;
   try{const result=await api(null);if(result.hasAccess){allowEntry=true;button.click();allowEntry=false;close()}else open()}
-  catch(error){status.textContent=error.message;open()}
+  catch(error){open();status.textContent=error.message}
   finally{checking=false}
  },true);
  $ea('solEarlyAccessRedeem')?.addEventListener('click',async()=>{
