@@ -43,8 +43,20 @@ module.exports = async function handler(req, res) {
     });
     if (!adminResponse.ok) throw new Error('Could not verify SOL admin access.');
     const adminRows = await adminResponse.json();
-    if (!Array.isArray(adminRows) || !adminRows.length) {
-      return res.status(403).json({ error: 'Drop day is coming soon. Checkout is currently admin-only.' });
+    const isAdmin = Array.isArray(adminRows) && adminRows.length > 0;
+    if (!isAdmin) {
+      const accessUrl = new URL(SUPABASE_URL + '/rest/v1/sol_early_access_codes');
+      accessUrl.searchParams.set('select', 'id,expires_at');
+      accessUrl.searchParams.set('redeemed_by', 'eq.' + user.id);
+      accessUrl.searchParams.set('revoked_at', 'is.null');
+      accessUrl.searchParams.set('limit', '10');
+      const accessResponse = await fetch(accessUrl, {
+        headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY }
+      });
+      if (!accessResponse.ok) throw new Error('Could not verify SOL early-access eligibility.');
+      const accessRows = await accessResponse.json();
+      const hasEarlyAccess = Array.isArray(accessRows) && accessRows.some(row => !row.expires_at || new Date(row.expires_at).getTime() > Date.now());
+      if (!hasEarlyAccess) return res.status(403).json({ error: 'Early checkout is currently limited to customers with a SOL early-access code.' });
     }
     const requestHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
     const liveMode = STRIPE_KEY.startsWith('sk_live_');
