@@ -2796,14 +2796,20 @@ initSolCloud();
  });
  async function adminLoad(){
   const panel=$ea('solEarlyAccessAdmin');if(!panel)return;
-  try{const data=await api(null);if(!data.admin){panel.style.display='none';return}
-   panel.style.display='block';const list=$ea('solEarlyAccessCodeList');list.replaceChildren();
+  panel.style.display='block';
+  try{const data=await api(null);if(!data.admin){
+    $ea('solEarlyAccessAdminStatus').textContent='This SOL account is not authorized to manage access codes. Sign in with the admin account listed in Supabase → sol_admins.';
+    $ea('solEarlyAccessGenerate').disabled=true;
+    return;
+   }
+   $ea('solEarlyAccessGenerate').disabled=false;
+   const list=$ea('solEarlyAccessCodeList');list.replaceChildren();
    (data.codes||[]).forEach(item=>{
     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #333;padding:12px 0;font-size:11px;flex-wrap:wrap';
     const info=document.createElement('span');info.textContent=(item.redeemed_at?'REDEEMED':item.revoked_at?'REVOKED':'AVAILABLE')+' · '+(item.expires_at?'EXPIRES '+new Date(item.expires_at).toLocaleDateString():'NO EXPIRY');row.append(info);
     if(!item.redeemed_at&&!item.revoked_at){const revoke=document.createElement('button');revoke.type='button';revoke.textContent='Revoke';revoke.style.cssText='background:transparent;color:#ddd;border:1px solid #555;padding:7px 10px';revoke.onclick=async()=>{try{await api({action:'revoke',id:item.id});await adminLoad()}catch(err){$ea('solEarlyAccessAdminStatus').textContent=err.message}};row.append(revoke)}list.append(row);
    });
-  }catch(error){$ea('solEarlyAccessAdminStatus').textContent=error.message}
+  }catch(error){panel.style.display='block';$ea('solEarlyAccessAdminStatus').textContent=error.message}
  }
  $ea('solEarlyAccessGenerate')?.addEventListener('click',async()=>{
   const button=$ea('solEarlyAccessGenerate'),out=$ea('solEarlyAccessNewCodes'),message=$ea('solEarlyAccessAdminStatus');button.disabled=true;message.textContent='Generating…';out.replaceChildren();
