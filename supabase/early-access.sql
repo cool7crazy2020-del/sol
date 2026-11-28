@@ -4,7 +4,7 @@ create table if not exists public.sol_early_access_codes (
   id uuid primary key default gen_random_uuid(),
   code_hash text not null unique,
   created_by uuid not null references auth.users(id),
-  redeemed_by uuid references auth.users(id) on delete set null,
+  redeemed_by uuid references auth.users(id) on delete restrict,
   created_at timestamptz not null default now(),
   expires_at timestamptz,
   redeemed_at timestamptz,
