@@ -1949,7 +1949,7 @@ html[data-sol-theme="light"] .nav a:hover,html[data-sol-theme="light"] .nav butt
   <p class="sol-drop-brand">SOL</p>
   <h1 class="sol-drop-title" id="solDropTitle"><span>DROP DAY</span><span>COMING SOON</span></h1>
   <p class="sol-drop-sub">DROP DATE REVEALED</p><p class="sol-drop-countdown" id="solDropCountdown" aria-live="off">--D : --H : --M</p>
-  <button type="button" id="solViewWebsite">View Website</button><button type="button" id="solEarlyAccessOpen" style="display:block;margin:18px auto 0;padding:10px 14px;background:transparent;border:1px solid #777;color:#eee;font:500 9px DM Sans,sans-serif;letter-spacing:.2em;cursor:pointer">HAVE AN EARLY ACCESS CODE?</button>
+  <button type="button" id="solViewWebsite">View Website</button>
  </div>
 </div>
 <div id="solEnterTransition" aria-hidden="true"><img class="sol-enter-logo" src="assets/sol-logo-transparent.svg?v=3" alt=""></div>
@@ -2239,11 +2239,22 @@ $('openBag').onclick=openBag;$('closeBag').onclick=closeBag;$('continueShopping'
 $('checkout').onclick=async()=>{
  const button=$('checkout');
  if(!cart.length){toast('Your bag is empty');return}
- if(!solIsAdmin){toast('Drop day is coming soon. Checkout is currently admin-only.');return}
- button.disabled=true;button.textContent='Preparing checkout…';
+ button.disabled=true;button.textContent='Checking access…';
  try{
   const {data:{session},error:sessionError}=await solDb.auth.getSession();
-  if(sessionError||!session?.access_token)throw new Error('Sign in with the SOL admin account to test checkout.');
+  if(sessionError||!session?.access_token){
+   button.disabled=false;button.textContent='Continue to checkout';
+   if(typeof solSetAccountMode==='function')solSetAccountMode('signin');
+   solOpenAccount();return;
+  }
+  let eligibility;
+  try{eligibility=await window.solCheckEarlyAccess(null)}catch(accessError){
+   button.disabled=false;button.textContent='Continue to checkout';window.solOpenEarlyAccess();return;
+  }
+  if(!eligibility.admin&&!eligibility.hasAccess){
+   button.disabled=false;button.textContent='Continue to checkout';window.solOpenEarlyAccess();return;
+  }
+  button.textContent='Preparing checkout…';
   const response=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({items:cart.map(item=>({id:String(item.id),size:String(item.size||'One size'),color:String(item.color||'')}))})});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||'Checkout could not be started. Please try again.');
@@ -2756,79 +2767,56 @@ initSolCloud();
  </div>
 </div><script id="sol-early-access-client">
 (function(){
- const $ea=id=>document.getElementById(id);
- const modal=$ea('solEarlyAccessModal'),status=$ea('solEarlyAccessStatus'),codeInput=$ea('solEarlyAccessCode');
- if(!modal||!$ea('solViewWebsite'))return;
- const open=()=>{modal.style.display='flex';status.textContent='';codeInput.focus()};
- const close=()=>{modal.style.display='none'};
- $ea('solEarlyAccessOpen')?.addEventListener('click',open);
+ const $ea=id=>document.getElementById(id),modal=$ea('solEarlyAccessModal'),status=$ea('solEarlyAccessStatus'),codeInput=$ea('solEarlyAccessCode');
+ if(!modal)return;
+ const open=()=>{modal.style.display='flex';modal.setAttribute('aria-hidden','false');status.textContent='';codeInput.focus()};
+ const close=()=>{modal.style.display='none';modal.setAttribute('aria-hidden','true')};
  $ea('solEarlyAccessClose')?.addEventListener('click',close);
  modal.addEventListener('click',e=>{if(e.target===modal)close()});
- async function sessionToken(){
-  if(!window.solDb && typeof solDb==='undefined')return null;
-  const {data}=await solDb.auth.getSession();return data?.session?.access_token||null;
- }
+ async function sessionToken(){if(typeof solDb==='undefined'||!solDb)return null;const {data}=await solDb.auth.getSession();return data?.session?.access_token||null}
  async function api(payload){
-  const token=await sessionToken();if(!token)throw new Error('Sign in to your SOL account first. Your code will remain here.');
+  const token=await sessionToken();if(!token)throw new Error('Sign in or create a SOL account to redeem your code.');
   const r=await fetch('/api/early-access',{method:payload?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:payload?JSON.stringify(payload):undefined,cache:'no-store'});
   const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Early access is unavailable.');return data;
  }
- let allowEntry=false,checking=false;
- document.addEventListener('click',async e=>{
-  const button=e.target.closest('#solViewWebsite');if(!button||allowEntry)return;
-  const publicDate=new Date(2026,11,13,0,0,0,0).getTime();
-  if(Date.now()>=publicDate)return;
-  e.preventDefault();e.stopImmediatePropagation();if(checking)return;checking=true;
-  try{const result=await api(null);if(result.hasAccess){allowEntry=true;button.click();allowEntry=false;close()}else open()}
-  catch(error){open();status.textContent=error.message}
-  finally{checking=false}
- },true);
+ window.solOpenEarlyAccess=open;window.solCheckEarlyAccess=api;
  $ea('solEarlyAccessRedeem')?.addEventListener('click',async()=>{
   const button=$ea('solEarlyAccessRedeem');button.disabled=true;button.textContent='CHECKING…';status.textContent='';
   try{
    if(!await sessionToken()){
     status.textContent='Sign in or create a SOL account first. Your code will stay in this box.';
     if(typeof solSetAccountMode==='function')solSetAccountMode('signin');
-    $ea('solAccountModal').style.display='flex';$ea('solAccountModal').setAttribute('aria-hidden','false');
-    return;
+    $ea('solAccountModal').style.display='flex';$ea('solAccountModal').setAttribute('aria-hidden','false');return;
    }
    await api({action:'redeem',code:codeInput.value});
-   status.textContent='ACCESS GRANTED — this code is now linked to your SOL account.';
-   setTimeout(()=>{close();$ea('solViewWebsite').click()},900);
+   status.textContent='ACCESS GRANTED — early checkout is now enabled for your account.';
+   setTimeout(()=>{close();const checkout=$ea('checkout');if(checkout)checkout.click()},850);
   }catch(error){status.textContent=error.message}
   finally{button.disabled=false;button.textContent='UNLOCK ACCESS'}
  });
  async function adminLoad(){
   const panel=$ea('solEarlyAccessAdmin');if(!panel)return;
-  try{
-   const data=await api(null);if(!data.admin){panel.style.display='none';return}
-   panel.style.display='block';
-   const list=$ea('solEarlyAccessCodeList');list.replaceChildren();
+  try{const data=await api(null);if(!data.admin){panel.style.display='none';return}
+   panel.style.display='block';const list=$ea('solEarlyAccessCodeList');list.replaceChildren();
    (data.codes||[]).forEach(item=>{
     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #333;padding:12px 0;font-size:11px;flex-wrap:wrap';
-    const info=document.createElement('span');info.textContent=(item.redeemed_at?'REDEEMED':item.revoked_at?'REVOKED':'AVAILABLE')+' · '+(item.expires_at?'EXPIRES '+new Date(item.expires_at).toLocaleDateString():'NO EXPIRY');
-    row.append(info);
-    if(!item.redeemed_at&&!item.revoked_at){const revoke=document.createElement('button');revoke.type='button';revoke.textContent='Revoke';revoke.style.cssText='background:transparent;color:#ddd;border:1px solid #555;padding:7px 10px';revoke.onclick=async()=>{try{await api({action:'revoke',id:item.id});await adminLoad()}catch(err){$ea('solEarlyAccessAdminStatus').textContent=err.message}};row.append(revoke)}
-    list.append(row);
+    const info=document.createElement('span');info.textContent=(item.redeemed_at?'REDEEMED':item.revoked_at?'REVOKED':'AVAILABLE')+' · '+(item.expires_at?'EXPIRES '+new Date(item.expires_at).toLocaleDateString():'NO EXPIRY');row.append(info);
+    if(!item.redeemed_at&&!item.revoked_at){const revoke=document.createElement('button');revoke.type='button';revoke.textContent='Revoke';revoke.style.cssText='background:transparent;color:#ddd;border:1px solid #555;padding:7px 10px';revoke.onclick=async()=>{try{await api({action:'revoke',id:item.id});await adminLoad()}catch(err){$ea('solEarlyAccessAdminStatus').textContent=err.message}};row.append(revoke)}list.append(row);
    });
   }catch(error){$ea('solEarlyAccessAdminStatus').textContent=error.message}
  }
  $ea('solEarlyAccessGenerate')?.addEventListener('click',async()=>{
-  const button=$ea('solEarlyAccessGenerate'),out=$ea('solEarlyAccessNewCodes'),message=$ea('solEarlyAccessAdminStatus');
-  button.disabled=true;message.textContent='Generating…';out.replaceChildren();
+  const button=$ea('solEarlyAccessGenerate'),out=$ea('solEarlyAccessNewCodes'),message=$ea('solEarlyAccessAdminStatus');button.disabled=true;message.textContent='Generating…';out.replaceChildren();
   try{
-   const count=Math.max(1,Math.min(50,Number($ea('solEarlyAccessCount').value)||1));
-   const expiry=$ea('solEarlyAccessExpiry').value;
+   const count=Math.max(1,Math.min(50,Number($ea('solEarlyAccessCount').value)||1)),expiry=$ea('solEarlyAccessExpiry').value;
    const result=await api({action:'create',count,expiresAt:expiry?new Date(expiry+'T23:59:59').toISOString():null});
    const heading=document.createElement('p');heading.textContent='Copy these codes now — they are only shown once:';heading.style.cssText='font-size:12px;color:#eee;margin-top:18px';out.append(heading);
    const pre=document.createElement('pre');pre.textContent=result.codes.join('\n');pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;background:#08080a;border:1px solid #444;padding:14px;color:#eee;font-size:13px;letter-spacing:.1em';out.append(pre);
    const copy=document.createElement('button');copy.type='button';copy.textContent='COPY ALL CODES';copy.className='button';copy.onclick=()=>navigator.clipboard?.writeText(result.codes.join('\n'));out.append(copy);
    message.textContent=result.codes.length+' one-time codes created.';await adminLoad();
-  }catch(error){message.textContent=error.message}
-  finally{button.disabled=false}
+  }catch(error){message.textContent=error.message}finally{button.disabled=false}
  });
- const original=window.go;
- document.addEventListener('click',e=>{if(e.target.closest('[data-page="studio"]'))setTimeout(adminLoad,1400)});
+ document.querySelector('[data-page="studio"]')?.addEventListener('click',()=>setTimeout(adminLoad,1500));
  $ea('solAdminSignIn')?.addEventListener('click',()=>setTimeout(adminLoad,1800));
  $ea('solMessagesRefresh')?.addEventListener('click',adminLoad);
 })();
